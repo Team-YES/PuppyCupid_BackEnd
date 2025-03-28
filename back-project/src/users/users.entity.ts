@@ -38,6 +38,9 @@ export class User {
   @OneToMany(() => Dog, (dog) => dog.user, { cascade: true })
   dogs: Dog[];
 
+  @Column({ type: 'varchar', nullable: true })
+  eid_refresh_token: string | null;
+
   @CreateDateColumn()
   created_at: Date;
 }

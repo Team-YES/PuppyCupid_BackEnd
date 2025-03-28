@@ -31,6 +31,9 @@ import { Message } from './messages/messages.entity';
 import { Notification } from './notifications/notifications.entity';
 import { Follow } from './follows/follows.entity';
 import { Payment } from './payments/payments.entity';
+
+import { AppController } from './app.controller';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -73,5 +76,6 @@ import { Payment } from './payments/payments.entity';
     PaymentsModule,
     WeatherModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
