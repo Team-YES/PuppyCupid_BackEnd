@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DogsModule } from './dogs/dogs.module';
@@ -15,10 +13,37 @@ import { FollowsModule } from './follows/follows.module';
 import { InquiriesModule } from './inquiries/inquiries.module';
 import { PaymentsModule } from './payments/payments.module';
 import { WeatherModule } from './weather/weather.module';
-
+// typeorm
+import { TypeOrmModule } from '@nestjs/typeorm';
+// config
+import { ConfigModule } from '@nestjs/config';
 @Module({
-  imports: [AuthModule, UsersModule, DogsModule, PostsModule, InteractionsModule, BlacklistModule, AdminModule, MatchesModule, MessagesModule, NotificationsModule, FollowsModule, InquiriesModule, PaymentsModule, WeatherModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'korizon5479@@',
+      database: 'puppies',
+      // entities: [Todo, User],
+      synchronize: true,
+    }),
+    AuthModule,
+    UsersModule,
+    DogsModule,
+    PostsModule,
+    InteractionsModule,
+    BlacklistModule,
+    AdminModule,
+    MatchesModule,
+    MessagesModule,
+    NotificationsModule,
+    FollowsModule,
+    InquiriesModule,
+    PaymentsModule,
+    WeatherModule,
+  ],
 })
 export class AppModule {}
