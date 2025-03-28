@@ -33,6 +33,7 @@ import { Follow } from './follows/follows.entity';
 import { Payment } from './payments/payments.entity';
 
 import { AppController } from './app.controller';
+import { Weather } from './weather/weather.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -57,6 +58,7 @@ import { AppController } from './app.controller';
         Notification,
         Follow,
         Payment,
+        Weather,
       ],
       synchronize: true,
     }),
