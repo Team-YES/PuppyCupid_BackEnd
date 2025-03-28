@@ -17,6 +17,20 @@ import { WeatherModule } from './weather/weather.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // config
 import { ConfigModule } from '@nestjs/config';
+// entity
+import { User } from './users/users.entity';
+import { Dog } from './dogs/dogs.entity';
+import { Blacklist } from './blacklist/blacklist.entity';
+import { Like } from './interactions/likes.entity';
+import { Post } from './posts/posts.entity';
+import { PostImage } from './posts/post_images.entity';
+import { Comment } from './interactions/comments.entity';
+import { Inquiry } from './inquiries/inquiries.entity';
+import { Match } from './matches/matches.entity';
+import { Message } from './messages/messages.entity';
+import { Notification } from './notifications/notifications.entity';
+import { Follow } from './follows/follows.entity';
+import { Payment } from './payments/payments.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,7 +41,21 @@ import { ConfigModule } from '@nestjs/config';
       username: 'root',
       password: 'korizon5479@@',
       database: 'puppies',
-      // entities: [Todo, User],
+      entities: [
+        User,
+        Dog,
+        Blacklist,
+        Post,
+        PostImage,
+        Comment,
+        Like,
+        Inquiry,
+        Match,
+        Message,
+        Notification,
+        Follow,
+        Payment,
+      ],
       synchronize: true,
     }),
     AuthModule,
