@@ -33,7 +33,6 @@ import { Follow } from './follows/follows.entity';
 import { Payment } from './payments/payments.entity';
 
 import { AppController } from './app.controller';
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
