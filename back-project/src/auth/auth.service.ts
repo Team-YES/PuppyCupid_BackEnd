@@ -22,7 +22,6 @@ export class AuthService {
       const user = {
         email: userFromOAuth.email,
         nickname: userFromOAuth.nickname,
-        photo: userFromOAuth.photo,
         type: provider,
       };
 

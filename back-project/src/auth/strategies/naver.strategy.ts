@@ -25,7 +25,6 @@ export class JwtNaverStrategy extends PassportStrategy(Strategy, 'naver') {
       const user = {
         email: _json.email,
         nickname: _json.nickname,
-        photo: _json.profile_image,
         provider: 'naver',
       };
       done(null, user);

@@ -28,12 +28,11 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ) {
     try {
-      const { name, emails, photos } = profile;
+      const { name, emails } = profile;
       const user = {
         email: emails?.[0]?.value,
         firstName: name?.givenName,
         lastName: name?.familyName,
-        photo: photos?.[0]?.value,
         provider: 'google',
       };
       done(null, user);
