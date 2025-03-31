@@ -1,4 +1,3 @@
-// auth/strategies/naver.strategy.ts
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile } from 'passport-naver';
