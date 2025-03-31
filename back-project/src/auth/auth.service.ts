@@ -21,7 +21,7 @@ export class AuthService {
 
       const user = {
         email: userFromOAuth.email,
-        nickname: userFromOAuth.nickname,
+        name: userFromOAuth.name,
         type: provider,
       };
 
@@ -66,6 +66,13 @@ export class AuthService {
         expires.getDate() +
           +this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_DATE'),
       );
+
+      res.cookie('access_token', accessToken, {
+        httpOnly: false,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        maxAge: 1000 * 60 * 60,
+      });
 
       res.cookie('eid_refresh_token', refreshToken, {
         httpOnly: true,
