@@ -63,6 +63,7 @@ export class WeatherService {
       wind_speed: weatherData.wind_speed,
       weather_main: weatherData.weather,
       weather_desc: weatherData.description,
+      icon: weatherData.icon,
     });
 
     return await this.weatherRepository.save(newWeather);
