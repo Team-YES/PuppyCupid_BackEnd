@@ -6,11 +6,9 @@ export class WeatherController {
   constructor(private readonly weatherService: WeatherService) {}
 
   @Get()
-  async getWeather(
-    @Query('lat') lat: string,
-    @Query('lon') lon: string,
-    @Query('dong_name') dong_name: string,
-  ) {
-    return this.weatherService.getWeather(+lat, +lon, dong_name);
+  async getWeather(@Query('lat') lat: string, @Query('lon') lon: string) {
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(lon);
+    return await this.weatherService.getWeather(latitude, longitude);
   }
 }
