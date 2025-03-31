@@ -31,6 +31,9 @@ export class Weather {
   @Column({ type: 'varchar', length: 100 })
   weather_desc: string;
 
+  @Column({ type: 'varchar', length: 10 })
+  icon: string;
+
   @CreateDateColumn()
   recorded_at: Date;
 }
