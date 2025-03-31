@@ -34,7 +34,6 @@ export class WeatherService {
         this.httpService.get(url, { params }),
       );
       const data = response.data;
-      console.log(data);
 
       return {
         temperature: data.main.temp,
