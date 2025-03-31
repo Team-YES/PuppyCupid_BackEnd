@@ -21,9 +21,7 @@ export class AuthController {
 
     const { eid_access_token } = result;
 
-    return res.redirect(
-      `http://localhost:3000/social-login-success?token=${eid_access_token}`,
-    );
+    return res.redirect(`http://localhost:3000`);
   }
 
   // // 카카오 로그인
@@ -40,9 +38,7 @@ export class AuthController {
       return res.redirect('http://localhost:3000/login-failed');
     }
 
-    return res.redirect(
-      `http://localhost:3000/social-login-success?token=${result.eid_access_token}`,
-    );
+    return res.redirect(`http://localhost:3000`);
   }
 
   // 네이버 로그인
@@ -61,9 +57,7 @@ export class AuthController {
       return res.redirect('http://localhost:3000/login-failed');
     }
 
-    return res.redirect(
-      `http://localhost:3000/social-login-success?token=${result.eid_access_token}`,
-    );
+    return res.redirect(`http://localhost:3000`);
   }
 
   @UseGuards(AuthGuard('jwt'))

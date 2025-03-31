@@ -5,13 +5,13 @@ import {
   OneToMany,
   CreateDateColumn,
 } from 'typeorm';
-
 import { Dog } from '../dogs/dogs.entity';
 
 export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
 }
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
@@ -20,17 +20,17 @@ export class User {
   @Column({ type: 'varchar', length: 50, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 20 })
-  name: string;
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  name: string | null;
 
   @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
   nickname: string | null;
 
-  @Column({ type: 'varchar', length: 15 })
-  phone: string;
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  phone: string | null;
 
-  @Column({ type: 'enum', enum: Gender })
-  gender: Gender;
+  @Column({ type: 'enum', enum: Gender, nullable: true })
+  gender: Gender | null;
 
   @Column({ type: 'boolean', default: false })
   is_power_user: boolean;
