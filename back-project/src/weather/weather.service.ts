@@ -34,6 +34,7 @@ export class WeatherService {
         this.httpService.get(url, { params }),
       );
       const data = response.data;
+      console.log(data);
 
       return {
         temperature: data.main.temp,
@@ -42,6 +43,7 @@ export class WeatherService {
         description: data.weather[0].description,
         wind_speed: data.wind.speed,
         humidity: data.main.humidity,
+        icon: data.weather[0].icon,
       };
     } catch (error) {
       this.logger.error(`API 요청 실패: ${error.message}`);

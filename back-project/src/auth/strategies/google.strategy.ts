@@ -33,6 +33,7 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
         email: emails?.[0]?.value,
         firstName: name?.givenName,
         lastName: name?.familyName,
+
         provider: 'google',
       };
       done(null, user);
