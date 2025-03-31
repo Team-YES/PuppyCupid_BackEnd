@@ -42,7 +42,6 @@ export class WeatherService {
         description: data.weather[0].description,
         wind_speed: data.wind.speed,
         humidity: data.main.humidity,
-        city: data.name,
       };
     } catch (error) {
       this.logger.error(`API 요청 실패: ${error.message}`);
@@ -50,12 +49,11 @@ export class WeatherService {
     }
   }
 
-  async saveWeatherData(lat: number, lon: number, dong_name: string) {
+  async saveWeatherData(lat: number, lon: number) {
     const weatherData = await this.fetchRealtimeWeather(lat, lon);
     if (!weatherData) return null;
 
     const newWeather = this.weatherRepository.create({
-      dong_name,
       latitude: lat,
       longitude: lon,
       temperature: weatherData.temperature,
@@ -68,9 +66,9 @@ export class WeatherService {
     return await this.weatherRepository.save(newWeather);
   }
 
-  async getWeather(lat: number, lon: number, dong_name: string) {
+  async getWeather(lat: number, lon: number) {
     const recentWeather = await this.weatherRepository.findOne({
-      where: { latitude: lat, longitude: lon, dong_name },
+      where: { latitude: lat, longitude: lon },
       order: { recorded_at: 'DESC' },
     });
 
@@ -78,6 +76,6 @@ export class WeatherService {
       return recentWeather;
     }
 
-    return await this.saveWeatherData(lat, lon, dong_name);
+    return await this.saveWeatherData(lat, lon);
   }
 }
