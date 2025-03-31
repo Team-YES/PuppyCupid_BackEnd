@@ -26,7 +26,7 @@ export class AuthController {
     );
   }
 
-  // 카카오 로그인
+  // // 카카오 로그인
   @Get('/kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuth(@Req() _req: Request) {}
@@ -48,7 +48,9 @@ export class AuthController {
   // 네이버 로그인
   @Get('/naver')
   @UseGuards(AuthGuard('naver'))
-  async naverAuth(@Req() _req: Request) {}
+  async naverAuth(@Req() _req: Request) {
+    console.log('[네이버 로그인 요청 도착]');
+  }
 
   @Get('/naver/callback')
   @UseGuards(AuthGuard('naver'))
