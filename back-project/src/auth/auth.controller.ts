@@ -68,4 +68,15 @@ export class AuthController {
       user: req.user,
     };
   }
+
+  @Get('/logout')
+  async logout(@Res() res: Response) {
+    res.clearCookie('eid_refresh_token');
+    res.clearCookie('access_token');
+
+    return res.status(200).json({
+      ok: true,
+      message: '로그아웃 성공',
+    });
+  }
 }
