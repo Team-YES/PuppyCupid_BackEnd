@@ -10,9 +10,6 @@ export class Weather {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  dong_name: string;
-
   @Column('float')
   latitude: number;
 
