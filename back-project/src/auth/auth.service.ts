@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response, Request } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { UserService } from 'src/users/users.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly userService: UserService,
+    private readonly userService: UsersService,
   ) {}
 
   async socialLogin(
@@ -25,7 +25,7 @@ export class AuthService {
         type: provider,
       };
 
-      let existingUser = await this.userService.findUser(user.email);
+      let existingUser = await this.userService.findUserByEmail(user.email);
 
       if (!existingUser) {
         existingUser = await this.userService.createUser(user);

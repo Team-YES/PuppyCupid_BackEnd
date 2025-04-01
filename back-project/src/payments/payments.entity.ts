@@ -34,9 +34,16 @@ export class Payment {
   @Column({ type: 'enum', enum: PaymentMethod })
   payment_method: PaymentMethod;
 
-  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: PaymentStatus,
+    default: PaymentStatus.PENDING,
+  })
   status: PaymentStatus;
 
   @CreateDateColumn()
   created_at: Date;
+
+  @Column({ nullable: true })
+  toss_payment_id: string;
 }
