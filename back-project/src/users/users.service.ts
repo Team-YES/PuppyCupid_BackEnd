@@ -11,7 +11,7 @@ interface CreateUserInput {
 }
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -21,10 +21,12 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  findUser(email: string): Promise<User | null> {
-    return this.userRepository.findOne({
-      where: { email },
-    });
+  findUserById(id: number): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  findUserByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   async createUser(user: CreateUserInput): Promise<User> {
