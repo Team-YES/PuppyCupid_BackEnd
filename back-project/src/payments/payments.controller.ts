@@ -9,6 +9,7 @@ export class PaymentsController {
 
   @Get('getTossClientKey')
   getTossClientKey() {
+    console.log(process.env.TOSS_CLIENT_KEY, 'asdfsdfsefss');
     return { tossClientKey: process.env.TOSS_CLIENT_KEY };
   }
 
