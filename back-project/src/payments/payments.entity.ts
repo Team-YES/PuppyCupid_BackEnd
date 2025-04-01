@@ -9,7 +9,6 @@ import {
 import { User } from 'src/users/users.entity';
 
 export enum PaymentMethod {
-  KAKAO = 'kakao',
   CARD = 'card',
   TEST = 'test',
 }
@@ -35,9 +34,16 @@ export class Payment {
   @Column({ type: 'enum', enum: PaymentMethod })
   payment_method: PaymentMethod;
 
-  @Column({ type: 'enum', enum: PaymentStatus, default: PaymentStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: PaymentStatus,
+    default: PaymentStatus.PENDING,
+  })
   status: PaymentStatus;
 
   @CreateDateColumn()
   created_at: Date;
+
+  @Column({ nullable: true })
+  toss_payment_id: string;
 }
