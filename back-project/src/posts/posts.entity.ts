@@ -16,14 +16,10 @@ import { Comment } from 'src/interactions/comments.entity';
 
 export enum PostCategory {
   FREE = 'free',
-  HEALTH = 'health',
-  DIET = 'diet',
-  TRAINING = 'training',
-  PRODUCTS = 'products',
   LOST = 'lost',
-  EVENT = 'event',
   WALKING = 'walking',
 }
+
 @Entity('posts')
 export class Post {
   @PrimaryGeneratedColumn()

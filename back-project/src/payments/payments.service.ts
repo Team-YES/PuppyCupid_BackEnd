@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Payment } from './payments.entity';
 import { PaymentMethod, PaymentStatus } from './payments.entity';
 import { UsersService } from 'src/users/users.service';
-
+import { UserRole } from 'src/users/users.entity';
 @Injectable()
 export class PaymentsService {
   constructor(
@@ -37,13 +37,20 @@ export class PaymentsService {
   ) {
     const payment = await this.paymentRepository.findOne({
       where: { id: orderId },
+      relations: ['user'],
     });
+
     if (!payment) {
       throw new Error('Payment not found');
     }
 
     payment.status = status;
     payment.toss_payment_id = tossorderId;
+
+    if (status === PaymentStatus.SUCCESS) {
+      payment.user.role = UserRole.POWER;
+      await this.userService.save(payment.user);
+    }
 
     return this.paymentRepository.save(payment);
   }

@@ -2,9 +2,15 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
+import { ConfigService } from '@nestjs/config';
+import * as jwt from 'jsonwebtoken';
+
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
   // 구글 로그인
   @Get('/google')
   @UseGuards(AuthGuard('google'))
@@ -60,13 +66,23 @@ export class AuthController {
     return res.redirect(`http://localhost:3000`);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('/check')
-  checkLogin(@Req() req: Request) {
-    return {
-      isLoggedIn: true,
-      user: req.user,
-    };
+  async checkLogin(@Req() req: Request) {
+    const token = req.cookies['access_token'];
+    if (!token) return { isLoggedIn: false };
+
+    try {
+      const payload = jwt.verify(
+        token,
+        this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')!,
+      );
+      return {
+        isLoggedIn: true,
+        user: payload,
+      };
+    } catch {
+      return { isLoggedIn: false };
+    }
   }
 
   @Get('/logout')

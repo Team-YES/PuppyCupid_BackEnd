@@ -12,6 +12,12 @@ export enum Gender {
   FEMALE = 'female',
 }
 
+export enum UserRole {
+  USER = 'user',
+  POWER = 'power',
+  ADMIN = 'admin',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
@@ -32,8 +38,8 @@ export class User {
   @Column({ type: 'enum', enum: Gender, nullable: true })
   gender: Gender | null;
 
-  @Column({ type: 'boolean', default: false })
-  is_power_user: boolean;
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
 
   @OneToMany(() => Dog, (dog) => dog.user, { cascade: true })
   dogs: Dog[];
