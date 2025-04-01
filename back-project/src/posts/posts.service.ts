@@ -4,11 +4,14 @@ import { Repository } from 'typeorm';
 
 import { Post } from './posts.entity';
 import { PostImage } from './post_images.entity';
-import { User, UserRole } from 'src/users/users.entity';
+import { UserRole } from 'src/users/users.entity';
 import { PostCategory } from './posts.entity';
 
-interface CreatePostInput {
-  user: User;
+export interface CreatePostInput {
+  user: {
+    id: number;
+    role: UserRole;
+  };
   category: PostCategory;
   title: string;
   content: string;
@@ -16,13 +19,13 @@ interface CreatePostInput {
   imageUrls: string[];
 }
 
-interface UpdatePostInput {
+export interface UpdatePostInput {
   postId: number;
   title: string;
   content: string;
 }
 
-interface DeletePostInput {
+export interface DeletePostInput {
   postId: number;
   user: {
     id: number;

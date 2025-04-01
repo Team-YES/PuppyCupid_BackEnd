@@ -32,8 +32,14 @@ export class User {
   @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
   nickname: string | null;
 
-  @Column({ type: 'varchar', length: 15, nullable: true })
+  @Column({ type: 'varchar', length: 15, nullable: true, unique: true })
   phone: string | null;
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  provider: 'google' | 'kakao' | 'naver' | null;
+
+  @Column({ type: 'boolean', default: false })
+  isPhoneVerified: boolean;
 
   @Column({ type: 'enum', enum: Gender, nullable: true })
   gender: Gender | null;
