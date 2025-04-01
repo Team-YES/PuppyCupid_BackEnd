@@ -9,7 +9,6 @@ import {
 import { User } from 'src/users/users.entity';
 
 export enum PaymentMethod {
-  KAKAO = 'kakao',
   CARD = 'card',
   TEST = 'test',
 }
