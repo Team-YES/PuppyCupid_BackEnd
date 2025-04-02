@@ -34,8 +34,8 @@ export class UsersService {
     return this.userRepository.findOne({ where: { phone } });
   }
 
-  findUserByNickname(nickname: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { nickname } });
+  findUserByNickname(nickName: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { nickName } });
   }
 
   async updatePhoneNumber(userId: number, phone: string) {
@@ -53,11 +53,11 @@ export class UsersService {
 
   async updateProfile(
     userId: number,
-    update: { gender: Gender; nickname: string }, // 💡 enum 타입 적용
+    update: { phone: string; nickName: string },
   ) {
     await this.userRepository.update(userId, {
-      gender: update.gender,
-      nickname: update.nickname,
+      phone: update.phone,
+      nickName: update.nickName,
     });
   }
 

@@ -29,6 +29,12 @@ export enum MbtiType {
   ENTJ = 'ENTJ',
 }
 
+export enum GenderType {
+  MALE = 'male',
+  FEMALE = 'female',
+  NEUTERED = 'male_neutered',
+}
+
 @Entity('dogs')
 export class Dog {
   @PrimaryGeneratedColumn()
@@ -43,6 +49,9 @@ export class Dog {
 
   @Column()
   age: number;
+
+  @Column({ type: 'enum', enum: GenderType })
+  gender: GenderType;
 
   @Column()
   breed: string;

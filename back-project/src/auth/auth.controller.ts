@@ -86,7 +86,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt-temp'))
   async updatePhone(
     @Req() req: Request,
-    @Body() body: { phone: string; gender: string; nickname: string },
+    @Body() body: { phone: string; gender: string; nickName: string },
     @Res() res: Response,
   ) {
     const user = req.user as JwtUser;
@@ -109,8 +109,8 @@ export class AuthController {
     await this.userService.updatePhoneNumber(userId, body.phone);
     await this.userService.setPhoneVerified(userId);
     await this.userService.updateProfile(userId, {
-      gender: body.gender as Gender,
-      nickname: body.nickname,
+      phone: body.phone,
+      nickName: body.nickName,
     });
     res.clearCookie('temp_access_token');
     const updatedUser = await this.userService.findUserById(userId);
@@ -155,7 +155,7 @@ export class AuthController {
           role: user.role,
           email: user.email,
           phoneNumber: user.phone,
-          nickname: user.nickname,
+          nickName: user.nickName,
           gender: user.gender,
           isPhoneVerified: user.isPhoneVerified,
         },

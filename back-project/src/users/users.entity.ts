@@ -30,7 +30,7 @@ export class User {
   name: string | null;
 
   @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
-  nickname: string | null;
+  nickName: string | null;
 
   @Column({ type: 'varchar', length: 15, nullable: true, unique: true })
   phone: string | null;

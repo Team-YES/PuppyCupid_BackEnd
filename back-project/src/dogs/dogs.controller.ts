@@ -55,6 +55,7 @@ export class DogsController {
       latitude,
       longitude,
       dong_name,
+      gender,
     } = body;
     const dogImageUrl = file ? `/uploads/dogsImage/${file.filename}` : '';
 
@@ -66,6 +67,7 @@ export class DogsController {
     return this.dogsService.createDogInfo({
       userId: req.user.id,
       name,
+      gender,
       age: Number(age),
       breed,
       mbti,
