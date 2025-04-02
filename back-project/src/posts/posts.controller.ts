@@ -58,6 +58,8 @@ export class PostsController {
     const { category, title, content } = body;
     const { id, role } = req.user;
 
+    console.log(body);
+
     const imageUrls = files.map((file) => `/uploads/posts/${file.filename}`);
     const mainImageUrl = imageUrls[0] || '';
 

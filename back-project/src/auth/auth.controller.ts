@@ -37,7 +37,7 @@ export class AuthController {
     const result = await this.authService.googleLogin(req, res);
 
     if (!result.ok) {
-      return res.redirect('http://localhost:3000/login-failed');
+      return res.redirect('http://localhost:3000/login');
     }
 
     const { eid_access_token } = result;
@@ -56,7 +56,7 @@ export class AuthController {
     const result = await this.authService.kakaoLogin(req, res);
 
     if (!result.ok) {
-      return res.redirect('http://localhost:3000/login-failed');
+      return res.redirect('http://localhost:3000/login');
     }
 
     return res.redirect(`http://localhost:3000`);
@@ -75,7 +75,7 @@ export class AuthController {
     const result = await this.authService.naverLogin(req, res);
 
     if (!result.ok) {
-      return res.redirect('http://localhost:3000/login-failed');
+      return res.redirect('http://localhost:3000/login');
     }
 
     return res.redirect(`http://localhost:3000`);
@@ -142,10 +142,21 @@ export class AuthController {
       const payload = jwt.verify(
         token,
         this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')!,
-      );
+      ) as JwtUser;
+
+      const user = await this.userService.findUserById(payload.id);
+      if (!user) {
+        return { isLoggedIn: false };
+      }
+
       return {
         isLoggedIn: true,
-        user: payload,
+        user: {
+          id: user.id,
+          role: user.role,
+          email: user.email,
+          phoneNumber: user.phone,
+        },
       };
     } catch {
       return { isLoggedIn: false };
