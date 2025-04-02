@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { JwtGoogleStrategy } from './strategies/google.strategy';
+import { JwtTempStrategy } from './strategies/jwt-temp.strategy';
 
 @Module({
   imports: [UsersModule, PassportModule, ConfigModule, JwtModule.register({})],
@@ -20,6 +21,7 @@ import { JwtGoogleStrategy } from './strategies/google.strategy';
     JwtNaverStrategy,
     JwtKakaoStrategy,
     JwtGoogleStrategy,
+    JwtTempStrategy,
   ],
 })
 export class AuthModule {}
