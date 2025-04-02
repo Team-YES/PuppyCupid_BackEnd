@@ -7,6 +7,8 @@ import {
   Param,
   Req,
   UseGuards,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,6 +19,10 @@ import {
   DeletePostInput,
   PostsService,
 } from './posts.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { v4 as uuidv4 } from 'uuid';
+import * as path from 'path';
 
 interface AuthRequest extends Request {
   user: {
@@ -30,14 +36,30 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   // 게시글 생성
-  @Post()
+  @Post('form')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      storage: diskStorage({
+        destination: './uploads/posts',
+        filename: (req, file, cd) => {
+          const ext = path.extname(file.originalname);
+          const filename = `${uuidv4()}${ext}`;
+          cd(null, filename);
+        },
+      }),
+    }),
+  )
   async createPost(
-    @Body() body: Omit<CreatePostInput, 'user'>,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() body: any,
     @Req() req: AuthRequest,
   ) {
-    const { category, title, content, mainImageUrl, imageUrls } = body;
+    const { category, title, content } = body;
     const { id, role } = req.user;
+
+    const imageUrls = files.map((file) => `/uploads/posts/${file.filename}`);
+    const mainImageUrl = imageUrls[0] || '';
 
     return this.postsService.createPost({
       user: {
