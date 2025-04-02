@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Response, Request } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/users.entity';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,59 @@ export class AuthService {
     private readonly userService: UsersService,
   ) {}
 
+  async issueTokensAndSetCookies(
+    user: User,
+    res: Response,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const isProd = process.env.NODE_ENV === 'production';
+
+    const accessToken = jwt.sign(
+      {
+        id: user.id,
+        role: user.role,
+        isPhoneVerified: user.isPhoneVerified,
+      },
+      this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')!,
+      {
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+      },
+    );
+
+    const refreshToken = jwt.sign(
+      {},
+      this.configService.get('JWT_REFRESH_TOKEN_SECRET_KEY')!,
+      {
+        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+        audience: String(user.id),
+      },
+    );
+
+    user.eid_refresh_token = refreshToken;
+    await this.userService.save(user);
+
+    const expires = new Date();
+    expires.setDate(
+      expires.getDate() +
+        +this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_DATE'),
+    );
+
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge: 1000 * 60 * 60,
+    });
+
+    res.cookie('eid_refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      expires,
+    });
+
+    return { accessToken, refreshToken };
+  }
+
   async socialLogin(
     req: Request,
     res: Response,
@@ -18,7 +72,6 @@ export class AuthService {
   ) {
     try {
       const isProd = process.env.NODE_ENV === 'production';
-
       const userFromOAuth = req.user as any;
 
       if (userFromOAuth.phoneNumber) {
@@ -40,12 +93,10 @@ export class AuthService {
       };
 
       let existingUser = await this.userService.findUserByEmail(user.email);
-
       if (!existingUser) {
         existingUser = await this.userService.createUser(user);
       }
 
-      // 전화번호가 없으면 임시 로그인 처리
       if (!existingUser.phone || !existingUser.isPhoneVerified) {
         const tempToken = jwt.sign(
           { id: existingUser.id, role: 'unverified' },
@@ -68,58 +119,10 @@ export class AuthService {
         };
       }
 
-      // JWT payload 생성
-      const payload = {
-        id: existingUser.id,
-        role: existingUser.role,
-        isPhoneVerified: true,
-      };
-
-      // access token 생성
-      const accessToken = jwt.sign(
-        payload,
-        this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')!,
-        {
-          expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
-        },
+      const accessToken = await this.issueTokensAndSetCookies(
+        existingUser,
+        res,
       );
-
-      // refresh token 생성
-      const refreshToken = jwt.sign(
-        {},
-        this.configService.get('JWT_REFRESH_TOKEN_SECRET_KEY')!,
-        {
-          expiresIn: this.configService.get(
-            'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-          ),
-          audience: String(existingUser.id),
-        },
-      );
-
-      // 사용
-      existingUser.eid_refresh_token = refreshToken;
-      await this.userService.save(existingUser);
-
-      // refresh token 쿠키 설정
-      const expires = new Date();
-      expires.setDate(
-        expires.getDate() +
-          +this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_DATE'),
-      );
-
-      res.cookie('access_token', accessToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? 'none' : 'lax',
-        maxAge: 1000 * 60 * 60,
-      });
-
-      res.cookie('eid_refresh_token', refreshToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? 'none' : 'lax',
-        expires,
-      });
 
       return {
         ok: true,

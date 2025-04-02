@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { User } from './users.entity';
+import { User, Gender } from './users.entity';
 
 interface CreateUserInput {
   email: string;
@@ -34,6 +34,10 @@ export class UsersService {
     return this.userRepository.findOne({ where: { phone } });
   }
 
+  findUserByNickname(nickname: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { nickname } });
+  }
+
   async updatePhoneNumber(userId: number, phone: string) {
     await this.userRepository.update({ id: userId }, { phone });
   }
@@ -45,6 +49,16 @@ export class UsersService {
   async createUser(user: CreateUserInput): Promise<User> {
     const newUser = this.userRepository.create(user);
     return await this.userRepository.save(newUser);
+  }
+
+  async updateProfile(
+    userId: number,
+    update: { gender: Gender; nickname: string }, // 💡 enum 타입 적용
+  ) {
+    await this.userRepository.update(userId, {
+      gender: update.gender,
+      nickname: update.nickname,
+    });
   }
 
   async save(user: User): Promise<User> {
