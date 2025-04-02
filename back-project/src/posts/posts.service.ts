@@ -101,4 +101,11 @@ export class PostsService {
     await this.postRepository.remove(post);
     return true;
   }
+
+  async getAllPosts(): Promise<Post[]> {
+    return await this.postRepository.find({
+      relations: ['user', 'images'],
+      order: { created_at: 'DESC' },
+    });
+  }
 }

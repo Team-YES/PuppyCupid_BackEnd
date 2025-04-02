@@ -10,6 +10,25 @@ import {
 
 import { User } from '../users/users.entity';
 
+export enum MbtiType {
+  ISTJ = 'ISTJ',
+  ISFJ = 'ISFJ',
+  INFJ = 'INFJ',
+  INTJ = 'INTJ',
+  ISTP = 'ISTP',
+  ISFP = 'ISFP',
+  INFP = 'INFP',
+  INTP = 'INTP',
+  ESTP = 'ESTP',
+  ESFP = 'ESFP',
+  ENFP = 'ENFP',
+  ENTP = 'ENTP',
+  ESTJ = 'ESTJ',
+  ESFJ = 'ESFJ',
+  ENFJ = 'ENFJ',
+  ENTJ = 'ENTJ',
+}
+
 @Entity()
 export class Dog {
   @PrimaryGeneratedColumn()
@@ -28,8 +47,8 @@ export class Dog {
   @Column()
   breed: string;
 
-  @Column({ nullable: true })
-  mbti: string;
+  @Column({ nullable: true, type: 'enum', enum: MbtiType })
+  mbti: MbtiType;
 
   @Column()
   personality: string;

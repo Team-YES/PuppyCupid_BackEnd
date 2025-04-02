@@ -9,6 +9,7 @@ import {
   UseGuards,
   UploadedFiles,
   UseInterceptors,
+  Get,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -103,5 +104,10 @@ export class PostsController {
         role: role as UserRole,
       },
     });
+  }
+
+  @Get()
+  async getAllPosts() {
+    return await this.postsService.getAllPosts();
   }
 }
