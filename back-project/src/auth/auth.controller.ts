@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -13,6 +14,7 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from 'src/users/users.service';
+import { Gender } from 'src/users/users.entity';
 
 interface JwtUser {
   id: number;
@@ -86,11 +88,17 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   async updatePhone(
     @Req() req: Request,
-    @Body() body: { phone: string },
+    @Body() body: { phone: string; gender: string; nickname: string },
     @Res() res: Response,
   ) {
     const user = req.user as JwtUser;
-    const userId = user.id;
+    const userId = user?.id;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ ok: false, error: '유저 정보가 없습니다.' });
+    }
 
     const existingByPhone = await this.userService.findUserByPhone(body.phone);
     if (existingByPhone && existingByPhone.id !== userId) {
@@ -102,6 +110,10 @@ export class AuthController {
 
     await this.userService.updatePhoneNumber(userId, body.phone);
     await this.userService.setPhoneVerified(userId);
+    await this.userService.updateProfile(userId, {
+      gender: body.gender as Gender,
+      nickname: body.nickname,
+    });
 
     const updatedUser = await this.userService.findUserById(userId);
     if (!updatedUser) {
@@ -110,25 +122,14 @@ export class AuthController {
         .json({ ok: false, error: '유저를 찾을 수 없습니다.' });
     }
 
-    const accessToken = jwt.sign(
-      { id: updatedUser.id, role: updatedUser.role },
-      this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')!,
-      {
-        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
-      },
-    );
-
-    res.cookie('access_token', accessToken, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 1000 * 60 * 60,
-    });
+    const { accessToken, refreshToken } =
+      await this.authService.issueTokensAndSetCookies(updatedUser, res);
 
     return res.status(200).json({
       ok: true,
       message: '전화번호 등록 완료, 로그인 완료',
       access_token: accessToken,
+      refresh_token: refreshToken,
     });
   }
 
@@ -156,11 +157,20 @@ export class AuthController {
           role: user.role,
           email: user.email,
           phoneNumber: user.phone,
+          nickname: user.nickname,
+          gender: user.gender,
+          isPhoneVerified: user.isPhoneVerified,
         },
       };
     } catch {
       return { isLoggedIn: false };
     }
+  }
+
+  @Get('/check-nickname')
+  async checkNickname(@Query('value') value: string) {
+    const existing = await this.userService.findUserByNickname(value);
+    return { available: !existing };
   }
 
   @Get('/logout')
