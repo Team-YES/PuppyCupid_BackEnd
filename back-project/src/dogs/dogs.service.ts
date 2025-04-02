@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Dog } from './dogs.entity';
+import { Dog, GenderType } from './dogs.entity';
 import { User } from '../users/users.entity';
 import { MbtiType } from './dogs.entity';
 
@@ -11,6 +11,7 @@ export interface CreateInfoInput {
   age: number;
   breed: string;
   mbti?: string;
+  gender: string;
   personality: string;
   dog_image: string;
   latitude: number | null;
@@ -37,6 +38,7 @@ export class DogsService {
       latitude,
       longitude,
       dong_name,
+      gender,
     } = dog;
 
     const newDog = this.dogRepository.create({
@@ -44,6 +46,7 @@ export class DogsService {
       age,
       breed,
       mbti: mbti as MbtiType,
+      gender: gender as GenderType,
       personality,
       dog_image,
       latitude,
