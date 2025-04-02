@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Dog } from './dogs.entity';
-
 import { User } from '../users/users.entity';
 import { MbtiType } from './dogs.entity';
 
@@ -14,8 +13,8 @@ export interface CreateInfoInput {
   mbti?: string;
   personality: string;
   dog_image: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   dong_name: string;
 }
 
@@ -26,7 +25,7 @@ export class DogsService {
     private readonly dogRepository: Repository<Dog>,
   ) {}
 
-  async createDogInfo(input: CreateInfoInput): Promise<Dog> {
+  async createDogInfo(dog: CreateInfoInput): Promise<Dog> {
     const {
       userId,
       name,
@@ -38,10 +37,9 @@ export class DogsService {
       latitude,
       longitude,
       dong_name,
-    } = input;
+    } = dog;
 
-    const dog = this.dogRepository.create({
-      user: { id: userId } as User,
+    const newDog = this.dogRepository.create({
       name,
       age,
       breed,
@@ -51,8 +49,9 @@ export class DogsService {
       latitude,
       longitude,
       dong_name,
+      user: { id: userId } as User,
     });
 
-    return await this.dogRepository.save(dog);
+    return await this.dogRepository.save(newDog);
   }
 }

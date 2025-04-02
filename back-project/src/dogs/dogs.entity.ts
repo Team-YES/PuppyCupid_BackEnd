@@ -29,7 +29,7 @@ export enum MbtiType {
   ENTJ = 'ENTJ',
 }
 
-@Entity()
+@Entity('dogs')
 export class Dog {
   @PrimaryGeneratedColumn()
   id: number;
@@ -56,13 +56,13 @@ export class Dog {
   @Column()
   dog_image: string;
 
-  @Column('float')
-  latitude: number;
+  @Column('float', { nullable: true })
+  latitude: number | null;
 
-  @Column('float')
-  longitude: number;
+  @Column('float', { nullable: true })
+  longitude: number | null;
 
-  @Column()
+  @Column({ nullable: true })
   dong_name: string;
 
   @CreateDateColumn()
