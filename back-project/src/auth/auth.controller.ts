@@ -42,8 +42,6 @@ export class AuthController {
       return res.redirect('http://localhost:3000/login');
     }
 
-    const { eid_access_token } = result;
-
     return res.redirect(`http://localhost:3000`);
   }
 
@@ -85,7 +83,7 @@ export class AuthController {
 
   // 전화번호
   @Post('/update-phone')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt-temp'))
   async updatePhone(
     @Req() req: Request,
     @Body() body: { phone: string; gender: string; nickname: string },
@@ -114,7 +112,7 @@ export class AuthController {
       gender: body.gender as Gender,
       nickname: body.nickname,
     });
-
+    res.clearCookie('temp_access_token');
     const updatedUser = await this.userService.findUserById(userId);
     if (!updatedUser) {
       return res
