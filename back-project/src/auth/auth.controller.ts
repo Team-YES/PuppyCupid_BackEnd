@@ -164,21 +164,4 @@ export class AuthController {
       return { isLoggedIn: false };
     }
   }
-
-  @Get('/check-nickname')
-  async checkNickname(@Query('value') value: string) {
-    const existing = await this.userService.findUserByNickname(value);
-    return { available: !existing };
-  }
-
-  @Get('/logout')
-  async logout(@Res() res: Response) {
-    res.clearCookie('eid_refresh_token');
-    res.clearCookie('access_token');
-
-    return res.status(200).json({
-      ok: true,
-      message: '로그아웃 성공',
-    });
-  }
 }
