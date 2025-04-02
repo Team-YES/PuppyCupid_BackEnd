@@ -104,7 +104,7 @@ export class AuthService {
           { expiresIn: '10m' },
         );
 
-        res.cookie('access_token', tempToken, {
+        res.cookie('temp_access_token', tempToken, {
           httpOnly: false,
           secure: isProd,
           sameSite: isProd ? 'none' : 'lax',
