@@ -15,9 +15,9 @@ import { Like } from 'src/interactions/likes.entity';
 import { Comment } from 'src/interactions/comments.entity';
 
 export enum PostCategory {
-  FREE = 'free',
+  ADOPT = 'adopt',
   LOST = 'lost',
-  WALKING = 'walking',
+  WALKING = 'walk',
 }
 
 @Entity('posts')
