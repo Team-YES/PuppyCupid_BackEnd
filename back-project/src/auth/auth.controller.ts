@@ -65,9 +65,7 @@ export class AuthController {
   // 네이버 로그인
   @Get('/naver')
   @UseGuards(AuthGuard('naver'))
-  async naverAuth(@Req() _req: Request) {
-    console.log('[네이버 로그인 요청 도착]');
-  }
+  async naverAuth(@Req() _req: Request) {}
 
   @Get('/naver/callback')
   @UseGuards(AuthGuard('naver'))
