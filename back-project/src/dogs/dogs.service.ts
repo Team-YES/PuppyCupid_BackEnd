@@ -57,4 +57,11 @@ export class DogsService {
 
     return await this.dogRepository.save(newDog);
   }
+
+  async findDogByUserID(userId: number): Promise<Dog | null> {
+    return await this.dogRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+  }
 }
