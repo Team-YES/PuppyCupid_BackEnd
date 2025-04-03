@@ -80,7 +80,7 @@ export class DogsController {
     });
   }
 
-  @Put('update/:dogId')
+  @Post('update/:dogId')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('image', {
