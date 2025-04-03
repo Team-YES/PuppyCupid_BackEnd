@@ -100,7 +100,7 @@ export class PostsService {
 
   async findAllPosts(userId: number): Promise<any[]> {
     const posts = await this.postRepository.find({
-      relations: ['user', 'images', 'likes'],
+      relations: ['user', 'images', 'likes', 'likes.user'],
       order: { created_at: 'DESC' },
     });
 
