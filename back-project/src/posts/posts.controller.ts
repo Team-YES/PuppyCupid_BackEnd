@@ -108,6 +108,13 @@ export class PostsController {
 
   @Get()
   async getAllPosts() {
-    return await this.postsService.getAllPosts();
+    return await this.postsService.findAllPosts();
+  }
+
+  @Get('user')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserPosts(@Req() req: AuthRequest) {
+    const userId = req.user.id;
+    return await this.postsService.findPostsByUser(userId);
   }
 }
