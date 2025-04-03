@@ -129,7 +129,6 @@ export class AuthService {
         eid_access_token: accessToken,
       };
     } catch (error) {
-      console.error(`[${provider.toUpperCase()} Login Error]`, error);
       return {
         ok: false,
         error: `${provider} 로그인 인증 중 오류가 발생했습니다.`,
