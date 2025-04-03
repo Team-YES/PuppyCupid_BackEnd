@@ -13,7 +13,6 @@ export interface CreatePostInput {
     role: UserRole;
   };
   category: PostCategory;
-  title: string;
   content: string;
   mainImageUrl: string;
   imageUrls: string[];
@@ -21,7 +20,6 @@ export interface CreatePostInput {
 
 export interface UpdatePostInput {
   postId: number;
-  title: string;
   content: string;
 }
 
@@ -40,16 +38,14 @@ export class PostsService {
 
     @InjectRepository(PostImage)
     private readonly postImageRepository: Repository<PostImage>,
-    private readonly postsService: PostsService,
   ) {}
 
   async createPost(input: CreatePostInput): Promise<Post> {
-    const { user, category, title, content, mainImageUrl, imageUrls } = input;
+    const { user, category, content, mainImageUrl, imageUrls } = input;
 
     const post = this.postRepository.create({
       user,
       category,
-      title,
       content,
       main_image_url: mainImageUrl,
       images: imageUrls.map((url, idx) => {
@@ -64,7 +60,7 @@ export class PostsService {
   }
 
   async updatePost(input: UpdatePostInput): Promise<Post> {
-    const { postId, title, content } = input;
+    const { postId, content } = input;
 
     const post = await this.postRepository.findOne({
       where: { id: postId },
@@ -74,7 +70,6 @@ export class PostsService {
       throw new Error('게시글을 찾을 수 없습니다.');
     }
 
-    post.title = title;
     post.content = content;
 
     return await this.postRepository.save(post);

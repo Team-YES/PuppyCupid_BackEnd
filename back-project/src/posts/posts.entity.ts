@@ -16,7 +16,7 @@ import { Comment } from 'src/interactions/comments.entity';
 
 export enum PostCategory {
   ADOPT = 'adopt',
-  LOST = 'lost',
+  FREE = 'free',
   WALKING = 'walk',
 }
 
@@ -31,9 +31,6 @@ export class Post {
 
   @Column({ type: 'enum', enum: PostCategory })
   category: PostCategory;
-
-  @Column()
-  title: string;
 
   @Column({ type: 'text' })
   content: string;
