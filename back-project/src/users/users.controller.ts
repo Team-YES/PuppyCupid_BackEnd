@@ -10,8 +10,25 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('info')
-  getProfile(@Req() req: Request) {
-    return req.user;
+  async findUserById(@Req() req: Request) {
+    const user = req.user as any;
+    const fullUser = await this.usersService.findUserById(user.id);
+    if (!fullUser) {
+      return {
+        ok: false,
+        error: '유저 정보를 찾을 수 없습니다.',
+      };
+    }
+
+    return {
+      ok: true,
+      user: {
+        id: fullUser.id,
+        email: fullUser.email,
+        nickName: fullUser.nickName,
+        phone: fullUser.phone,
+      },
+    };
   }
 
   @UseGuards(AuthGuard('jwt'))
