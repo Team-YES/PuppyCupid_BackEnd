@@ -74,6 +74,17 @@ export class PostsController {
     });
   }
 
+  @Get(':postId')
+  @UseGuards(AuthGuard('jwt'))
+  async getPostDetail(
+    @Param('postId') postId: number,
+    @Req() req: AuthRequest,
+  ) {
+    const post = await this.postsService.findPostById(postId);
+
+    return { post };
+  }
+
   // 게시글 수정
   @Put(':postId')
   @UseGuards(AuthGuard('jwt'))

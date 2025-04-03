@@ -47,7 +47,6 @@ export class PaymentsController {
         throw new Error('Payment verification failed');
       }
     } catch (error) {
-      console.error('Payment verification error:', error.message);
       return { success: false, message: 'Payment failed verification' };
     }
   }
@@ -70,7 +69,6 @@ export class PaymentsController {
 
       return { success: true, message: 'Payment failed, status updated.' };
     } catch (error) {
-      console.error('Failed to update payment status:', error.message);
       return { success: false, message: 'Failed to handle payment failure' };
     }
   }

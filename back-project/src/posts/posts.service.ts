@@ -40,6 +40,19 @@ export class PostsService {
     private readonly postImageRepository: Repository<PostImage>,
   ) {}
 
+  async findPostById(postId: number): Promise<Post> {
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['user', 'images', 'likes', 'likes.user'],
+    });
+
+    if (!post) {
+      throw new Error('해당 게시글을 찾을 수 없습니다.');
+    }
+
+    return post;
+  }
+
   async createPost(input: CreatePostInput): Promise<Post> {
     const { user, category, content, mainImageUrl, imageUrls } = input;
 
