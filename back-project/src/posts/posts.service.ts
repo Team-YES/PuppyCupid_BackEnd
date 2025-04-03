@@ -6,14 +6,13 @@ import { Post } from './posts.entity';
 import { PostImage } from './post_images.entity';
 import { UserRole } from 'src/users/users.entity';
 import { PostCategory } from './posts.entity';
-
+import { Like } from 'src/interactions/likes.entity';
 export interface CreatePostInput {
   user: {
     id: number;
     role: UserRole;
   };
   category: PostCategory;
-  title: string;
   content: string;
   mainImageUrl: string;
   imageUrls: string[];
@@ -21,7 +20,6 @@ export interface CreatePostInput {
 
 export interface UpdatePostInput {
   postId: number;
-  title: string;
   content: string;
 }
 
@@ -43,12 +41,11 @@ export class PostsService {
   ) {}
 
   async createPost(input: CreatePostInput): Promise<Post> {
-    const { user, category, title, content, mainImageUrl, imageUrls } = input;
+    const { user, category, content, mainImageUrl, imageUrls } = input;
 
     const post = this.postRepository.create({
       user,
       category,
-      title,
       content,
       main_image_url: mainImageUrl,
       images: imageUrls.map((url, idx) => {
@@ -63,7 +60,7 @@ export class PostsService {
   }
 
   async updatePost(input: UpdatePostInput): Promise<Post> {
-    const { postId, title, content } = input;
+    const { postId, content } = input;
 
     const post = await this.postRepository.findOne({
       where: { id: postId },
@@ -73,7 +70,6 @@ export class PostsService {
       throw new Error('게시글을 찾을 수 없습니다.');
     }
 
-    post.title = title;
     post.content = content;
 
     return await this.postRepository.save(post);
@@ -102,11 +98,16 @@ export class PostsService {
     return true;
   }
 
-  async findAllPosts(): Promise<Post[]> {
-    return await this.postRepository.find({
-      relations: ['user', 'images'],
+  async findAllPosts(userId: number): Promise<any[]> {
+    const posts = await this.postRepository.find({
+      relations: ['user', 'images', 'likes', 'likes.user'],
       order: { created_at: 'DESC' },
     });
+
+    return posts.map((post) => ({
+      ...post,
+      liked: post.likes.some((like) => like.user.id === userId),
+    }));
   }
 
   async findPostsByUser(userId: number): Promise<Post[]> {
@@ -115,5 +116,9 @@ export class PostsService {
       relations: ['user', 'images'],
       order: { created_at: 'DESC' },
     });
+  }
+
+  async updateLikeCount(postId: number, count: number): Promise<void> {
+    await this.postRepository.update(postId, { like_count: count });
   }
 }

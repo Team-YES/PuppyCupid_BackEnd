@@ -56,7 +56,7 @@ export class PostsController {
     @Body() body: any,
     @Req() req: AuthRequest,
   ) {
-    const { category, title, content } = body;
+    const { category, content } = body;
     const { id, role } = req.user;
 
     const imageUrls = files.map((file) => `/uploads/posts/${file.filename}`);
@@ -68,7 +68,6 @@ export class PostsController {
         role: role as UserRole,
       },
       category,
-      title,
       content,
       mainImageUrl,
       imageUrls,
@@ -82,11 +81,10 @@ export class PostsController {
     @Param('postId') postId: number,
     @Body() body: Omit<UpdatePostInput, 'postId'>,
   ) {
-    const { title, content } = body;
+    const { content } = body;
 
     return this.postsService.updatePost({
       postId,
-      title,
       content,
     });
   }
@@ -107,8 +105,10 @@ export class PostsController {
   }
 
   @Get()
-  async getAllPosts() {
-    return await this.postsService.findAllPosts();
+  @UseGuards(AuthGuard('jwt'))
+  async getAllPostsWithLike(@Req() req: AuthRequest) {
+    const userId = req.user.id;
+    return await this.postsService.findAllPosts(userId);
   }
 
   @Get('user')
