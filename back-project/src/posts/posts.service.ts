@@ -102,8 +102,16 @@ export class PostsService {
     return true;
   }
 
-  async getAllPosts(): Promise<Post[]> {
+  async findAllPosts(): Promise<Post[]> {
     return await this.postRepository.find({
+      relations: ['user', 'images'],
+      order: { created_at: 'DESC' },
+    });
+  }
+
+  async findPostsByUser(userId: number): Promise<Post[]> {
+    return await this.postRepository.find({
+      where: { user: { id: userId } },
       relations: ['user', 'images'],
       order: { created_at: 'DESC' },
     });
