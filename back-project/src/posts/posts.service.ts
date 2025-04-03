@@ -6,7 +6,7 @@ import { Post } from './posts.entity';
 import { PostImage } from './post_images.entity';
 import { UserRole } from 'src/users/users.entity';
 import { PostCategory } from './posts.entity';
-
+import { Like } from 'src/interactions/likes.entity';
 export interface CreatePostInput {
   user: {
     id: number;
@@ -40,6 +40,7 @@ export class PostsService {
 
     @InjectRepository(PostImage)
     private readonly postImageRepository: Repository<PostImage>,
+    private readonly postsService: PostsService,
   ) {}
 
   async createPost(input: CreatePostInput): Promise<Post> {
@@ -115,5 +116,9 @@ export class PostsService {
       relations: ['user', 'images'],
       order: { created_at: 'DESC' },
     });
+  }
+
+  async updateLikeCount(postId: number, count: number): Promise<void> {
+    await this.postRepository.update(postId, { like_count: count });
   }
 }
