@@ -105,8 +105,10 @@ export class PostsController {
   }
 
   @Get()
-  async getAllPosts() {
-    return await this.postsService.findAllPosts();
+  @UseGuards(AuthGuard('jwt'))
+  async getAllPostsWithLike(@Req() req: AuthRequest) {
+    const userId = req.user.id;
+    return await this.postsService.findAllPosts(userId);
   }
 
   @Get('user')
