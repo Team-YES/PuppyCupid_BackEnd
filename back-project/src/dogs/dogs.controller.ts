@@ -6,6 +6,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
+  Get,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -15,6 +16,8 @@ import * as path from 'path';
 import { AuthGuard } from '@nestjs/passport';
 import { DogsService, CreateInfoInput } from './dogs.service';
 import { Express } from 'express';
+import { ok } from 'assert';
+import { error } from 'console';
 
 interface AuthRequest extends Request {
   user: {
@@ -77,5 +80,29 @@ export class DogsController {
       longitude: parsedLongitude,
       dong_name,
     });
+  }
+
+  @Get('profile')
+  @UseGuards(AuthGuard('jwt'))
+  async getDogProfile(@Req() req: AuthRequest) {
+    const userId = req.user.id;
+    const dog = await this.dogsService.findDogByUserID(userId);
+
+    if (!dog) {
+      return { ok: false, error: '강아지 프로필이 존재하지 않습니다' };
+    }
+
+    return {
+      ok: true,
+      dog: {
+        name: dog.name,
+        breed: dog.breed,
+        age: dog.age,
+        personality: dog.personality,
+        mbti: dog.mbti,
+        gender: dog.gender,
+        image: dog.dog_image,
+      },
+    };
   }
 }
