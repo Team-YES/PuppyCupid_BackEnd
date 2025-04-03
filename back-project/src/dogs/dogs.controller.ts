@@ -82,6 +82,18 @@ export class DogsController {
 
   @Put('update/:dogId')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/dogsImage',
+        filename: (req, file, cb) => {
+          const ext = path.extname(file.originalname);
+          const filename = `${uuidv4()}${ext}`;
+          cb(null, filename);
+        },
+      }),
+    }),
+  )
   async updateDog(
     @Param('dogId') dogId: number,
     @Body() body: Omit<UpdateInfoInput, 'userId' | 'dogId'>,
@@ -99,6 +111,8 @@ export class DogsController {
       gender,
       dog_image,
     } = body;
+
+    console.log(body);
 
     return this.dogsService.updateDogInfo({
       dogId,
