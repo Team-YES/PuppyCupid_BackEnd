@@ -64,7 +64,6 @@ export class DogsService {
       dog_image,
       latitude,
       longitude,
-
       user: { id: userId } as User,
     });
 
@@ -83,7 +82,6 @@ export class DogsService {
       dog_image,
       latitude,
       longitude,
-
       gender,
     } = input;
 

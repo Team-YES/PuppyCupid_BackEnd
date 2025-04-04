@@ -7,7 +7,6 @@ import {
   UploadedFile,
   Req,
   Get,
-  Put,
   Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -110,7 +109,6 @@ export class DogsController {
       personality,
       latitude,
       longitude,
-
       gender,
       image,
     } = body;
@@ -138,7 +136,6 @@ export class DogsController {
       dog_image: dogImageUrl,
       latitude: latitude ? parseFloat(latitude) : null,
       longitude: longitude ? parseFloat(longitude) : null,
-
       gender,
     });
   }
