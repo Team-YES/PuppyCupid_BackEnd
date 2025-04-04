@@ -57,7 +57,7 @@ export class DogsController {
       personality,
       latitude,
       longitude,
-      dog_name,
+
       gender,
     } = body;
 
@@ -81,7 +81,6 @@ export class DogsController {
       dog_image: dogImageUrl,
       latitude: parsedLatitude,
       longitude: parsedLongitude,
-      dog_name,
     });
   }
 
@@ -111,7 +110,7 @@ export class DogsController {
       personality,
       latitude,
       longitude,
-      dog_name,
+
       gender,
       image,
     } = body;
@@ -139,7 +138,7 @@ export class DogsController {
       dog_image: dogImageUrl,
       latitude: latitude ? parseFloat(latitude) : null,
       longitude: longitude ? parseFloat(longitude) : null,
-      dong_name,
+
       gender,
     });
   }

@@ -16,7 +16,6 @@ export interface CreateInfoInput {
   dog_image: string;
   latitude: number | null;
   longitude: number | null;
-  dog_name: string;
 }
 
 export interface UpdateInfoInput {
@@ -31,7 +30,6 @@ export interface UpdateInfoInput {
   dog_image: string;
   latitude: number | null;
   longitude: number | null;
-  dog_name: string;
 }
 
 @Injectable()
@@ -52,7 +50,7 @@ export class DogsService {
       dog_image,
       latitude,
       longitude,
-      dog_name,
+
       gender,
     } = dog;
 
@@ -66,7 +64,7 @@ export class DogsService {
       dog_image,
       latitude,
       longitude,
-      dog_name,
+
       user: { id: userId } as User,
     });
 
@@ -85,7 +83,7 @@ export class DogsService {
       dog_image,
       latitude,
       longitude,
-      dog_name,
+
       gender,
     } = input;
 
@@ -106,7 +104,6 @@ export class DogsService {
     dog.dog_image = dog_image;
     dog.latitude = latitude;
     dog.longitude = longitude;
-    dog.dog_name = dog_name;
 
     return await this.dogRepository.save(dog);
   }
