@@ -79,6 +79,23 @@ export class AuthController {
     return res.redirect(`http://localhost:3000`);
   }
 
+  // 닉네임 중복 검사
+  @Get('/nickName')
+  @UseGuards(AuthGuard('jwt-temp'))
+  async checkNickname(@Query('nickName') nickName: string) {
+    if (!nickName) {
+      return { ok: false, error: '닉네임을 입력해주세요.' };
+    }
+
+    const user = await this.userService.findUserByNickname(nickName);
+
+    if (user) {
+      return { ok: false, message: '이미 사용 중인 닉네임입니다.' };
+    }
+
+    return { ok: true, message: '사용 가능한 닉네임입니다.' };
+  }
+
   // 전화번호
   @Post('/update-phone')
   @UseGuards(AuthGuard('jwt-temp'))
@@ -110,6 +127,7 @@ export class AuthController {
       phone: body.phone,
       nickName: body.nickName,
     });
+
     res.clearCookie('temp_access_token');
     const updatedUser = await this.userService.findUserById(userId);
     if (!updatedUser) {
