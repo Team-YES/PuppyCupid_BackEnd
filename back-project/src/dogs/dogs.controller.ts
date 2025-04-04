@@ -84,6 +84,7 @@ export class DogsController {
   }
 
   @Post('update/:dogId')
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({

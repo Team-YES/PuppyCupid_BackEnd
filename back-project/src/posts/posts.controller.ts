@@ -95,6 +95,8 @@ export class PostsController {
   ) {
     const { content } = body;
 
+    console.log(body, 'Sdfalsdjfsajkdflakjsdf');
+
     return this.postsService.updatePost({
       postId,
       content,
