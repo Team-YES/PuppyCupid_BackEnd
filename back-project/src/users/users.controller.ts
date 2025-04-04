@@ -21,6 +21,7 @@ export class UsersController {
   async findUserById(@Req() req: Request) {
     const user = req.user as any;
     const fullUser = await this.usersService.findUserById(user.id);
+
     if (!fullUser) {
       return {
         ok: false,
