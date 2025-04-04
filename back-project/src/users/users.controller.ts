@@ -2,7 +2,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  ParseIntPipe,
   Put,
   Query,
   Req,
@@ -14,6 +17,13 @@ import { UsersService } from './users.service';
 import { PostsService } from 'src/posts/posts.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
+import { UserRole } from './users.service';
+export interface AuthRequest extends Request {
+  user: {
+    id: number;
+    role: UserRole;
+  };
+}
 
 @Controller('users')
 export class UsersController {
@@ -96,5 +106,22 @@ export class UsersController {
       liked,
       notifications,
     };
+  }
+
+  @Delete(':userId')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteUser(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Req() req: AuthRequest,
+  ) {
+    const { id: requesterId, role } = req.user;
+
+    return this.usersService.deleteUser({
+      targetUserId: userId,
+      requester: {
+        id: requesterId,
+        role,
+      },
+    });
   }
 }
