@@ -83,6 +83,7 @@ export class DogsController {
     });
   }
 
+  @Post('update/:dogId')
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
