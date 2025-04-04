@@ -123,7 +123,6 @@ export class PostsController {
     const userId = req.user.id;
     const posts = await this.postsService.findAllPosts(userId);
 
-    console.log(userId);
     return {
       posts,
       currentUser: {

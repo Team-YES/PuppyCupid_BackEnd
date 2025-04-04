@@ -59,7 +59,7 @@ export class Dog {
   @Column({ nullable: true, type: 'enum', enum: MbtiType })
   mbti: MbtiType;
 
-  @Column()
+  @Column({ type: 'text' })
   personality: string;
 
   @Column()
