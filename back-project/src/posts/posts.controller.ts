@@ -74,6 +74,7 @@ export class PostsController {
     });
   }
 
+  // 아이디로 게시물 불러오기
   @Get(':postId')
   @UseGuards(AuthGuard('jwt'))
   async getPostDetail(
@@ -86,7 +87,7 @@ export class PostsController {
   }
 
   // 게시글 수정
-  @Put(':postId')
+  @Post(':postId')
   @UseGuards(AuthGuard('jwt'))
   async updatePost(
     @Param('postId') postId: number,
@@ -115,13 +116,23 @@ export class PostsController {
     });
   }
 
+  // 모든 게시물
   @Get()
   @UseGuards(AuthGuard('jwt'))
   async getAllPostsWithLike(@Req() req: AuthRequest) {
     const userId = req.user.id;
-    return await this.postsService.findAllPosts(userId);
+    const posts = await this.postsService.findAllPosts(userId);
+
+    console.log(userId);
+    return {
+      posts,
+      currentUser: {
+        id: userId,
+      },
+    };
   }
 
+  // 내가 쓴 게시물
   @Get('user')
   @UseGuards(AuthGuard('jwt'))
   async getUserPosts(@Req() req: AuthRequest) {
