@@ -108,7 +108,6 @@ export class DogsService {
     dog.longitude = longitude;
     dog.dog_name = dog_name;
 
-    // 저장
     return await this.dogRepository.save(dog);
   }
 
