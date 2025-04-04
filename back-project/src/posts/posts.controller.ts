@@ -74,7 +74,16 @@ export class PostsController {
       imageUrls,
     });
   }
+  // 게시물 검색
+  @Get('/search')
+  async searchPosts(@Query('keyword') keyword: string) {
+    if (!keyword || keyword.trim().length < 2) {
+      return { ok: true, posts: [] };
+    }
 
+    const posts = await this.postsService.findPostsBySearch(keyword);
+    return { ok: true, posts };
+  }
   // 아이디로 게시물 불러오기
   @Get(':postId')
   @UseGuards(AuthGuard('jwt'))
@@ -130,13 +139,6 @@ export class PostsController {
         id: userId,
       },
     };
-  }
-
-  // 게시물 검색
-  @Get('/search')
-  async searchPosts(@Query('keyword') keyword: string) {
-    const posts = await this.postsService.findPostsBySearch(keyword);
-    return { ok: true, posts };
   }
 
   // 내가 쓴 게시물

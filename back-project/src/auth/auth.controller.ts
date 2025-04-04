@@ -26,7 +26,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
-    private readonly userService: UsersService,
+    private readonly usersService: UsersService,
   ) {}
   // 구글 로그인
   @Get('/google')
@@ -87,7 +87,7 @@ export class AuthController {
       return { ok: false, error: '닉네임을 입력해주세요.' };
     }
 
-    const user = await this.userService.findUserByNickname(nickName);
+    const user = await this.usersService.findUserByNickname(nickName);
 
     if (user) {
       return { ok: false, message: '이미 사용 중인 닉네임입니다.' };
@@ -113,7 +113,7 @@ export class AuthController {
         .json({ ok: false, error: '유저 정보가 없습니다.' });
     }
 
-    const existingByPhone = await this.userService.findUserByPhone(body.phone);
+    const existingByPhone = await this.usersService.findUserByPhone(body.phone);
     if (existingByPhone && existingByPhone.id !== userId) {
       return res.status(409).json({
         ok: false,
@@ -121,15 +121,15 @@ export class AuthController {
       });
     }
 
-    await this.userService.updatePhoneNumber(userId, body.phone);
-    await this.userService.setPhoneVerified(userId);
-    await this.userService.updateProfile(userId, {
+    await this.usersService.updatePhoneNumber(userId, body.phone);
+    await this.usersService.setPhoneVerified(userId);
+    await this.usersService.updateProfile(userId, {
       phone: body.phone,
       nickName: body.nickName,
     });
 
     res.clearCookie('temp_access_token');
-    const updatedUser = await this.userService.findUserById(userId);
+    const updatedUser = await this.usersService.findUserById(userId);
     if (!updatedUser) {
       return res
         .status(404)
@@ -159,7 +159,7 @@ export class AuthController {
         this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')!,
       ) as JwtUser;
 
-      const user = await this.userService.findUserById(payload.id);
+      const user = await this.usersService.findUserById(payload.id);
       if (!user) {
         return { isLoggedIn: false };
       }

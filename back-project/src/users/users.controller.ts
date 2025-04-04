@@ -1,11 +1,29 @@
 // users.controller.ts
-import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UsersService } from './users.service';
 import { PostsService } from 'src/posts/posts.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
+import { UserRole } from './users.service';
+export interface AuthRequest extends Request {
+  user: {
+    id: number;
+    role: UserRole;
+  };
+}
 
 @Controller('users')
 export class UsersController {
@@ -40,6 +58,22 @@ export class UsersController {
     };
   }
 
+  @Get('/nickName')
+  @UseGuards(AuthGuard('jwt'))
+  async checkNickname(@Query('nickName') nickName: string) {
+    if (!nickName) {
+      return { ok: false, error: '닉네임을 입력해주세요.' };
+    }
+
+    const user = await this.usersService.findUserByNickname(nickName);
+
+    if (user) {
+      return { ok: false, message: '이미 사용 중인 닉네임입니다.' };
+    }
+
+    return { ok: true, message: '사용 가능한 닉네임입니다.' };
+  }
+
   @UseGuards(AuthGuard('jwt'))
   @Put('update')
   async updateform(
@@ -72,5 +106,22 @@ export class UsersController {
       liked,
       notifications,
     };
+  }
+
+  @Delete(':userId')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteUser(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Req() req: AuthRequest,
+  ) {
+    const { id: requesterId, role } = req.user;
+
+    return this.usersService.deleteUser({
+      targetUserId: userId,
+      requester: {
+        id: requesterId,
+        role,
+      },
+    });
   }
 }
