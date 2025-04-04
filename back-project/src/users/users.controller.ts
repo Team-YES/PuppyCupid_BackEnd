@@ -1,5 +1,13 @@
 // users.controller.ts
-import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UsersService } from './users.service';
@@ -38,6 +46,22 @@ export class UsersController {
         phone: fullUser.phone,
       },
     };
+  }
+
+  @Get('/nickName')
+  @UseGuards(AuthGuard('jwt'))
+  async checkNickname(@Query('nickName') nickName: string) {
+    if (!nickName) {
+      return { ok: false, error: '닉네임을 입력해주세요.' };
+    }
+
+    const user = await this.usersService.findUserByNickname(nickName);
+
+    if (user) {
+      return { ok: false, message: '이미 사용 중인 닉네임입니다.' };
+    }
+
+    return { ok: true, message: '사용 가능한 닉네임입니다.' };
   }
 
   @UseGuards(AuthGuard('jwt'))
