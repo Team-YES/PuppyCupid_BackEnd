@@ -10,6 +10,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   Get,
+  Query,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
@@ -129,6 +130,13 @@ export class PostsController {
         id: userId,
       },
     };
+  }
+
+  // 게시물 검색
+  @Get('/search')
+  async searchPosts(@Query('keyword') keyword: string) {
+    const posts = await this.postsService.findPostsBySearch(keyword);
+    return { ok: true, posts };
   }
 
   // 내가 쓴 게시물
