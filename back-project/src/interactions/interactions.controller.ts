@@ -20,8 +20,9 @@ interface AuthRequest extends Request {
 @Controller('interactions')
 export class InteractionsController {
   constructor(private readonly interactionsService: InteractionsService) {}
-  @UseGuards(AuthGuard('jwt'))
+
   @Post('like/:postId')
+  @UseGuards(AuthGuard('jwt'))
   async toggleLike(@Param('postId') postId: number, @Req() req: AuthRequest) {
     const userId = req.user.id;
     const { liked, likeCount } = await this.interactionsService.toggleLike(
@@ -34,6 +35,7 @@ export class InteractionsController {
       likeCount,
     };
   }
+
   @Post('comment/:postId')
   @UseGuards(AuthGuard('jwt'))
   async createComment(

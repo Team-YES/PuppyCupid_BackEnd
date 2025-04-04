@@ -60,6 +60,11 @@ export class DogsController {
       dog_name,
       gender,
     } = body;
+
+    const parsedPersonality = Array.isArray(personality)
+      ? personality.join(',')
+      : personality;
+
     const dogImageUrl = file ? `/uploads/dogsImage/${file.filename}` : '';
 
     const parsedLatitude = body.latitude ? parseFloat(body.latitude) : null;
@@ -72,7 +77,7 @@ export class DogsController {
       age: Number(age),
       breed,
       mbti,
-      personality,
+      personality: parsedPersonality,
       dog_image: dogImageUrl,
       latitude: parsedLatitude,
       longitude: parsedLongitude,
@@ -112,7 +117,9 @@ export class DogsController {
       dog_image,
     } = body;
 
-    console.log(body);
+    const parsedPersonality = Array.isArray(personality)
+      ? personality.join(',')
+      : personality;
 
     return this.dogsService.updateDogInfo({
       dogId,
@@ -121,7 +128,7 @@ export class DogsController {
       age,
       breed,
       mbti,
-      personality,
+      personality: parsedPersonality,
       dog_image,
       latitude,
       longitude,
