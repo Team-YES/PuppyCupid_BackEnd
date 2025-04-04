@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -9,6 +13,11 @@ interface CreateUserInput {
   nickname?: string;
   photo?: string;
   provider: 'google' | 'kakao' | 'naver';
+}
+
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
 }
 
 @Injectable()
@@ -63,5 +72,24 @@ export class UsersService {
 
   async save(user: User): Promise<User> {
     return await this.userRepository.save(user);
+  }
+
+  async deleteUser(params: {
+    targetUserId: number;
+    requester: { id: number; role: UserRole };
+  }): Promise<User> {
+    const { targetUserId, requester } = params;
+
+    // 관리자 또는 본인만 삭제 가능
+    if (requester.role !== UserRole.ADMIN && requester.id !== targetUserId) {
+      throw new ForbiddenException('권한이 없습니다.');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: targetUserId },
+    });
+    if (!user) throw new NotFoundException('유저를 찾을 수 없습니다.');
+
+    return this.userRepository.remove(user);
   }
 }
