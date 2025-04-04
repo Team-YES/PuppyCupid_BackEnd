@@ -71,9 +71,6 @@ export class Dog {
   @Column('float', { nullable: true })
   longitude: number | null;
 
-  @Column({ nullable: true })
-  dog_name: string;
-
   @CreateDateColumn()
   created_at: Date;
 

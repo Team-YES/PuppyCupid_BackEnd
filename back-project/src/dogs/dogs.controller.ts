@@ -7,7 +7,6 @@ import {
   UploadedFile,
   Req,
   Get,
-  Put,
   Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -81,12 +80,10 @@ export class DogsController {
       dog_image: dogImageUrl,
       latitude: parsedLatitude,
       longitude: parsedLongitude,
-      dog_name,
     });
   }
 
   @Post('update/:dogId')
-  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -101,7 +98,8 @@ export class DogsController {
   )
   async updateDog(
     @Param('dogId') dogId: number,
-    @Body() body: Omit<UpdateInfoInput, 'userId' | 'dogId'>,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: any,
     @Req() req: AuthRequest,
   ) {
     const {
@@ -112,14 +110,21 @@ export class DogsController {
       personality,
       latitude,
       longitude,
-      dog_name,
       gender,
-      dog_image,
+      image,
     } = body;
 
     const parsedPersonality = Array.isArray(personality)
       ? personality.join(',')
       : personality;
+
+    const existingDog = await this.dogsService.findDogByUserID(req.user.id);
+
+    const dogImageUrl = file
+      ? `/uploads/dogsImage/${file.filename}`
+      : image && image !== 'null' && image !== ''
+        ? image
+        : existingDog?.dog_image || '';
 
     return this.dogsService.updateDogInfo({
       dogId,
@@ -129,13 +134,13 @@ export class DogsController {
       breed,
       mbti,
       personality: parsedPersonality,
-      dog_image,
-      latitude,
-      longitude,
-      dog_name,
+      dog_image: dogImageUrl,
+      latitude: latitude ? parseFloat(latitude) : null,
+      longitude: longitude ? parseFloat(longitude) : null,
       gender,
     });
   }
+
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
   async getDogProfile(@Req() req: AuthRequest) {
