@@ -57,7 +57,7 @@ export class DogsController {
       personality,
       latitude,
       longitude,
-      dong_name,
+      dog_name,
       gender,
     } = body;
     const dogImageUrl = file ? `/uploads/dogsImage/${file.filename}` : '';
@@ -76,7 +76,7 @@ export class DogsController {
       dog_image: dogImageUrl,
       latitude: parsedLatitude,
       longitude: parsedLongitude,
-      dong_name,
+      dog_name,
     });
   }
 
@@ -107,7 +107,7 @@ export class DogsController {
       personality,
       latitude,
       longitude,
-      dong_name,
+      dog_name,
       gender,
       dog_image,
     } = body;
@@ -125,7 +125,7 @@ export class DogsController {
       dog_image,
       latitude,
       longitude,
-      dong_name,
+      dog_name,
       gender,
     });
   }

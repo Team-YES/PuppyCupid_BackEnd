@@ -72,7 +72,7 @@ export class Dog {
   longitude: number | null;
 
   @Column({ nullable: true })
-  dong_name: string;
+  dog_name: string;
 
   @CreateDateColumn()
   created_at: Date;
