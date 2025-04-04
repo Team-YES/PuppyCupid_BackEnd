@@ -6,7 +6,11 @@ import { Post } from './posts.entity';
 import { PostImage } from './post_images.entity';
 import { UserRole } from 'src/users/users.entity';
 import { PostCategory } from './posts.entity';
-import { Like } from 'src/interactions/likes.entity';
+import { Like as LikeEntity } from 'src/interactions/likes.entity';
+
+import { Like } from 'typeorm';
+
+const like = new LikeEntity();
 export interface CreatePostInput {
   user: {
     id: number;
@@ -109,6 +113,17 @@ export class PostsService {
 
     await this.postRepository.remove(post);
     return true;
+  }
+
+  async findPostsBySearch(keyword: string): Promise<Post[]> {
+    return await this.postRepository.find({
+      where: {
+        content: Like(`%${keyword}%`),
+      },
+      order: {
+        created_at: 'DESC',
+      },
+    });
   }
 
   async findAllPosts(userId: number): Promise<any[]> {
