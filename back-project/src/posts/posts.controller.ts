@@ -76,13 +76,23 @@ export class PostsController {
   }
   // 게시물 검색
   @Get('/search')
-  async searchPosts(@Query('keyword') keyword: string) {
+  @UseGuards(AuthGuard('jwt'))
+  async searchPosts(
+    @Query('keyword') keyword: string,
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user.id;
+
     if (!keyword || keyword.trim().length < 2) {
-      return { ok: true, posts: [] };
+      return {
+        ok: true,
+        posts: [],
+        currentUser: { id: userId },
+      };
     }
 
-    const posts = await this.postsService.findPostsBySearch(keyword);
-    return { ok: true, posts };
+    const posts = await this.postsService.findPostsBySearch(keyword, userId);
+    return { ok: true, posts, currentUser: { id: userId } };
   }
   // 아이디로 게시물 불러오기
   @Get(':postId')
