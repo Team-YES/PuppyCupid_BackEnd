@@ -142,6 +142,24 @@ export class DogsController {
     });
   }
 
+  @Post(':dogId/location')
+  @UseGuards(AuthGuard('jwt'))
+  async setDogLocation(
+    @Param('dogId') dogId: number,
+    @Body('latitude') latitude: number,
+    @Body('longitude') longitude: number,
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user.id;
+    await this.dogsService.updateLocation(userId, dogId, latitude, longitude);
+    const nearbyDogs = await this.dogsService.findNearbyDogs(dogId);
+
+    return {
+      ok: true,
+      dogs: nearbyDogs,
+    };
+  }
+
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
   async getDogProfile(@Req() req: AuthRequest) {

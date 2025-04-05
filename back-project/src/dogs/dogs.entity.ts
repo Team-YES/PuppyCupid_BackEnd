@@ -32,7 +32,8 @@ export enum MbtiType {
 export enum GenderType {
   MALE = 'male',
   FEMALE = 'female',
-  NEUTERED = 'male_neutered',
+  NEUTERED_MALE = 'male_neutered',
+  NEUTERED_FEMALE = 'female_neutered',
 }
 
 @Entity('dogs')

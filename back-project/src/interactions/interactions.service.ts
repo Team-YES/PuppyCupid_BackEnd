@@ -97,4 +97,25 @@ export class InteractionsService {
       order: { created_at: 'ASC' },
     });
   }
+
+  async deleteComment(
+    commentId: number,
+    userId: number,
+  ): Promise<{ ok: boolean }> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+      relations: ['user'],
+    });
+
+    if (!comment) {
+      throw new Error('댓글을 찾을 수 없습니다.');
+    }
+
+    if (comment.user.id !== userId) {
+      throw new Error('삭제 권한이 없습니다.');
+    }
+
+    await this.commentRepository.remove(comment);
+    return { ok: true };
+  }
 }
