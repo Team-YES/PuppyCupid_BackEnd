@@ -62,11 +62,12 @@ export class UsersService {
 
   async updateProfile(
     userId: number,
-    update: { phone: string; nickName: string },
+    update: { phone: string; nickName: string; gender: Gender },
   ) {
     await this.userRepository.update(userId, {
       phone: update.phone,
       nickName: update.nickName,
+      gender: update.gender,
     });
   }
 
