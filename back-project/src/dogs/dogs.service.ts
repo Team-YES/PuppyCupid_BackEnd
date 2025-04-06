@@ -51,7 +51,6 @@ export class DogsService {
       dog_image,
       latitude,
       longitude,
-
       gender,
     } = dog;
 
