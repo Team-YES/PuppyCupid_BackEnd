@@ -101,7 +101,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt-temp'))
   async updatePhone(
     @Req() req: Request,
-    @Body() body: { phone: string; gender: string; nickName: string },
+    @Body() body: { phone: string; gender: Gender; nickName: string },
     @Res() res: Response,
   ) {
     const user = req.user as JwtUser;
@@ -126,6 +126,7 @@ export class AuthController {
     await this.usersService.updateProfile(userId, {
       phone: body.phone,
       nickName: body.nickName,
+      gender: body.gender,
     });
 
     res.clearCookie('temp_access_token');

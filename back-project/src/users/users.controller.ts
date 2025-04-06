@@ -18,6 +18,7 @@ import { PostsService } from 'src/posts/posts.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
 import { UserRole } from './users.service';
+import { Gender } from './users.entity';
 export interface AuthRequest extends Request {
   user: {
     id: number;
@@ -78,12 +79,13 @@ export class UsersController {
   @Put('update')
   async updateform(
     @Req() req: Request,
-    @Body() body: { nickname: string; phone: string },
+    @Body() body: { nickname: string; phone: string; gender: Gender },
   ) {
     const user = req.user as any;
     await this.usersService.updateProfile(user.id, {
       nickName: body.nickname,
       phone: body.phone,
+      gender: body.gender,
     });
     return { ok: true, message: '정보 수정 완료' };
   }
