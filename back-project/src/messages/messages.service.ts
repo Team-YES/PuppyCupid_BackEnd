@@ -42,7 +42,7 @@ export class MessagesService {
     return Array.from(users.values());
   }
 
-  // 유저 간 메세지
+  // 유저 간 채팅
   async getConversation(
     userId: number,
     otherUserId: number,
