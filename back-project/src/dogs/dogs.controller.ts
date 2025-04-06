@@ -56,7 +56,7 @@ export class DogsController {
       personality,
       latitude,
       longitude,
-      dog_name,
+
       gender,
     } = body;
 
