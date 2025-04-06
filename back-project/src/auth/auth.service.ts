@@ -74,6 +74,7 @@ export class AuthService {
       const isProd = process.env.NODE_ENV === 'production';
       const userFromOAuth = req.user as any;
 
+      // 휴대폰 번호 기준 중복 검사
       if (userFromOAuth.phoneNumber) {
         const userByPhone = await this.userService.findUserByPhone(
           userFromOAuth.phoneNumber,
@@ -86,15 +87,23 @@ export class AuthService {
         }
       }
 
-      const user = {
-        email: userFromOAuth.email,
-        name: userFromOAuth.name,
-        provider,
-      };
+      // 이메일 기준 중복 검사
+      const userByEmail = await this.userService.findUserByEmail(
+        userFromOAuth.email,
+      );
+      if (userByEmail && (userByEmail.provider ?? null) !== provider) {
+        return {
+          ok: false,
+          error: `이미 ${userByEmail.provider?.toUpperCase() || '다른'} 계정으로 가입된 이메일입니다.`,
+        };
+      }
 
-      let existingUser = await this.userService.findUserByEmail(user.email);
+      let existingUser = userByEmail;
       if (!existingUser) {
-        existingUser = await this.userService.createUser(user);
+        existingUser = await this.userService.createUser({
+          email: userFromOAuth.email,
+          provider,
+        });
       }
 
       if (!existingUser.phone || !existingUser.isPhoneVerified) {
