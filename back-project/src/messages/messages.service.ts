@@ -35,8 +35,16 @@ export class MessagesService {
     const users = new Map<number, User>();
 
     for (const msg of messages) {
+      if (!msg.sender || !msg.receiver) {
+        console.warn('⚠️ sender 또는 receiver가 null입니다:', msg);
+        continue; // null이면 무시
+      }
+
       const otherUser = msg.sender.id === userId ? msg.receiver : msg.sender;
-      users.set(otherUser.id, otherUser);
+
+      if (otherUser && otherUser.id) {
+        users.set(otherUser.id, otherUser);
+      }
     }
 
     return Array.from(users.values());
