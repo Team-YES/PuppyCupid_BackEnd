@@ -25,14 +25,23 @@ export class MessagesService {
     return await this.messageRepository.save(message);
   }
 
-  // 채팅한 유저 정보
-  async getChatUsers(userId: number): Promise<User[]> {
+  // 채팅 유저
+  async getChatUsers(userId: number): Promise<
+    {
+      id: number;
+      nickName: string;
+      dogImage: string | null;
+      lastMessage: string;
+      lastMessageTime: string;
+    }[]
+  > {
     const messages = await this.messageRepository.find({
       where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
-      relations: ['sender', 'receiver'],
+      relations: ['sender', 'receiver', 'sender.dogs', 'receiver.dogs'],
+      order: { created_at: 'DESC' },
     });
 
-    const users = new Map<number, User>();
+    const result = new Map<number, any>();
 
     for (const msg of messages) {
       if (!msg.sender || !msg.receiver) {
@@ -41,13 +50,21 @@ export class MessagesService {
       }
 
       const otherUser = msg.sender.id === userId ? msg.receiver : msg.sender;
+      const dogs = otherUser.dogs || [];
+      const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
 
-      if (otherUser && otherUser.id) {
-        users.set(otherUser.id, otherUser);
+      if (!result.has(otherUser.id)) {
+        result.set(otherUser.id, {
+          id: otherUser.id,
+          nickName: otherUser.nickName,
+          dogImage,
+          lastMessage: msg.content,
+          lastMessageTime: msg.created_at.toISOString(),
+        });
       }
     }
 
-    return Array.from(users.values());
+    return Array.from(result.values());
   }
 
   // 유저 간 채팅
@@ -63,5 +80,23 @@ export class MessagesService {
       relations: ['sender', 'receiver'],
       order: { created_at: 'ASC' },
     });
+  }
+
+  async deleteConversation(userId: number, otherUserId: number): Promise<void> {
+    const messages = await this.messageRepository.find({
+      where: [
+        { sender: { id: userId }, receiver: { id: otherUserId } },
+        { sender: { id: otherUserId }, receiver: { id: userId } },
+      ],
+      relations: ['sender', 'receiver'],
+    });
+
+    const ownMessages = messages.filter((msg) => msg.sender.id === userId);
+
+    if (ownMessages.length !== messages.length) {
+      throw new Error('본인이 보낸 메시지만 삭제할 수 있습니다.');
+    }
+
+    await this.messageRepository.remove(ownMessages);
   }
 }

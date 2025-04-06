@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -54,5 +55,16 @@ export class MessagesController {
       otherUserId,
     );
     return { ok: true, messages };
+  }
+
+  @Delete('/:otherUserId')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteConversation(
+    @Param('otherUserId') otherUserId: number,
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user.id;
+    await this.messagesService.deleteConversation(userId, otherUserId);
+    return { ok: true, message: '채팅 삭제 완료' };
   }
 }

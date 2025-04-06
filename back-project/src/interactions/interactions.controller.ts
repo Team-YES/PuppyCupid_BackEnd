@@ -45,13 +45,29 @@ export class InteractionsController {
     @Req() req: AuthRequest,
   ) {
     const userId = req.user.id;
-    const comment = await this.interactionsService.createComment(
+    const fullComment = await this.interactionsService.createComment(
       userId,
       postId,
       body.content,
       body.parentCommentId,
     );
-    return { ok: true, comment };
+
+    const dogs = fullComment.user?.dogs || [];
+    const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
+
+    const commentResponse = {
+      id: fullComment.id,
+      content: fullComment.content,
+      created_at: fullComment.created_at,
+      user: {
+        id: fullComment.user.id,
+        nickName: fullComment.user.nickName,
+        dogImage,
+      },
+      parentCommentId: fullComment.parentComment?.id || null,
+    };
+
+    return { ok: true, comment: commentResponse };
   }
 
   @Get('comment/:postId')

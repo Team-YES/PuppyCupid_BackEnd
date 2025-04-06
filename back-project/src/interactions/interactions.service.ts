@@ -79,7 +79,7 @@ export class InteractionsService {
     postId: number,
     content: string,
     parentCommentId?: number,
-  ): Promise<Comment> {
+  ): Promise<any> {
     const comment = this.commentRepository.create({
       user: { id: userId },
       post: { id: postId },
@@ -87,14 +87,56 @@ export class InteractionsService {
       parentComment: parentCommentId ? { id: parentCommentId } : undefined,
     });
 
-    return await this.commentRepository.save(comment);
+    const savedComment = await this.commentRepository.save(comment);
+
+    // 저장 후 다시 조회 (user.dogs 포함)
+    const fullComment = await this.commentRepository.findOne({
+      where: { id: savedComment.id },
+      relations: ['user', 'user.dogs', 'parentComment'],
+    });
+
+    if (!fullComment) {
+      throw new Error('댓글 조회 실패');
+    }
+
+    const dogs = fullComment?.user?.dogs || [];
+    const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
+
+    return {
+      id: fullComment.id,
+      content: fullComment.content,
+      created_at: fullComment.created_at,
+      user: {
+        id: fullComment.user.id,
+        nickName: fullComment.user.nickName,
+        dogImage,
+      },
+      parentCommentId: fullComment.parentComment?.id || null,
+    };
   }
 
-  async getCommentsByPost(postId: number): Promise<Comment[]> {
-    return await this.commentRepository.find({
+  async getCommentsByPost(postId: number): Promise<any[]> {
+    const comments = await this.commentRepository.find({
       where: { post: { id: postId } },
-      relations: ['user', 'parentComment'],
+      relations: ['user', 'user.dogs', 'parentComment'],
       order: { created_at: 'ASC' },
+    });
+
+    return comments.map((comment) => {
+      const dogs = comment.user?.dogs || [];
+      const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
+
+      return {
+        id: comment.id,
+        content: comment.content,
+        created_at: comment.created_at,
+        user: {
+          id: comment.user.id,
+          nickName: comment.user.nickName,
+          dogImage,
+        },
+        parentCommentId: comment.parentComment?.id || null,
+      };
     });
   }
 
