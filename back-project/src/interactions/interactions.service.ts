@@ -90,11 +90,28 @@ export class InteractionsService {
     return await this.commentRepository.save(comment);
   }
 
-  async getCommentsByPost(postId: number): Promise<Comment[]> {
-    return await this.commentRepository.find({
+  async getCommentsByPost(postId: number): Promise<any[]> {
+    const comments = await this.commentRepository.find({
       where: { post: { id: postId } },
-      relations: ['user', 'parentComment'],
+      relations: ['user', 'user.dogs', 'parentComment'], // ✅ dogs도 포함
       order: { created_at: 'ASC' },
+    });
+
+    return comments.map((comment) => {
+      const dogs = comment.user?.dogs || [];
+      const dogImage = dogs.length > 0 ? dogs[0].dog_image : null; // ✅ 첫 번째 강아지의 이미지 사용
+
+      return {
+        id: comment.id,
+        content: comment.content,
+        created_at: comment.created_at,
+        user: {
+          id: comment.user.id,
+          nickName: comment.user.nickName,
+          dogImage,
+        },
+        parentCommentId: comment.parentComment?.id || null,
+      };
     });
   }
 
