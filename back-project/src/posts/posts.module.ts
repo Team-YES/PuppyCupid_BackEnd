@@ -5,10 +5,10 @@ import { PostImage } from './post_images.entity';
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { InteractionsModule } from 'src/interactions/interactions.module';
-
+import { Comment } from 'src/interactions/comments.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, PostImage]),
+    TypeOrmModule.forFeature([Post, PostImage, Comment]),
     forwardRef(() => InteractionsModule),
   ],
   providers: [PostsService],

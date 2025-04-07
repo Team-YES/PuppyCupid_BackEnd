@@ -156,8 +156,20 @@ export class PostsController {
     const userId = req.user.id;
     const posts = await this.postsService.findAllPosts(userId);
 
+    const postsWithComments = await Promise.all(
+      posts.map(async (post) => {
+        const comments = await this.interactionsService.getCommentsByPost(
+          post.id,
+        );
+        return {
+          ...post,
+          comments,
+        };
+      }),
+    );
+
     return {
-      posts,
+      posts: postsWithComments,
       currentUser: {
         id: userId,
       },

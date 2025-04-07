@@ -9,6 +9,7 @@ import { PostCategory } from './posts.entity';
 import { Like as LikeEntity } from 'src/interactions/likes.entity';
 
 import { Like } from 'typeorm';
+import { Comment } from 'src/interactions/comments.entity';
 
 const like = new LikeEntity();
 export interface CreatePostInput {
@@ -42,6 +43,9 @@ export class PostsService {
 
     @InjectRepository(PostImage)
     private readonly postImageRepository: Repository<PostImage>,
+
+    @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
   ) {}
 
   async findPostById(postId: number): Promise<Post> {
@@ -138,10 +142,42 @@ export class PostsService {
       order: { created_at: 'DESC' },
     });
 
-    return posts.map((post) => ({
-      ...post,
-      liked: post.likes.some((like) => like.user.id === userId),
-    }));
+    // 댓글 포함
+    return Promise.all(
+      posts.map(async (post) => {
+        const liked = post.likes.some((like) => like.user.id === userId);
+
+        // 댓글 가져오기 (user, dog 정보까지 포함해서)
+        const comments = await this.commentRepository.find({
+          where: { post: { id: post.id } },
+          relations: ['user', 'user.dogs', 'parentComment'],
+          order: { created_at: 'ASC' },
+        });
+
+        const mappedComments = comments.map((comment) => {
+          const dogs = comment.user?.dogs || [];
+          const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
+
+          return {
+            id: comment.id,
+            content: comment.content,
+            created_at: comment.created_at,
+            parentCommentId: comment.parentComment?.id || null,
+            user: {
+              id: comment.user.id,
+              nickName: comment.user.nickName,
+              dogImage,
+            },
+          };
+        });
+
+        return {
+          ...post,
+          liked,
+          comments: mappedComments,
+        };
+      }),
+    );
   }
 
   async findPostsByUser(userId: number): Promise<Post[]> {
