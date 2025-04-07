@@ -77,7 +77,21 @@ export class MessagesService {
     });
   }
 
+  // 채팅 삭제
   async deleteConversation(userId: number, otherUserId: number): Promise<void> {
+    const messages = await this.messageRepository.find({
+      where: [
+        { sender: { id: userId }, receiver: { id: otherUserId } },
+        { sender: { id: otherUserId }, receiver: { id: userId } },
+      ],
+      relations: ['sender', 'receiver'],
+    });
+
+    await this.messageRepository.remove(messages);
+  }
+
+  // 내가 보낸 메세지 삭제
+  async deleteMyMessage(userId: number, otherUserId: number): Promise<void> {
     const messages = await this.messageRepository.find({
       where: [
         { sender: { id: userId }, receiver: { id: otherUserId } },
