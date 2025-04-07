@@ -5,6 +5,7 @@ import { Payment } from './payments.entity';
 import { PaymentMethod, PaymentStatus } from './payments.entity';
 import { UsersService } from 'src/users/users.service';
 import { UserRole } from 'src/users/users.entity';
+import { addMonths, addYears } from 'date-fns';
 @Injectable()
 export class PaymentsService {
   constructor(
@@ -15,28 +16,29 @@ export class PaymentsService {
 
   async createPayment(userId: number, amount: number, method: PaymentMethod) {
     const user = await this.userService.findUserById(userId);
+    if (!user) throw new Error('User 정보가 없습니다.');
 
-    if (!user) {
-      throw new Error('User 정보가 없습니다.');
-    }
+    const orderId = `order_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
     const payment = this.paymentRepository.create({
       user,
       amount,
       payment_method: method,
-      status: PaymentStatus.PENDING,
+      status: PaymentStatus.SUCCESS,
+      order_id: orderId,
     });
 
     return this.paymentRepository.save(payment);
   }
 
   async updatePaymentStatus(
-    orderId: number,
+    orderId: string,
     status: PaymentStatus,
     tossorderId: string,
+    amount: number,
   ) {
     const payment = await this.paymentRepository.findOne({
-      where: { id: orderId },
+      where: { order_id: orderId },
       relations: ['user'],
     });
 
@@ -47,8 +49,15 @@ export class PaymentsService {
     payment.status = status;
     payment.toss_payment_id = tossorderId;
 
-    if (status === PaymentStatus.SUCCESS) {
-      payment.user.role = UserRole.POWER;
+    if (status === PaymentStatus.SUCCESS && amount) {
+      if (amount === 3900) {
+        payment.user.role = UserRole.POWER_MONTH;
+        payment.user.power_expired_at = addMonths(new Date(), 1);
+      } else if (amount === 29000) {
+        payment.user.role = UserRole.POWER_YEAR;
+        payment.user.power_expired_at = addYears(new Date(), 1);
+      }
+
       await this.userService.save(payment.user);
     }
 

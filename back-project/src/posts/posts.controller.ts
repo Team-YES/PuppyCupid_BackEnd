@@ -25,6 +25,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
+import { InteractionsService } from 'src/interactions/interactions.service';
 
 interface AuthRequest extends Request {
   user: {
@@ -35,7 +36,10 @@ interface AuthRequest extends Request {
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly interactionsService: InteractionsService,
+  ) {}
 
   // 게시글 생성
   @Post('form')
@@ -74,6 +78,7 @@ export class PostsController {
       imageUrls,
     });
   }
+
   // 게시물 검색
   @Get('/search')
   @UseGuards(AuthGuard('jwt'))
@@ -94,6 +99,7 @@ export class PostsController {
     const posts = await this.postsService.findPostsBySearch(keyword, userId);
     return { ok: true, posts, currentUser: { id: userId } };
   }
+
   // 아이디로 게시물 불러오기
   @Get(':postId')
   @UseGuards(AuthGuard('jwt'))
@@ -103,7 +109,14 @@ export class PostsController {
   ) {
     const post = await this.postsService.findPostById(postId);
 
-    return { post };
+    const comments = await this.interactionsService.getCommentsByPost(postId);
+
+    return {
+      ok: true,
+      post,
+      comments,
+      currentUserId: req.user.id,
+    };
   }
 
   // 게시글 수정
@@ -143,8 +156,20 @@ export class PostsController {
     const userId = req.user.id;
     const posts = await this.postsService.findAllPosts(userId);
 
+    const postsWithComments = await Promise.all(
+      posts.map(async (post) => {
+        const comments = await this.interactionsService.getCommentsByPost(
+          post.id,
+        );
+        return {
+          ...post,
+          comments,
+        };
+      }),
+    );
+
     return {
-      posts,
+      posts: postsWithComments,
       currentUser: {
         id: userId,
       },

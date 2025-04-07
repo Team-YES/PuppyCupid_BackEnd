@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { PaymentStatus } from './payments.entity';
+import { PaymentMethod, PaymentStatus } from './payments.entity';
 import axios from 'axios';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('payments')
 export class PaymentsController {
@@ -12,49 +22,52 @@ export class PaymentsController {
     return { tossClientKey: process.env.TOSS_CLIENT_KEY };
   }
 
+  // 결제
+  @Post('create')
+  @UseGuards(AuthGuard('jwt'))
+  async createPayment(
+    @Body('amount') amount: number,
+    @Body('method') method: PaymentMethod,
+    @Req() req: any,
+  ) {
+    const payment = await this.paymentService.createPayment(
+      req.user.id,
+      amount,
+      method,
+    );
+
+    return { orderId: payment.order_id };
+  }
+
   // 결제 성공 처리
   @Post('success')
   async handlePaymentSuccess(
-    @Body('orderId') orderId: number,
+    @Body('orderId') orderId: string,
     @Body('amount') amount: number,
     @Body('paymentKey') paymentKey: string,
-    // 토스 결제 키
   ) {
     try {
-      // 결제 상태 확인
-      const response = await axios.post(
-        'https://api.tosspayments.com/v1/payments/' + paymentKey,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.TOSS_API_KEY}`,
-          },
-        },
+      const payment = await this.paymentService.updatePaymentStatus(
+        orderId,
+        PaymentStatus.SUCCESS,
+        paymentKey,
+        amount,
       );
 
-      const paymentData = response.data;
-
-      if (paymentData.status === 'SUCCESS') {
-        // 결제 성공 시, 결제 상태 업데이트
-        const payment = await this.paymentService.updatePaymentStatus(
-          orderId,
-          PaymentStatus.SUCCESS,
-          paymentData.paymentKey,
-        );
-
-        return { success: true, message: 'Payment successful' };
-      } else {
-        throw new Error('Payment verification failed');
-      }
+      return { success: true, message: 'Payment marked as successful' };
     } catch (error) {
-      return { success: false, message: 'Payment failed verification' };
+      console.error('결제 성공 처리 실패:', error);
+      return {
+        success: false,
+        message: 'Failed to mark payment as successful',
+      };
     }
   }
 
   // 결제 실패 처리
   @Post('fail')
   async handlePaymentFailure(
-    @Body('orderId') orderId: number,
+    @Body('orderId') orderId: string,
     @Body('amount') amount: number,
     @Body('errorCode') errorCode: string,
     @Body('errorMessage') errorMessage: string,
@@ -64,7 +77,8 @@ export class PaymentsController {
       const payment = await this.paymentService.updatePaymentStatus(
         orderId,
         PaymentStatus.FAILED,
-        errorMessage, // 오류 메시지 저장
+        errorMessage,
+        amount,
       );
 
       return { success: true, message: 'Payment failed, status updated.' };

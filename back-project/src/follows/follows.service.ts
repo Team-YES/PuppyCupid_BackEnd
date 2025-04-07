@@ -46,6 +46,7 @@ export class FollowsService {
     return follows.map((x) => x.follower);
   }
 
+  // 팔로잉 목록
   async getFollowings(userId: number): Promise<User[]> {
     const follows = await this.followRepository.find({
       where: { follower: { id: userId } },

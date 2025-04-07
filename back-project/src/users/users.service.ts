@@ -6,18 +6,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { User, Gender } from './users.entity';
+import { User, Gender, UserRole } from './users.entity';
 
 interface CreateUserInput {
   email: string;
   nickname?: string;
   photo?: string;
   provider: 'google' | 'kakao' | 'naver';
-}
-
-export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
 }
 
 @Injectable()
