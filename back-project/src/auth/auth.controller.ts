@@ -175,6 +175,7 @@ export class AuthController {
           nickName: user.nickName,
           gender: user.gender,
           isPhoneVerified: user.isPhoneVerified,
+          power_expired_at: user.power_expired_at,
         },
       };
     } catch {
