@@ -23,7 +23,7 @@ export class Comment {
   user: User;
 
   @Column({ type: 'text' })
-  comment: string;
+  content: string;
 
   @ManyToOne(() => Comment, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parent_comment_id' })

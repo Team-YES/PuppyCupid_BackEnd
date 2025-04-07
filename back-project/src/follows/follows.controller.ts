@@ -1,4 +1,32 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Post, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { FollowsService } from './follows.service';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthRequest } from 'src/users/users.controller';
 
 @Controller('follows')
-export class FollowsController {}
+@UseGuards(AuthGuard('jwt'))
+export class FollowsController {
+  constructor(private readonly followsService: FollowsService) {}
+
+  @Post(':targetUserId')
+  async toggleFollow(
+    @Param('targetUserId') targetUserId: number,
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user.id;
+    const result = await this.followsService.toggleFollow(userId, targetUserId);
+    return { ok: true, ...result };
+  }
+
+  @Get('followers/:userId')
+  async getFollowers(@Param('userId') userId: number) {
+    const users = await this.followsService.getFollowers(userId);
+    return { ok: true, users };
+  }
+
+  @Get('followings/:userId')
+  async getFollowings(@Param('userId') userId: number) {
+    const users = await this.followsService.getFollowings(userId);
+    return { ok: true, users };
+  }
+}
