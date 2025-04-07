@@ -41,14 +41,14 @@ export class InteractionsController {
   @UseGuards(AuthGuard('jwt'))
   async createComment(
     @Param('postId') postId: number,
-    @Body() body: { content: string; parentCommentId?: number },
+    @Body() body: { comment: string; parentCommentId?: number },
     @Req() req: AuthRequest,
   ) {
     const userId = req.user.id;
     const fullComment = await this.interactionsService.createComment(
       userId,
       postId,
-      body.content,
+      body.comment,
       body.parentCommentId,
     );
 
@@ -57,7 +57,7 @@ export class InteractionsController {
 
     const commentResponse = {
       id: fullComment.id,
-      content: fullComment.content,
+      comment: fullComment.comment,
       created_at: fullComment.created_at,
       user: {
         id: fullComment.user.id,

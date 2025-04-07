@@ -77,19 +77,18 @@ export class InteractionsService {
   async createComment(
     userId: number,
     postId: number,
-    content: string,
+    comment: string,
     parentCommentId?: number,
   ): Promise<any> {
-    const comment = this.commentRepository.create({
+    const newComment = this.commentRepository.create({
       user: { id: userId },
       post: { id: postId },
-      content,
+      comment,
       parentComment: parentCommentId ? { id: parentCommentId } : undefined,
     });
 
-    const savedComment = await this.commentRepository.save(comment);
+    const savedComment = await this.commentRepository.save(newComment);
 
-    // 저장 후 다시 조회 (user.dogs 포함)
     const fullComment = await this.commentRepository.findOne({
       where: { id: savedComment.id },
       relations: ['user', 'user.dogs', 'parentComment'],
@@ -99,12 +98,12 @@ export class InteractionsService {
       throw new Error('댓글 조회 실패');
     }
 
-    const dogs = fullComment?.user?.dogs || [];
+    const dogs = fullComment.user?.dogs || [];
     const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
 
     return {
       id: fullComment.id,
-      content: fullComment.content,
+      comment: fullComment.comment,
       created_at: fullComment.created_at,
       user: {
         id: fullComment.user.id,
@@ -128,7 +127,7 @@ export class InteractionsService {
 
       return {
         id: comment.id,
-        content: comment.content,
+        comment: comment.comment,
         created_at: comment.created_at,
         user: {
           id: comment.user.id,
