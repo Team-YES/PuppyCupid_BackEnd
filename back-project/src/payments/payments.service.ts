@@ -5,6 +5,7 @@ import { Payment } from './payments.entity';
 import { PaymentMethod, PaymentStatus } from './payments.entity';
 import { UsersService } from 'src/users/users.service';
 import { UserRole } from 'src/users/users.entity';
+import { addMonths, addYears } from 'date-fns';
 @Injectable()
 export class PaymentsService {
   constructor(
@@ -51,8 +52,10 @@ export class PaymentsService {
     if (status === PaymentStatus.SUCCESS && amount) {
       if (amount === 3900) {
         payment.user.role = UserRole.POWER_MONTH;
+        payment.user.power_expired_at = addMonths(new Date(), 1);
       } else if (amount === 29000) {
         payment.user.role = UserRole.POWER_YEAR;
+        payment.user.power_expired_at = addYears(new Date(), 1);
       }
 
       await this.userService.save(payment.user);

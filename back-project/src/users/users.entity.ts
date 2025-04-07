@@ -48,6 +48,9 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
+  @Column({ type: 'timestamp', nullable: true })
+  power_expired_at: Date | null;
+
   @OneToMany(() => Dog, (dog) => dog.user, { cascade: true })
   dogs: Dog[];
 
