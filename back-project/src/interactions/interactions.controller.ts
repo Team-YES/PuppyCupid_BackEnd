@@ -59,6 +59,7 @@ export class InteractionsController {
       id: fullComment.id,
       content: fullComment.content,
       created_at: fullComment.created_at,
+      postId: fullComment.postId,
       user: {
         id: fullComment.user.id,
         nickName: fullComment.user.nickName,
@@ -67,13 +68,13 @@ export class InteractionsController {
       parentCommentId: fullComment.parentComment?.id || null,
     };
 
-    return { ok: true, comment: commentResponse };
+    return { ok: true, content: commentResponse };
   }
 
   @Get('comment/:postId')
   async getComments(@Param('postId') postId: number) {
     const comments = await this.interactionsService.getCommentsByPost(postId);
-    return { ok: true, comments };
+    return { ok: true, comments, postId };
   }
 
   @Delete('comment/:commentId')

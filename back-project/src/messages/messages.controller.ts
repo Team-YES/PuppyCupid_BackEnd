@@ -57,6 +57,7 @@ export class MessagesController {
     return { ok: true, messages };
   }
 
+  // 내가 보낸 메세지
   @Delete('/:otherUserId')
   @UseGuards(AuthGuard('jwt'))
   async deleteConversation(
