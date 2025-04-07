@@ -14,7 +14,8 @@ export enum Gender {
 
 export enum UserRole {
   USER = 'user',
-  POWER = 'power',
+  POWER_MONTH = 'power_month',
+  POWER_YEAR = 'power_year',
   ADMIN = 'admin',
 }
 

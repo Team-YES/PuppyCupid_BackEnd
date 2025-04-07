@@ -24,6 +24,9 @@ export class Payment {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ unique: true, nullable: false })
+  order_id: string;
+
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
