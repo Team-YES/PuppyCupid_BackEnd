@@ -77,13 +77,13 @@ export class InteractionsService {
   async createComment(
     userId: number,
     postId: number,
-    comment: string,
+    content: string,
     parentCommentId?: number,
   ): Promise<any> {
     const newComment = this.commentRepository.create({
       user: { id: userId },
       post: { id: postId },
-      comment,
+      content,
       parentComment: parentCommentId ? { id: parentCommentId } : undefined,
     });
 
@@ -103,7 +103,7 @@ export class InteractionsService {
 
     return {
       id: fullComment.id,
-      comment: fullComment.comment,
+      content: fullComment.content,
       created_at: fullComment.created_at,
       user: {
         id: fullComment.user.id,
@@ -127,7 +127,7 @@ export class InteractionsService {
 
       return {
         id: comment.id,
-        comment: comment.comment,
+        content: comment.content,
         created_at: comment.created_at,
         user: {
           id: comment.user.id,
