@@ -1,4 +1,3 @@
-// users.controller.ts
 import {
   Body,
   Controller,
@@ -17,7 +16,7 @@ import { UsersService } from './users.service';
 import { PostsService } from 'src/posts/posts.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
-import { UserRole } from './users.service';
+import { UserRole } from './users.entity';
 import { Gender } from './users.entity';
 export interface AuthRequest extends Request {
   user: {
