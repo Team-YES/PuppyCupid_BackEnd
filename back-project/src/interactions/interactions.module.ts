@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { InteractionsController } from './interactions.controller';
 import { InteractionsService } from './interactions.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,7 +8,10 @@ import { Post } from 'src/posts/posts.entity';
 import { PostsModule } from 'src/posts/posts.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Like, Comment, Post]), PostsModule],
+  imports: [
+    TypeOrmModule.forFeature([Like, Comment, Post]),
+    forwardRef(() => PostsModule),
+  ],
   controllers: [InteractionsController],
   providers: [InteractionsService],
   exports: [InteractionsService],
