@@ -105,6 +105,7 @@ export class InteractionsService {
       id: fullComment.id,
       content: fullComment.content,
       created_at: fullComment.created_at,
+      postId: fullComment.post.id,
       user: {
         id: fullComment.user.id,
         nickName: fullComment.user.nickName,
