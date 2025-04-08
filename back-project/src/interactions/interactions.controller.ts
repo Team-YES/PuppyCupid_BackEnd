@@ -53,7 +53,6 @@ export class InteractionsController {
     );
 
     const dogs = fullComment.user?.dogs || [];
-    const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
 
     const commentResponse = {
       id: fullComment.id,
@@ -63,7 +62,7 @@ export class InteractionsController {
       user: {
         id: fullComment.user.id,
         nickName: fullComment.user.nickName,
-        dogImage,
+        dogImage: fullComment.user.dogs?.[0]?.dog_image ?? null,
       },
       parentCommentId: fullComment.parentComment?.id || null,
     };
