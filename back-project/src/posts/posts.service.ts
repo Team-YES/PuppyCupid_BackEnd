@@ -136,16 +136,10 @@ export class PostsService {
     }));
   }
 
-  async findAllPosts(
-    userId: number,
-    page: number,
-    limit: number,
-  ): Promise<any[]> {
+  async findAllPosts(userId: number): Promise<any[]> {
     const posts = await this.postRepository.find({
       relations: ['user', 'images', 'likes', 'likes.user'],
       order: { created_at: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
     });
 
     // 댓글 포함
@@ -199,6 +193,8 @@ export class PostsService {
         skip: (page - 1) * limit,
         take: limit,
       });
+
+    if (!items) return { items: [], totalCount: 0 };
 
     return { items, totalCount };
   }
