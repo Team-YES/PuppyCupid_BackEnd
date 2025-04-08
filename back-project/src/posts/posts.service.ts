@@ -140,20 +140,18 @@ export class PostsService {
     userId: number,
     page: number,
     limit: number,
-  ): Promise<any[]> {
-    const posts = await this.postRepository.find({
+  ): Promise<{ items: any[]; totalCount: number }> {
+    const [posts, totalCount] = await this.postRepository.findAndCount({
       relations: ['user', 'images', 'likes', 'likes.user'],
       order: { created_at: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
 
-    // 댓글 포함
-    return Promise.all(
+    const items = await Promise.all(
       posts.map(async (post) => {
         const liked = post.likes.some((like) => like.user.id === userId);
 
-        // 댓글 가져오기 (user, dog 정보까지 포함해서)
         const comments = await this.commentRepository.find({
           where: { post: { id: post.id } },
           relations: ['user', 'user.dogs', 'parentComment'],
@@ -184,20 +182,25 @@ export class PostsService {
         };
       }),
     );
+
+    return { items, totalCount };
   }
 
   async findPostsByUser(
     userId: number,
     page: number,
     limit: number,
-  ): Promise<Post[]> {
-    return await this.postRepository.find({
-      where: { user: { id: userId } },
-      relations: ['user', 'images'],
-      order: { created_at: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+  ): Promise<{ items: Post[]; totalCount: number }> {
+    const [items, totalCount]: [Post[], number] =
+      await this.postRepository.findAndCount({
+        where: { user: { id: userId } },
+        relations: ['user', 'images'],
+        order: { created_at: 'DESC' },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+
+    return { items, totalCount };
   }
 
   async updateLikeCount(postId: number, count: number): Promise<void> {

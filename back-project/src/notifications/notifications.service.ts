@@ -14,12 +14,14 @@ export class NotificationsService {
     userId: number,
     page: number,
     limit: number,
-  ): Promise<Notification[]> {
-    return await this.notificationRepository.find({
+  ): Promise<{ items: Notification[]; totalCount: number }> {
+    const [items, totalCount] = await this.notificationRepository.findAndCount({
       where: { user: { id: userId } },
       order: { created_at: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
+
+    return { items, totalCount };
   }
 }
