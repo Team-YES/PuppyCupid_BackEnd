@@ -190,14 +190,17 @@ export class PostsService {
     userId: number,
     page: number,
     limit: number,
-  ): Promise<Post[]> {
-    return await this.postRepository.find({
-      where: { user: { id: userId } },
-      relations: ['user', 'images'],
-      order: { created_at: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+  ): Promise<{ items: Post[]; totalCount: number }> {
+    const [items, totalCount]: [Post[], number] =
+      await this.postRepository.findAndCount({
+        where: { user: { id: userId } },
+        relations: ['user', 'images'],
+        order: { created_at: 'DESC' },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+
+    return { items, totalCount };
   }
 
   async updateLikeCount(postId: number, count: number): Promise<void> {

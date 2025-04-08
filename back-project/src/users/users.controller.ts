@@ -102,26 +102,37 @@ export class UsersController {
     const userId = user.id;
 
     const pageLimit = parseInt(limit);
+    const postPageNum = parseInt(postPage);
+    const likedPageNum = parseInt(likedPage);
+    const notiPageNum = parseInt(notiPage);
 
-    const [posts, liked, notifications] = await Promise.all([
-      this.postsService.findPostsByUser(userId, parseInt(postPage), pageLimit),
+    const [postsResult, likedResult, notiResult] = await Promise.all([
+      this.postsService.findPostsByUser(userId, postPageNum, pageLimit),
       this.interactionsService.findLikedPostsByUser(
         userId,
-        parseInt(likedPage),
+        likedPageNum,
         pageLimit,
       ),
-      this.notificationsService.findByUser(
-        userId,
-        parseInt(notiPage),
-        pageLimit,
-      ),
+      this.notificationsService.findByUser(userId, notiPageNum, pageLimit),
     ]);
 
     return {
       ok: true,
-      posts,
-      liked,
-      notifications,
+      posts: {
+        items: postsResult.items,
+        totalCount: postsResult.totalCount,
+        hasMore: postPageNum * pageLimit < postsResult.totalCount,
+      },
+      liked: {
+        items: likedResult.items,
+        totalCount: likedResult.totalCount,
+        hasMore: likedPageNum * pageLimit < likedResult.totalCount,
+      },
+      notifications: {
+        items: notiResult.items,
+        totalCount: notiResult.totalCount,
+        hasMore: notiPageNum * pageLimit < notiResult.totalCount,
+      },
     };
   }
 
