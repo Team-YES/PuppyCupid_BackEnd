@@ -17,7 +17,10 @@ export class MessagesService {
     receiverId: number,
     content: string,
   ): Promise<Message | null> {
-    if (content === '채팅 신청합니다!') {
+    if (
+      content === '채팅 신청합니다!' ||
+      content === '산책 메이트 신청합니다!'
+    ) {
       const existing = await this.messageRepository.findOne({
         where: [
           { sender: { id: sendId }, receiver: { id: receiverId } },
