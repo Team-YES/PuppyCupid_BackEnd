@@ -155,7 +155,7 @@ export class PostsController {
   async getAllPostsWithLike(
     @Req() req: AuthRequest,
     @Query('page') page = 1,
-    @Query('limit') limit = 9,
+    @Query('limit') limit = 2,
   ) {
     const userId = req.user.id;
     const posts = await this.postsService.findAllPosts(
