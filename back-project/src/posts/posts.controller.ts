@@ -152,9 +152,17 @@ export class PostsController {
   // 모든 게시물
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  async getAllPostsWithLike(@Req() req: AuthRequest) {
+  async getAllPostsWithLike(
+    @Req() req: AuthRequest,
+    @Query('page') page = 1,
+    @Query('limit') limit = 9,
+  ) {
     const userId = req.user.id;
-    const posts = await this.postsService.findAllPosts(userId);
+    const posts = await this.postsService.findAllPosts(
+      userId,
+      Number(page),
+      Number(limit),
+    );
 
     const postsWithComments = await Promise.all(
       posts.map(async (post) => {
@@ -179,8 +187,19 @@ export class PostsController {
   // 내가 쓴 게시물
   @Get('user')
   @UseGuards(AuthGuard('jwt'))
-  async getUserPosts(@Req() req: AuthRequest) {
+  async getUserPosts(
+    @Req() req: AuthRequest,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '9',
+  ) {
     const userId = req.user.id;
-    return await this.postsService.findPostsByUser(userId);
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+
+    return await this.postsService.findPostsByUser(
+      userId,
+      pageNumber,
+      limitNumber,
+    );
   }
 }

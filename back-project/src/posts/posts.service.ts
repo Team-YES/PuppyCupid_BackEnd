@@ -136,10 +136,16 @@ export class PostsService {
     }));
   }
 
-  async findAllPosts(userId: number): Promise<any[]> {
+  async findAllPosts(
+    userId: number,
+    page: number,
+    limit: number,
+  ): Promise<any[]> {
     const posts = await this.postRepository.find({
       relations: ['user', 'images', 'likes', 'likes.user'],
       order: { created_at: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     // 댓글 포함
@@ -180,11 +186,17 @@ export class PostsService {
     );
   }
 
-  async findPostsByUser(userId: number): Promise<Post[]> {
+  async findPostsByUser(
+    userId: number,
+    page: number,
+    limit: number,
+  ): Promise<Post[]> {
     return await this.postRepository.find({
       where: { user: { id: userId } },
       relations: ['user', 'images'],
       order: { created_at: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
   }
 
