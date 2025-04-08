@@ -152,28 +152,24 @@ export class PostsController {
   // 모든 게시물
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  async getAllPostsWithLike(
-    @Req() req: AuthRequest,
-    @Query('page') page = 1,
-    @Query('limit') limit = 2,
-  ) {
+  async getAllPostsWithLike(@Req() req: AuthRequest) {
     const userId = req.user.id;
-    const pageNum = Number(page);
-    const pageLimit = Number(limit);
+    const posts = await this.postsService.findAllPosts(userId);
 
-    const { items, totalCount } = await this.postsService.findAllPosts(
-      userId,
-      pageNum,
-      pageLimit,
+    const postsWithComments = await Promise.all(
+      posts.map(async (post) => {
+        const comments = await this.interactionsService.getCommentsByPost(
+          post.id,
+        );
+        return {
+          ...post,
+          comments,
+        };
+      }),
     );
 
     return {
-      ok: true,
-      posts: {
-        items,
-        totalCount,
-        hasMore: pageNum * pageLimit < totalCount,
-      },
+      posts: postsWithComments,
       currentUser: {
         id: userId,
       },
