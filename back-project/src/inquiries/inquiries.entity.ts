@@ -28,6 +28,15 @@ export class Inquiry {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @Column({ type: 'varchar', length: 50 })
+  name: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  email: string;
+
+  @Column({ type: 'varchar', length: 20 })
+  phone: string;
+
   @Column({ type: 'enum', enum: InquiryType })
   type: InquiryType;
 

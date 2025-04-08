@@ -92,20 +92,7 @@ export class MessagesService {
     });
   }
 
-  // 채팅 삭제
-  async deleteConversation(userId: number, otherUserId: number): Promise<void> {
-    const messages = await this.messageRepository.find({
-      where: [
-        { sender: { id: userId }, receiver: { id: otherUserId } },
-        { sender: { id: otherUserId }, receiver: { id: userId } },
-      ],
-      relations: ['sender', 'receiver'],
-    });
-
-    await this.messageRepository.remove(messages);
-  }
-
-  // 내가 보낸 메세지 삭제
+  // 내 화면에서만 채팅 삭제
   async deleteMyMessage(userId: number, otherUserId: number): Promise<void> {
     const messages = await this.messageRepository.find({
       where: [
@@ -115,12 +102,25 @@ export class MessagesService {
       relations: ['sender', 'receiver'],
     });
 
-    const ownMessages = messages.filter((msg) => msg.sender.id === userId);
-
-    if (ownMessages.length !== messages.length) {
-      throw new Error('본인이 보낸 메시지만 삭제할 수 있습니다.');
+    for (const message of messages) {
+      if (message.sender.id === userId) {
+        message.senderDeleted = true;
+      }
+      if (message.receiver.id === userId) {
+        message.receiverDeleted = true;
+      }
     }
 
-    await this.messageRepository.remove(ownMessages);
+    await this.messageRepository.save(messages);
+  }
+
+  // 채팅 삭제
+  async deleteConversation(userId: number, otherUserId: number): Promise<void> {
+    const messages = await this.messageRepository.find({
+      where: [{ sender: { id: userId }, receiver: { id: otherUserId } }],
+      relations: ['sender', 'receiver'],
+    });
+
+    await this.messageRepository.remove(messages);
   }
 }

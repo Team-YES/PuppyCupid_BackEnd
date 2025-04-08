@@ -65,10 +65,17 @@ export class InteractionsService {
     };
   }
 
-  async findLikedPostsByUser(userId: number): Promise<Post[]> {
+  async findLikedPostsByUser(
+    userId: number,
+    page: number,
+    limit: number,
+  ): Promise<Post[]> {
     const likes = await this.likeRepository.find({
       where: { user: { id: userId } },
       relations: ['post'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { created_at: 'DESC' },
     });
 
     return likes.map((like) => like.post);
