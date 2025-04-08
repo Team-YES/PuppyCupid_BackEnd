@@ -16,7 +16,19 @@ export class MessagesService {
     sendId: number,
     receiverId: number,
     content: string,
-  ): Promise<Message> {
+  ): Promise<Message | null> {
+    if (content === '채팅 신청합니다!') {
+      const existing = await this.messageRepository.findOne({
+        where: [
+          { sender: { id: sendId }, receiver: { id: receiverId } },
+          { sender: { id: receiverId }, receiver: { id: sendId } },
+        ],
+        relations: ['sender', 'receiver'],
+      });
+
+      if (existing) return null;
+    }
+
     const message = this.messageRepository.create({
       sender: { id: sendId } as User,
       receiver: { id: receiverId } as User,
