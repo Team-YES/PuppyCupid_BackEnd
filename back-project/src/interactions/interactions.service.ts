@@ -69,7 +69,11 @@ export class InteractionsService {
     userId: number,
     page: number,
     limit: number,
-  ): Promise<Post[]> {
+  ): Promise<{ items: Post[]; totalCount: number }> {
+    const totalCount = await this.likeRepository.count({
+      where: { user: { id: userId } },
+    });
+
     const likes = await this.likeRepository.find({
       where: { user: { id: userId } },
       relations: ['post'],
@@ -78,7 +82,9 @@ export class InteractionsService {
       order: { created_at: 'DESC' },
     });
 
-    return likes.map((like) => like.post);
+    const items = likes.map((like) => like.post);
+
+    return { items, totalCount };
   }
 
   async createComment(
