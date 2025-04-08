@@ -91,14 +91,30 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('mypage')
-  async getMypageData(@Req() req: Request) {
+  async getMypageData(
+    @Req() req: Request,
+    @Query('postPage') postPage = '1',
+    @Query('likedPage') likedPage = '1',
+    @Query('notiPage') notiPage = '1',
+    @Query('limit') limit = '9',
+  ) {
     const user = req.user as any;
     const userId = user.id;
 
+    const pageLimit = parseInt(limit);
+
     const [posts, liked, notifications] = await Promise.all([
-      this.postsService.findPostsByUser(userId),
-      this.interactionsService.findLikedPostsByUser(userId),
-      this.notificationsService.findByUser(userId),
+      this.postsService.findPostsByUser(userId, parseInt(postPage), pageLimit),
+      this.interactionsService.findLikedPostsByUser(
+        userId,
+        parseInt(likedPage),
+        pageLimit,
+      ),
+      this.notificationsService.findByUser(
+        userId,
+        parseInt(notiPage),
+        pageLimit,
+      ),
     ]);
 
     return {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Match, MatchStatus } from './matches.entity';
+import { Match } from './matches.entity';
 import { Dog } from 'src/dogs/dogs.entity';
 import { Repository } from 'typeorm';
 @Injectable()
@@ -26,7 +26,6 @@ export class MatchesService {
     const match = this.matchRepository.create({
       dog1: { id: dog1Id } as Dog,
       dog2: { id: dog2Id } as Dog,
-      status: MatchStatus.PENDING,
     });
     return await this.matchRepository.save(match);
   }
@@ -43,8 +42,6 @@ export class MatchesService {
       throw new Error('매칭 요청이 존재하지 않습니다');
     }
 
-    match.status =
-      action === 'accept' ? MatchStatus.ACCEPTED : MatchStatus.REJECTED;
     return await this.matchRepository.save(match);
   }
 
