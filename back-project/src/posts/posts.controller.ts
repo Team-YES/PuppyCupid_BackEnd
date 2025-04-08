@@ -158,26 +158,22 @@ export class PostsController {
     @Query('limit') limit = 2,
   ) {
     const userId = req.user.id;
-    const posts = await this.postsService.findAllPosts(
-      userId,
-      Number(page),
-      Number(limit),
-    );
+    const pageNum = Number(page);
+    const pageLimit = Number(limit);
 
-    const postsWithComments = await Promise.all(
-      posts.map(async (post) => {
-        const comments = await this.interactionsService.getCommentsByPost(
-          post.id,
-        );
-        return {
-          ...post,
-          comments,
-        };
-      }),
+    const { items, totalCount } = await this.postsService.findAllPosts(
+      userId,
+      pageNum,
+      pageLimit,
     );
 
     return {
-      posts: postsWithComments,
+      ok: true,
+      posts: {
+        items,
+        totalCount,
+        hasMore: pageNum * pageLimit < totalCount,
+      },
       currentUser: {
         id: userId,
       },
