@@ -30,7 +30,7 @@ export class MessagesController {
       body.receiverId,
       body.content,
     );
-    return { ok: true, message };
+    return { ok: true, exist: message === null, message };
   }
 
   // 채팅한 유저 정보
