@@ -194,6 +194,8 @@ export class PostsService {
         take: limit,
       });
 
+    if (!items) return { items: [], totalCount: 0 };
+
     return { items, totalCount };
   }
 

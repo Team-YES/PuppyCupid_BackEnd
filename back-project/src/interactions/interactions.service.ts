@@ -82,7 +82,9 @@ export class InteractionsService {
       order: { created_at: 'DESC' },
     });
 
-    const items = likes.map((like) => like.post);
+    const items = likes
+      .map((like) => like.post)
+      .filter((post): post is Post => post !== null && post !== undefined);
 
     return { items, totalCount };
   }
