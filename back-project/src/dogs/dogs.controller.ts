@@ -154,9 +154,23 @@ export class DogsController {
     await this.dogsService.updateLocation(userId, dogId, latitude, longitude);
     const nearbyDogs = await this.dogsService.findNearbyDogs(dogId);
 
+    const dogsInfo = nearbyDogs.map((dog) => ({
+      id: dog.id,
+      name: dog.name,
+      breed: dog.breed,
+      age: dog.age,
+      personality: dog.personality,
+      mbti: dog.mbti,
+      gender: dog.gender,
+      image: dog.dog_image,
+      latitude: dog.latitude,
+      longitude: dog.longitude,
+      userId: dog.user?.id ?? null,
+    }));
+
     return {
       ok: true,
-      dogs: nearbyDogs,
+      dogs: dogsInfo,
     };
   }
 
