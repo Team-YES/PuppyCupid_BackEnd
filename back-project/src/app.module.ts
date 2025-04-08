@@ -34,6 +34,7 @@ import { Payment } from './payments/payments.entity';
 
 import { AppController } from './app.controller';
 import { Weather } from './weather/weather.entity';
+import { ReportModule } from './report/report.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -76,6 +77,7 @@ import { Weather } from './weather/weather.entity';
     InquiriesModule,
     PaymentsModule,
     WeatherModule,
+    ReportModule,
   ],
   controllers: [AppController],
 })

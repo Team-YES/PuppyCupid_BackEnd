@@ -143,6 +143,7 @@ export class DogsService {
 
     return this.dogRepository
       .createQueryBuilder('dog')
+      .leftJoinAndSelect('dog.user', 'user')
       .where('dog.id != :myDogId', { myDogId: dogId })
       .andWhere('dog.latitude IS NOT NULL AND dog.longitude IS NOT NULL')
       .andWhere(
