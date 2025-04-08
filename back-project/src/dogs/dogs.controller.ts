@@ -157,7 +157,6 @@ export class DogsController {
     return {
       ok: true,
       dogs: nearbyDogs,
-      userId,
     };
   }
 
@@ -182,8 +181,8 @@ export class DogsController {
         mbti: dog.mbti,
         gender: dog.gender,
         image: dog.dog_image,
+        userId: dog.user.id,
       },
-      userId,
     };
   }
 }
