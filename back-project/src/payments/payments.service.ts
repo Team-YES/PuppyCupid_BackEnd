@@ -50,7 +50,7 @@ export class PaymentsService {
     payment.toss_payment_id = tossorderId;
 
     if (status === PaymentStatus.SUCCESS && amount) {
-      if (amount === 3900) {
+      if (amount === 2900) {
         payment.user.role = UserRole.POWER_MONTH;
         payment.user.power_expired_at = addMonths(new Date(), 1);
       } else if (amount === 29000) {
