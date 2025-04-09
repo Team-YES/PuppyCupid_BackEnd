@@ -42,6 +42,11 @@ export class UsersService {
     return this.userRepository.findOne({ where: { nickName } });
   }
 
+  async getUserNickName(userId: number): Promise<string> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    return user?.nickName ?? '알 수 없음';
+  }
+
   async updatePhoneNumber(userId: number, phone: string) {
     await this.userRepository.update({ id: userId }, { phone });
   }

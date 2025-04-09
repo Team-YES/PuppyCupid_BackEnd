@@ -183,6 +183,48 @@ export class AuthController {
     }
   }
 
+  @Get('/refresh')
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies['eid_refresh_token'];
+
+    if (!refreshToken) {
+      return res
+        .status(401)
+        .json({ ok: false, error: 'Refresh token이 없습니다.' });
+    }
+
+    try {
+      const decoded: any = jwt.verify(
+        refreshToken,
+        this.configService.get('JWT_REFRESH_TOKEN_SECRET_KEY')!,
+      );
+
+      const userId = decoded.aud;
+      if (!userId) {
+        return res
+          .status(401)
+          .json({ ok: false, error: '유효하지 않은 토큰입니다.' });
+      }
+
+      const user = await this.usersService.findUserById(Number(userId));
+
+      if (!user || user.eid_refresh_token !== refreshToken) {
+        return res
+          .status(401)
+          .json({ ok: false, error: '토큰이 만료되었거나 일치하지 않습니다.' });
+      }
+
+      const { accessToken } = await this.authService.issueTokensAndSetCookies(
+        user,
+        res,
+      );
+
+      return res.status(200).json({ ok: true, access_token: accessToken });
+    } catch (err) {
+      return res.status(401).json({ ok: false, error: '토큰 검증 실패' });
+    }
+  }
+
   @Get('/logout')
   async logout(@Res() res: Response) {
     res.clearCookie('eid_refresh_token');
