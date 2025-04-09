@@ -3,14 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from './messages.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/users.entity';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private readonly messageRepository: Repository<Message>,
-    private readonly usersService: UsersService,
   ) {}
 
   // 보내기
@@ -61,8 +59,10 @@ export class MessagesService {
     const result = new Map<number, any>();
 
     for (const msg of messages) {
-      if (msg.sender.id === userId && msg.senderDeleted) continue;
-      if (msg.receiver.id === userId && msg.receiverDeleted) continue;
+      if (!msg.sender || !msg.receiver) {
+        console.warn('⚠️ sender 또는 receiver가 null입니다:', msg);
+        continue; // null이면 무시
+      }
 
       const otherUser = msg.sender.id === userId ? msg.receiver : msg.sender;
       const dogs = otherUser.dogs || [];
@@ -87,7 +87,7 @@ export class MessagesService {
     userId: number,
     otherUserId: number,
   ): Promise<Message[]> {
-    const messages = await this.messageRepository.find({
+    return this.messageRepository.find({
       where: [
         { sender: { id: userId }, receiver: { id: otherUserId } },
         { sender: { id: otherUserId }, receiver: { id: userId } },
@@ -95,16 +95,10 @@ export class MessagesService {
       relations: ['sender', 'receiver'],
       order: { created_at: 'ASC' },
     });
-
-    return messages.filter((msg) => {
-      if (msg.sender.id === userId && msg.senderDeleted) return false;
-      if (msg.receiver.id === userId && msg.receiverDeleted) return false;
-      return true;
-    });
   }
 
-  // 채팅 삭제
-  async deleteConversation(userId: number, otherUserId: number): Promise<void> {
+  // 내 화면에서만 채팅 삭제
+  async deleteMyMessage(userId: number, otherUserId: number): Promise<void> {
     const messages = await this.messageRepository.find({
       where: [
         { sender: { id: userId }, receiver: { id: otherUserId } },
@@ -112,17 +106,6 @@ export class MessagesService {
       ],
       relations: ['sender', 'receiver'],
     });
-
-    const nickName = await this.usersService.getUserNickName(userId);
-    const systemMessage = this.messageRepository.create({
-      sender: { id: userId },
-      receiver: { id: otherUserId },
-      content: `💬 ${nickName}님이 채팅방을 나가셨습니다.`,
-      system: true,
-      senderDeleted: true,
-      receiverDeleted: true,
-    });
-    await this.messageRepository.save(systemMessage);
 
     for (const message of messages) {
       if (message.sender.id === userId) {
@@ -132,6 +115,17 @@ export class MessagesService {
         message.receiverDeleted = true;
       }
     }
+
     await this.messageRepository.save(messages);
+  }
+
+  // 채팅 삭제
+  async deleteConversation(userId: number, otherUserId: number): Promise<void> {
+    const messages = await this.messageRepository.find({
+      where: [{ sender: { id: userId }, receiver: { id: otherUserId } }],
+      relations: ['sender', 'receiver'],
+    });
+
+    await this.messageRepository.remove(messages);
   }
 }
