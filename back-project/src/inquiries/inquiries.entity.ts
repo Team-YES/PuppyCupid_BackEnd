@@ -9,9 +9,9 @@ import {
 import { User } from 'src/users/users.entity';
 
 export enum InquiryType {
-  REPORT = 'report',
-  PAYMENT = 'payment',
-  OTHER = 'other',
+  SERVICE = 'service',
+  BUG = 'bug',
+  ETC = 'etc',
 }
 
 export enum InquiryStatus {
