@@ -138,7 +138,7 @@ export class PostsService {
 
   async findAllPosts(userId: number): Promise<any[]> {
     const posts = await this.postRepository.find({
-      relations: ['user', 'images', 'likes', 'likes.user'],
+      relations: ['user', 'images', 'likes', 'likes.user', 'user.dogs'],
       order: { created_at: 'DESC' },
     });
 
@@ -147,7 +147,6 @@ export class PostsService {
       posts.map(async (post) => {
         const liked = post.likes.some((like) => like.user.id === userId);
 
-        // 댓글 가져오기 (user, dog 정보까지 포함해서)
         const comments = await this.commentRepository.find({
           where: { post: { id: post.id } },
           relations: ['user', 'user.dogs', 'parentComment'],
@@ -171,10 +170,17 @@ export class PostsService {
           };
         });
 
+        const dogs = post.user?.dogs || [];
+        const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
+
         return {
           ...post,
           liked,
           comments: mappedComments,
+          user: {
+            ...post.user,
+            dogImage,
+          },
         };
       }),
     );

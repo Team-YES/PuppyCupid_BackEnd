@@ -154,6 +154,7 @@ export class PostsController {
   @UseGuards(AuthGuard('jwt'))
   async getAllPostsWithLike(@Req() req: AuthRequest) {
     const userId = req.user.id;
+
     const posts = await this.postsService.findAllPosts(userId);
 
     const postsWithComments = await Promise.all(
@@ -161,6 +162,7 @@ export class PostsController {
         const comments = await this.interactionsService.getCommentsByPost(
           post.id,
         );
+
         return {
           ...post,
           comments,
