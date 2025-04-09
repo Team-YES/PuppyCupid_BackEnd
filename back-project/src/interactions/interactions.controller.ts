@@ -45,29 +45,19 @@ export class InteractionsController {
     @Req() req: AuthRequest,
   ) {
     const userId = req.user.id;
-    const fullComment = await this.interactionsService.createComment(
-      userId,
-      postId,
-      body.content,
-      body.parentCommentId,
-    );
 
-    const dogs = fullComment.user?.dogs || [];
-
-    const commentResponse = {
-      id: fullComment.id,
-      content: fullComment.content,
-      created_at: fullComment.created_at,
-      postId: fullComment.postId,
-      user: {
-        id: fullComment.user.id,
-        nickName: fullComment.user.nickName,
-        dogImage: fullComment.user.dogs?.[0]?.dog_image ?? null,
-      },
-      parentCommentId: fullComment.parentComment?.id || null,
-    };
-
-    return { ok: true, content: commentResponse };
+    try {
+      const commentResponse = await this.interactionsService.createComment(
+        userId,
+        postId,
+        body.content,
+        body.parentCommentId,
+      );
+      return { ok: true, content: commentResponse };
+    } catch (err) {
+      console.error('댓글 등록 중 에러:', err);
+      return { ok: false, error: err.message || 'Internal server error' };
+    }
   }
 
   @Get('comment/:postId')
