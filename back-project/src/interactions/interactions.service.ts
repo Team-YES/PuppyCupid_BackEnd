@@ -106,15 +106,12 @@ export class InteractionsService {
 
     const fullComment = await this.commentRepository.findOne({
       where: { id: savedComment.id },
-      relations: ['user', 'user.dogs', 'parentComment'],
+      relations: ['user', 'user.dogs', 'post', 'parentComment'],
     });
 
-    if (!fullComment) {
-      throw new Error('댓글 조회 실패');
+    if (!fullComment || !fullComment.user || !fullComment.post) {
+      throw new Error('댓글 조회 실패: 필요한 관계 데이터가 없습니다.');
     }
-
-    const dogs = fullComment.user?.dogs || [];
-    const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
 
     return {
       id: fullComment.id,
@@ -124,9 +121,9 @@ export class InteractionsService {
       user: {
         id: fullComment.user.id,
         nickName: fullComment.user.nickName,
-        dogImage,
+        dogImage: fullComment.user.dogs?.[0]?.dog_image ?? null,
       },
-      parentCommentId: fullComment.parentComment?.id || null,
+      parentCommentId: fullComment.parentComment?.id ?? null,
     };
   }
 

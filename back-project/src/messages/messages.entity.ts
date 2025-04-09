@@ -30,6 +30,9 @@ export class Message {
   @Column({ type: 'text' })
   content: string;
 
+  @Column({ default: false })
+  system: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 }
