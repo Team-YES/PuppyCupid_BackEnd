@@ -93,47 +93,81 @@ export class UsersController {
   @Get('mypage')
   async getMypageData(
     @Req() req: Request,
-    @Query('postPage') postPage = '1',
-    @Query('likedPage') likedPage = '1',
-    @Query('notiPage') notiPage = '1',
-    @Query('limit') limit = '9',
+    @Query() query: Record<string, string>,
   ) {
     const user = req.user as any;
     const userId = user.id;
 
-    const pageLimit = parseInt(limit);
-    const postPageNum = parseInt(postPage);
-    const likedPageNum = parseInt(likedPage);
-    const notiPageNum = parseInt(notiPage);
+    const limit = parseInt(query.limit ?? '9');
 
-    const [postsResult, likedResult, notiResult] = await Promise.all([
-      this.postsService.findPostsByUser(userId, postPageNum, pageLimit),
-      this.interactionsService.findLikedPostsByUser(
-        userId,
-        likedPageNum,
-        pageLimit,
-      ),
-      this.notificationsService.findByUser(userId, notiPageNum, pageLimit),
-    ]);
+    const pageKey = Object.keys(query).find((key) => key.endsWith('Page'));
 
-    return {
-      ok: true,
-      posts: {
-        items: postsResult.items,
-        totalCount: postsResult.totalCount,
-        hasMore: postPageNum * pageLimit < postsResult.totalCount,
-      },
-      liked: {
-        items: likedResult.items,
-        totalCount: likedResult.totalCount,
-        hasMore: likedPageNum * pageLimit < likedResult.totalCount,
-      },
-      notifications: {
-        items: notiResult.items,
-        totalCount: notiResult.totalCount,
-        hasMore: notiPageNum * pageLimit < notiResult.totalCount,
-      },
-    };
+    if (!pageKey) {
+      return {
+        ok: false,
+        error: '페이지 정보를 찾을 수 없습니다.',
+      };
+    }
+
+    const type = pageKey.replace('Page', '');
+    const page = parseInt(query[pageKey] ?? '1');
+
+    try {
+      if (type === 'posts') {
+        const result = await this.postsService.findPostsByUser(
+          userId,
+          page,
+          limit,
+        );
+        return {
+          ok: true,
+          posts: {
+            items: result.items,
+            totalCount: result.totalCount,
+            hasMore: page * limit < result.totalCount,
+          },
+        };
+      } else if (type === 'liked') {
+        const result = await this.interactionsService.findLikedPostsByUser(
+          userId,
+          page,
+          limit,
+        );
+        return {
+          ok: true,
+          liked: {
+            items: result.items,
+            totalCount: result.totalCount,
+            hasMore: page * limit < result.totalCount,
+          },
+        };
+      } else if (type === 'notifications') {
+        const result = await this.notificationsService.findByUser(
+          userId,
+          page,
+          limit,
+        );
+        return {
+          ok: true,
+          notifications: {
+            items: result.items,
+            totalCount: result.totalCount,
+            hasMore: page * limit < result.totalCount,
+          },
+        };
+      } else {
+        return {
+          ok: false,
+          error: `알 수 없는 타입입니다: ${type}`,
+        };
+      }
+    } catch (err) {
+      console.error(err);
+      return {
+        ok: false,
+        error: '서버 오류 발생',
+      };
+    }
   }
 
   @Delete(':userId')
