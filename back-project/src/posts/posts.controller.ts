@@ -155,7 +155,7 @@ export class PostsController {
   async getAllPostsWithLikeComment(
     @Req() req: AuthRequest,
     @Query('page') page: string = '1',
-    @Query('limit') limit: string = '9',
+    @Query('limit') limit: string = '2',
   ) {
     const userId = req.user.id;
     const pageNumber = parseInt(page, 10);
@@ -168,15 +168,12 @@ export class PostsController {
     );
 
     return {
-      ok: true,
-      posts: {
-        items,
-        totalCount,
-        hasMore: pageNumber * limitNumber < totalCount,
-      },
+      posts: items,
       currentUser: {
         id: userId,
       },
+      totalCount,
+      hasMore: pageNumber * limitNumber < totalCount,
     };
   }
 

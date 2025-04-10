@@ -155,26 +155,8 @@ export class PostsService {
       posts.map(async (post) => {
         const liked = post.likes.some((like) => like.user.id === userId);
 
-        const comments = await this.commentRepository.find({
+        const commentCount = await this.commentRepository.count({
           where: { post: { id: post.id } },
-          relations: ['user', 'user.dogs', 'parentComment'],
-          order: { created_at: 'ASC' },
-        });
-
-        const mappedComments = comments.map((comment) => {
-          const dogImage = comment.user?.dogs?.[0]?.dog_image || null;
-
-          return {
-            id: comment.id,
-            content: comment.content,
-            created_at: comment.created_at,
-            parentCommentId: comment.parentComment?.id || null,
-            user: {
-              id: comment.user.id,
-              nickName: comment.user.nickName,
-              dogImage,
-            },
-          };
         });
 
         const dogImage = post.user?.dogs?.[0]?.dog_image || null;
@@ -182,8 +164,7 @@ export class PostsService {
         return {
           ...post,
           liked,
-          comments: mappedComments,
-          comment_count: mappedComments.length,
+          comment_count: commentCount,
           user: {
             ...post.user,
             dogImage,
