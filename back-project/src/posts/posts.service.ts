@@ -208,4 +208,11 @@ export class PostsService {
   async updateLikeCount(postId: number, count: number): Promise<void> {
     await this.postRepository.update(postId, { like_count: count });
   }
+
+  // 작성글 개수
+  async countPostsByUser(userId: number): Promise<number> {
+    return this.postRepository.count({
+      where: { user: { id: userId } },
+    });
+  }
 }
