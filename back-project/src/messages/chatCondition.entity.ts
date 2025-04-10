@@ -24,4 +24,7 @@ export class ChatCondition {
 
   @Column({ default: false })
   exited: boolean;
+
+  @Column({ type: 'timestamp', nullable: true })
+  exitedAt: Date | null;
 }

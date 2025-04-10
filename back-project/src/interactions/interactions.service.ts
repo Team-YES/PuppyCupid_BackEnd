@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Like } from './likes.entity';
@@ -17,6 +17,8 @@ export class InteractionsService {
 
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
+
+    @Inject(forwardRef(() => PostsService))
     private readonly postsService: PostsService,
   ) {}
 
@@ -149,6 +151,20 @@ export class InteractionsService {
         },
         parentCommentId: comment.parentComment?.id || null,
       };
+    });
+  }
+
+  // 좋아요 수
+  async countLikesByPostId(postId: number): Promise<number> {
+    return this.likeRepository.count({
+      where: { post: { id: postId } },
+    });
+  }
+
+  // 댓글 수
+  async countCommentsByPostId(postId: number): Promise<number> {
+    return this.commentRepository.count({
+      where: { post: { id: postId } },
     });
   }
 
