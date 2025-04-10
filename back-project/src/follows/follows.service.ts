@@ -54,4 +54,20 @@ export class FollowsService {
     });
     return follows.map((x) => x.following);
   }
+
+  // 팔로우 팔로워 개수
+
+  // 나를 팔로우한 사람들
+  async countFollowers(userId: number): Promise<number> {
+    return this.followRepository.count({
+      where: { follower: { id: userId } },
+    });
+  }
+
+  // 내가 팔로우한 사람들
+  async countFollowings(userId: number): Promise<number> {
+    return this.followRepository.count({
+      where: { following: { id: userId } },
+    });
+  }
 }

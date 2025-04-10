@@ -35,6 +35,7 @@ import { Payment } from './payments/payments.entity';
 import { AppController } from './app.controller';
 import { Weather } from './weather/weather.entity';
 import { ReportModule } from './report/report.module';
+import { ChatCondition } from './messages/chatCondition.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -60,6 +61,7 @@ import { ReportModule } from './report/report.module';
         Follow,
         Payment,
         Weather,
+        ChatCondition,
       ],
       synchronize: true,
     }),
