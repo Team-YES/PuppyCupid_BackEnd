@@ -95,6 +95,7 @@ export class UsersService {
     const user = await this.userRepository.findOne({
       where: { id: targetUserId },
     });
+
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다.');
 
     return this.userRepository.remove(user);
