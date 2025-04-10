@@ -200,8 +200,6 @@ export class UsersController {
     @Req() req: Request,
     @Query() query: Record<string, string>,
   ) {
-    const currentUserId = (req.user as any).id;
-
     const targetUserId = parseInt(otherUserId);
 
     if (isNaN(targetUserId)) {
@@ -241,6 +239,13 @@ export class UsersController {
         this.usersService.findUserWithDogs(targetUserId),
       ]);
 
+      if (!targetUser) {
+        return {
+          ok: false,
+          error: '대상 유저를 찾을 수 없습니다.',
+        };
+      }
+
       const stats = {
         postCount,
         followerCount,
@@ -248,6 +253,7 @@ export class UsersController {
         followers,
         followings,
         dogs: targetUser?.dogs ?? [],
+        nickName: targetUser.nickName ?? '알 수 없음',
       };
 
       if (type === 'posts') {
