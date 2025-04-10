@@ -34,10 +34,8 @@ export class MessagesService {
     ]);
 
     if (!isRequest) {
-      // ✅ 일반 메시지일 때 상대방이 나간 상태면 메시지 전송 막기
       if (otherExit?.exited) return null;
     } else {
-      // ✅ 신청 메시지 처리 로직
       const messages = await this.messageRepository.find({
         where: [
           { sender: { id: sendId }, receiver: { id: receiverId } },
@@ -175,7 +173,6 @@ export class MessagesService {
       where: { userId: otherUserId, otherUserId: userId },
     });
 
-    // ✅ 나만 나갔거나 상대가 아직 안 나갔을 때만 메시지 발송
     const isFirstToExit = !otherCondition || !otherCondition.exited;
     if (isFirstToExit) {
       const nickName = await this.usersService.getUserNickName(userId);

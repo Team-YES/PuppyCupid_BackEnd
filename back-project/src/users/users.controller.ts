@@ -202,8 +202,7 @@ export class UsersController {
     const currentUser = req.user as any;
     const currentUserId = currentUser.id;
 
-    const targetUserId = parseInt(query.userId ?? `${currentUserId}`); // 없으면 본인
-
+    const targetUserId = parseInt(query.userId ?? `${currentUserId}`);
     const limit = parseInt(query.limit ?? '9');
     const pageKey = Object.keys(query).find((key) => key.endsWith('Page'));
 
@@ -218,14 +217,21 @@ export class UsersController {
     const page = parseInt(query[pageKey] ?? '1');
 
     try {
-      const [postCount, followerCount, followingCount, followers, followings] =
-        await Promise.all([
-          this.postsService.countPostsByUser(targetUserId),
-          this.followsService.countFollowers(targetUserId),
-          this.followsService.countFollowings(targetUserId),
-          this.followsService.getFollowers(targetUserId),
-          this.followsService.getFollowings(targetUserId),
-        ]);
+      const [
+        postCount,
+        followerCount,
+        followingCount,
+        followers,
+        followings,
+        targetUser,
+      ] = await Promise.all([
+        this.postsService.countPostsByUser(targetUserId),
+        this.followsService.countFollowers(targetUserId),
+        this.followsService.countFollowings(targetUserId),
+        this.followsService.getFollowers(targetUserId),
+        this.followsService.getFollowings(targetUserId),
+        this.usersService.findUserWithDogs(targetUserId),
+      ]);
 
       const stats = {
         postCount,
@@ -233,6 +239,7 @@ export class UsersController {
         followingCount,
         followers,
         followings,
+        dogs: targetUser?.dogs ?? [],
       };
 
       if (type === 'posts') {
