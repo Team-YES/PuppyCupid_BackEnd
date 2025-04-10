@@ -21,6 +21,12 @@ export class Message {
   @JoinColumn({ name: 'receiver_id' })
   receiver: User;
 
+  @Column({ default: false })
+  senderDeleted: boolean;
+
+  @Column({ default: false })
+  receiverDeleted: boolean;
+
   @Column({ type: 'text' })
   content: string;
 

@@ -10,6 +10,7 @@ import { Like as LikeEntity } from 'src/interactions/likes.entity';
 
 import { Like } from 'typeorm';
 import { Comment } from 'src/interactions/comments.entity';
+import { InteractionsService } from 'src/interactions/interactions.service';
 
 const like = new LikeEntity();
 export interface CreatePostInput {
@@ -46,6 +47,8 @@ export class PostsService {
 
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+
+    private readonly interactionsService: InteractionsService,
   ) {}
 
   async findPostById(postId: number): Promise<Post> {
@@ -190,11 +193,11 @@ export class PostsService {
     userId: number,
     page: number,
     limit: number,
-  ): Promise<{ items: Post[]; totalCount: number }> {
+  ): Promise<{ items: any[]; totalCount: number }> {
     const [items, totalCount]: [Post[], number] =
       await this.postRepository.findAndCount({
         where: { user: { id: userId } },
-        relations: ['user', 'images'],
+        relations: ['user', 'images', 'likes', 'likes.user'],
         order: { created_at: 'DESC' },
         skip: (page - 1) * limit,
         take: limit,
@@ -202,7 +205,25 @@ export class PostsService {
 
     if (!items) return { items: [], totalCount: 0 };
 
-    return { items, totalCount };
+    const finalItems = await Promise.all(
+      items.map(async (post) => {
+        const commentCount =
+          await this.interactionsService.countCommentsByPostId(post.id);
+        const likeCount = await this.interactionsService.countLikesByPostId(
+          post.id,
+        );
+        const liked = post.likes.some((like) => like.user.id === userId);
+
+        return {
+          ...post,
+          commentCount,
+          likeCount,
+          liked,
+        };
+      }),
+    );
+
+    return { items: finalItems, totalCount };
   }
 
   async updateLikeCount(postId: number, count: number): Promise<void> {

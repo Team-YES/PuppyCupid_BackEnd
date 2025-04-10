@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Message } from './messages.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/users.entity';
+import { Message } from './messages.entity';
 import { ChatCondition } from 'src/messages/chatCondition.entity';
+import { User } from 'src/users/users.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -16,17 +16,29 @@ export class MessagesService {
     private readonly usersService: UsersService,
   ) {}
 
-  // 보내기
   async sendMessage(
     sendId: number,
     receiverId: number,
     content: string,
   ): Promise<Message | null> {
-    if (
-      content === '채팅 신청합니다!' ||
-      content === '산책 메이트 신청합니다!'
-    ) {
-      const existing = await this.messageRepository.findOne({
+    const isRequest =
+      content === '채팅 신청합니다!' || content === '산책 메이트 신청합니다!';
+
+    const [myExit, otherExit] = await Promise.all([
+      this.chatConditionRepository.findOne({
+        where: { userId: sendId, otherUserId: receiverId },
+      }),
+      this.chatConditionRepository.findOne({
+        where: { userId: receiverId, otherUserId: sendId },
+      }),
+    ]);
+
+    if (!isRequest) {
+      // ✅ 일반 메시지일 때 상대방이 나간 상태면 메시지 전송 막기
+      if (otherExit?.exited) return null;
+    } else {
+      // ✅ 신청 메시지 처리 로직
+      const messages = await this.messageRepository.find({
         where: [
           { sender: { id: sendId }, receiver: { id: receiverId } },
           { sender: { id: receiverId }, receiver: { id: sendId } },
@@ -34,18 +46,35 @@ export class MessagesService {
         relations: ['sender', 'receiver'],
       });
 
-      if (existing) return null;
+      const canReapply = myExit?.exited && (!otherExit || !otherExit.exited);
+      if (messages.length > 0 && !canReapply) return null;
+
+      if (canReapply && myExit?.exitedAt) {
+        for (const msg of messages) {
+          if (msg.created_at <= myExit.exitedAt) {
+            if (msg.sender.id === sendId) msg.senderDeleted = true;
+            if (msg.receiver.id === sendId) msg.receiverDeleted = true;
+          }
+        }
+        await this.messageRepository.save(messages);
+      }
+
+      if (myExit?.exited) {
+        myExit.exited = false;
+        myExit.exitedAt = null;
+        await this.chatConditionRepository.save(myExit);
+      }
     }
 
-    const message = this.messageRepository.create({
+    const newMessage = this.messageRepository.create({
       sender: { id: sendId } as User,
       receiver: { id: receiverId } as User,
       content,
     });
-    return await this.messageRepository.save(message);
+
+    return this.messageRepository.save(newMessage);
   }
 
-  // 채팅 유저
   async getChatUsers(userId: number): Promise<
     {
       id: number;
@@ -55,31 +84,25 @@ export class MessagesService {
       lastMessageTime: string;
     }[]
   > {
-    const messages = await this.messageRepository.find({
-      where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
-      relations: ['sender', 'receiver', 'sender.dogs', 'receiver.dogs'],
-      order: { created_at: 'DESC' },
-    });
+    const [messages, myExitedConditions] = await Promise.all([
+      this.messageRepository.find({
+        where: [{ sender: { id: userId } }, { receiver: { id: userId } }],
+        relations: ['sender', 'receiver', 'sender.dogs', 'receiver.dogs'],
+        order: { created_at: 'DESC' },
+      }),
+      this.chatConditionRepository.find({ where: { userId, exited: true } }),
+    ]);
 
-    const exitedConditions = await this.chatConditionRepository.find({
-      where: { userId },
-    });
-
-    const exitedUserIds = exitedConditions
-      .filter((cond) => cond.exited)
-      .map((cond) => cond.otherUserId);
-
+    const exitedUserIds = new Set(
+      myExitedConditions.map((cond) => cond.otherUserId),
+    );
     const result = new Map<number, any>();
 
     for (const msg of messages) {
-      if (!msg.sender || !msg.receiver) continue;
-
       const otherUser = msg.sender.id === userId ? msg.receiver : msg.sender;
+      if (!otherUser || exitedUserIds.has(otherUser.id)) continue;
 
-      if (exitedUserIds.includes(otherUser.id)) continue;
-
-      const dogs = otherUser.dogs || [];
-      const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
+      const dogImage = otherUser.dogs?.[0]?.dog_image || null;
 
       if (!result.has(otherUser.id)) {
         result.set(otherUser.id, {
@@ -95,12 +118,15 @@ export class MessagesService {
     return Array.from(result.values());
   }
 
-  // 유저 간 채팅
   async getConversation(
     userId: number,
     otherUserId: number,
   ): Promise<Message[]> {
-    return this.messageRepository.find({
+    const myCondition = await this.chatConditionRepository.findOne({
+      where: { userId, otherUserId },
+    });
+
+    const messages = await this.messageRepository.find({
       where: [
         { sender: { id: userId }, receiver: { id: otherUserId } },
         { sender: { id: otherUserId }, receiver: { id: userId } },
@@ -108,31 +134,24 @@ export class MessagesService {
       relations: ['sender', 'receiver'],
       order: { created_at: 'ASC' },
     });
+
+    return messages.filter((msg) => {
+      if (myCondition?.exitedAt && msg.created_at <= myCondition.exitedAt) {
+        return false;
+      }
+
+      // 삭제된 메시지 필터링
+      if (
+        (msg.sender.id === userId && msg.senderDeleted) ||
+        (msg.receiver.id === userId && msg.receiverDeleted)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
   }
 
-  // 내 화면에서만 채팅 삭제
-  // async deleteMyMessage(userId: number, otherUserId: number): Promise<void> {
-  //   const messages = await this.messageRepository.find({
-  //     where: [
-  //       { sender: { id: userId }, receiver: { id: otherUserId } },
-  //       { sender: { id: otherUserId }, receiver: { id: userId } },
-  //     ],
-  //     relations: ['sender', 'receiver'],
-  //   });
-
-  //   for (const message of messages) {
-  //     if (message.sender.id === userId) {
-  //       message.senderDeleted = true;
-  //     }
-  //     if (message.receiver.id === userId) {
-  //       message.receiverDeleted = true;
-  //     }
-  //   }
-
-  //   await this.messageRepository.save(messages);
-  // }
-
-  // 채팅 삭제
   async deleteConversation(userId: number, otherUserId: number): Promise<void> {
     let myCondition = await this.chatConditionRepository.findOne({
       where: { userId, otherUserId },
@@ -143,9 +162,11 @@ export class MessagesService {
         userId,
         otherUserId,
         exited: true,
+        exitedAt: new Date(),
       });
     } else {
       myCondition.exited = true;
+      myCondition.exitedAt = new Date();
     }
 
     await this.chatConditionRepository.save(myCondition);
@@ -154,22 +175,20 @@ export class MessagesService {
       where: { userId: otherUserId, otherUserId: userId },
     });
 
-    // 상대가 아직 안 나갔으면 시스템 메시지 생성
-    if (!otherCondition || !otherCondition.exited) {
-      const user = { id: userId } as User;
-      const otherUser = { id: otherUserId } as User;
+    // ✅ 나만 나갔거나 상대가 아직 안 나갔을 때만 메시지 발송
+    const isFirstToExit = !otherCondition || !otherCondition.exited;
+    if (isFirstToExit) {
       const nickName = await this.usersService.getUserNickName(userId);
-      const exitMessage = this.messageRepository.create({
-        sender: user,
-        receiver: otherUser,
+      const systemMessage = this.messageRepository.create({
+        sender: { id: userId } as User,
+        receiver: { id: otherUserId } as User,
         content: `${nickName}님이 채팅을 나갔습니다.`,
         system: true,
       });
 
-      await this.messageRepository.save(exitMessage);
+      await this.messageRepository.save(systemMessage);
     }
 
-    // 두 명 다 나간 경우에만 메시지 삭제
     if (myCondition.exited && otherCondition?.exited) {
       const messages = await this.messageRepository.find({
         where: [
@@ -177,11 +196,10 @@ export class MessagesService {
           { sender: { id: otherUserId }, receiver: { id: userId } },
         ],
         relations: ['sender', 'receiver'],
+        withDeleted: true,
       });
 
       await this.messageRepository.remove(messages);
-
-      // 둘 다 나갔으면 chatCondition도 삭제 (선택사항)
       await this.chatConditionRepository.remove([myCondition, otherCondition]);
     }
   }
