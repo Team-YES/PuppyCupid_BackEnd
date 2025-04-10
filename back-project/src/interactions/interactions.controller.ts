@@ -55,7 +55,6 @@ export class InteractionsController {
       );
       return { ok: true, content: commentResponse };
     } catch (err) {
-      console.error('댓글 등록 중 에러:', err);
       return { ok: false, error: err.message || 'Internal server error' };
     }
   }
