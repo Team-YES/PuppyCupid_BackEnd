@@ -202,7 +202,7 @@ export class UsersController {
   ) {
     const targetUserId = parseInt(otherUserId);
 
-    if (isNaN(targetUserId)) {
+    if (!targetUserId) {
       return {
         ok: false,
         error: '올바른 userId가 필요합니다.',
