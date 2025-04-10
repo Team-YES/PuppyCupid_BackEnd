@@ -18,6 +18,7 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
 import { UserRole } from './users.entity';
 import { Gender } from './users.entity';
+import { FollowsService } from 'src/follows/follows.service';
 export interface AuthRequest extends Request {
   user: {
     id: number;
@@ -32,6 +33,7 @@ export class UsersController {
     private readonly postsService: PostsService,
     private readonly interactionsService: InteractionsService,
     private readonly notificationsService: NotificationsService,
+    private readonly followsService: FollowsService,
   ) {}
 
   @UseGuards(AuthGuard('jwt'))
@@ -113,12 +115,30 @@ export class UsersController {
     const page = parseInt(query[pageKey] ?? '1');
 
     try {
+      const [postCount, followerCount, followingCount, followers, followings] =
+        await Promise.all([
+          this.postsService.countPostsByUser(userId),
+          this.followsService.countFollowers(userId),
+          this.followsService.countFollowings(userId),
+          this.followsService.getFollowers(userId),
+          this.followsService.getFollowings(userId),
+        ]);
+
+      const stats = {
+        postCount,
+        followerCount,
+        followingCount,
+        followers,
+        followings,
+      };
+
       if (type === 'posts') {
         const result = await this.postsService.findPostsByUser(
           userId,
           page,
           limit,
         );
+
         return {
           ok: true,
           posts: {
@@ -126,6 +146,7 @@ export class UsersController {
             totalCount: result.totalCount,
             hasMore: page * limit < result.totalCount,
           },
+          ...stats,
         };
       } else if (type === 'liked') {
         const result = await this.interactionsService.findLikedPostsByUser(
@@ -140,6 +161,7 @@ export class UsersController {
             totalCount: result.totalCount,
             hasMore: page * limit < result.totalCount,
           },
+          ...stats,
         };
       } else if (type === 'notifications') {
         const result = await this.notificationsService.findByUser(
@@ -154,11 +176,79 @@ export class UsersController {
             totalCount: result.totalCount,
             hasMore: page * limit < result.totalCount,
           },
+          ...stats,
         };
       } else {
         return {
           ok: false,
           error: `알 수 없는 타입입니다: ${type}`,
+        };
+      }
+    } catch (err) {
+      console.error(err);
+      return {
+        ok: false,
+        error: '서버 오류 발생',
+      };
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('otherpage')
+  async getOtherpageData(
+    @Req() req: Request,
+    @Query() query: Record<string, string>,
+  ) {
+    const currentUser = req.user as any;
+    const currentUserId = currentUser.id;
+
+    const targetUserId = parseInt(query.userId ?? `${currentUserId}`); // 없으면 본인
+
+    const limit = parseInt(query.limit ?? '9');
+    const pageKey = Object.keys(query).find((key) => key.endsWith('Page'));
+
+    if (!pageKey) {
+      return {
+        ok: false,
+        error: '페이지 정보를 찾을 수 없습니다.',
+      };
+    }
+
+    const type = pageKey.replace('Page', '');
+    const page = parseInt(query[pageKey] ?? '1');
+
+    try {
+      const [postCount, followerCount, followingCount, followers, followings] =
+        await Promise.all([
+          this.postsService.countPostsByUser(targetUserId),
+          this.followsService.countFollowers(targetUserId),
+          this.followsService.countFollowings(targetUserId),
+          this.followsService.getFollowers(targetUserId),
+          this.followsService.getFollowings(targetUserId),
+        ]);
+
+      const stats = {
+        postCount,
+        followerCount,
+        followingCount,
+        followers,
+        followings,
+      };
+
+      if (type === 'posts') {
+        const result = await this.postsService.findPostsByUser(
+          targetUserId,
+          page,
+          limit,
+        );
+        return {
+          ok: true,
+          posts: {
+            items: result.items,
+            totalCount: result.totalCount,
+            hasMore: page * limit < result.totalCount,
+          },
+          ...stats,
         };
       }
     } catch (err) {
