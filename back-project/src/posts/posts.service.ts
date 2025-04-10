@@ -139,47 +139,32 @@ export class PostsService {
     }));
   }
 
-  async findAllPosts(userId: number): Promise<any[]> {
-    const posts = await this.postRepository.find({
+  async findAllPosts(
+    userId: number,
+    page: number,
+    limit: number,
+  ): Promise<{ items: any[]; totalCount: number }> {
+    const [posts, totalCount] = await this.postRepository.findAndCount({
       relations: ['user', 'images', 'likes', 'likes.user', 'user.dogs'],
       order: { created_at: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
-    // 댓글 포함
-    return Promise.all(
+    const items = await Promise.all(
       posts.map(async (post) => {
         const liked = post.likes.some((like) => like.user.id === userId);
 
-        const comments = await this.commentRepository.find({
+        const commentCount = await this.commentRepository.count({
           where: { post: { id: post.id } },
-          relations: ['user', 'user.dogs', 'parentComment'],
-          order: { created_at: 'ASC' },
         });
 
-        const mappedComments = comments.map((comment) => {
-          const dogs = comment.user?.dogs || [];
-          const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
-
-          return {
-            id: comment.id,
-            content: comment.content,
-            created_at: comment.created_at,
-            parentCommentId: comment.parentComment?.id || null,
-            user: {
-              id: comment.user.id,
-              nickName: comment.user.nickName,
-              dogImage,
-            },
-          };
-        });
-
-        const dogs = post.user?.dogs || [];
-        const dogImage = dogs.length > 0 ? dogs[0].dog_image : null;
+        const dogImage = post.user?.dogs?.[0]?.dog_image || null;
 
         return {
           ...post,
           liked,
-          comments: mappedComments,
+          comment_count: commentCount,
           user: {
             ...post.user,
             dogImage,
@@ -187,6 +172,8 @@ export class PostsService {
         };
       }),
     );
+
+    return { items, totalCount };
   }
 
   async findPostsByUser(
@@ -209,15 +196,12 @@ export class PostsService {
       items.map(async (post) => {
         const commentCount =
           await this.interactionsService.countCommentsByPostId(post.id);
-        const likeCount = await this.interactionsService.countLikesByPostId(
-          post.id,
-        );
+
         const liked = post.likes.some((like) => like.user.id === userId);
 
         return {
           ...post,
           commentCount,
-          likeCount,
           liked,
         };
       }),
