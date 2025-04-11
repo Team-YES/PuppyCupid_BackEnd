@@ -36,8 +36,6 @@ import { AppController } from './app.controller';
 import { Weather } from './weather/weather.entity';
 import { ReportModule } from './report/report.module';
 import { ChatCondition } from './messages/chatCondition.entity';
-import { SchedulerService } from './scheduler/scheduler.service';
-import { SchedulerModule } from './scheduler/scheduler.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -82,9 +80,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     PaymentsModule,
     WeatherModule,
     ReportModule,
-    SchedulerModule,
   ],
   controllers: [AppController],
-  providers: [SchedulerService],
 })
 export class AppModule {}

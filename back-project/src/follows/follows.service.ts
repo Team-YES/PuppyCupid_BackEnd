@@ -16,11 +16,14 @@ export class FollowsService {
 
   // 팔로우, 언팔로우
   async toggleFollow(
-    FollowerId: number,
-    followingId: number,
+    follower_id: number,
+    following_id: number,
   ): Promise<{ followed: boolean }> {
     const existing = await this.followRepository.findOne({
-      where: { follower: { id: followingId }, following: { id: followingId } },
+      where: {
+        follower: { id: follower_id },
+        following: { id: following_id },
+      },
     });
 
     if (existing) {
@@ -29,8 +32,8 @@ export class FollowsService {
     }
 
     const follow = this.followRepository.create({
-      follower: { id: followingId } as User,
-      following: { id: followingId } as User,
+      follower: { id: follower_id } as User,
+      following: { id: following_id } as User,
     });
 
     await this.followRepository.save(follow);
@@ -69,5 +72,30 @@ export class FollowsService {
     return this.followRepository.count({
       where: { following: { id: userId } },
     });
+  }
+
+  // FollowsService.ts 안에 추가
+  async getFollowStatus(
+    myId: number,
+    targetUserId: number,
+  ): Promise<{ isFollowing: boolean; isFollowedBy: boolean }> {
+    const isFollowing = await this.followRepository.findOne({
+      where: {
+        follower: { id: myId },
+        following: { id: targetUserId },
+      },
+    });
+
+    const isFollowedBy = await this.followRepository.findOne({
+      where: {
+        follower: { id: targetUserId },
+        following: { id: myId },
+      },
+    });
+
+    return {
+      isFollowing: !!isFollowing,
+      isFollowedBy: !!isFollowedBy,
+    };
   }
 }
