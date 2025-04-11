@@ -4,7 +4,6 @@ import { UsersModule } from './users/users.module';
 import { DogsModule } from './dogs/dogs.module';
 import { PostsModule } from './posts/posts.module';
 import { InteractionsModule } from './interactions/interactions.module';
-import { BlacklistModule } from './blacklist/blacklist.module';
 import { AdminModule } from './admin/admin.module';
 import { MatchesModule } from './matches/matches.module';
 import { MessagesModule } from './messages/messages.module';
@@ -20,7 +19,6 @@ import { ConfigModule } from '@nestjs/config';
 // entity
 import { User } from './users/users.entity';
 import { Dog } from './dogs/dogs.entity';
-import { Blacklist } from './blacklist/blacklist.entity';
 import { Like } from './interactions/likes.entity';
 import { Post } from './posts/posts.entity';
 import { PostImage } from './posts/post_images.entity';
@@ -34,10 +32,11 @@ import { Payment } from './payments/payments.entity';
 
 import { AppController } from './app.controller';
 import { Weather } from './weather/weather.entity';
-import { ReportModule } from './report/report.module';
+import { ReportsModule } from './report/report.module';
 import { ChatCondition } from './messages/chatCondition.entity';
 import { SchedulerService } from './scheduler/scheduler.service';
 import { SchedulerModule } from './scheduler/scheduler.module';
+import { Report } from './report/report.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -51,7 +50,6 @@ import { SchedulerModule } from './scheduler/scheduler.module';
       entities: [
         User,
         Dog,
-        Blacklist,
         Post,
         PostImage,
         Comment,
@@ -64,6 +62,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
         Payment,
         Weather,
         ChatCondition,
+        Report,
       ],
       synchronize: true,
     }),
@@ -72,7 +71,6 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     DogsModule,
     PostsModule,
     InteractionsModule,
-    BlacklistModule,
     AdminModule,
     MatchesModule,
     MessagesModule,
@@ -81,7 +79,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     InquiriesModule,
     PaymentsModule,
     WeatherModule,
-    ReportModule,
+    ReportsModule,
     SchedulerModule,
   ],
   controllers: [AppController],
