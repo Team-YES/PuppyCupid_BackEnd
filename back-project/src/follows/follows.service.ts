@@ -57,21 +57,37 @@ export class FollowsService {
   }
 
   // 팔로워 목록
-  async getFollowers(userId: number): Promise<User[]> {
+  async getFollowers(userId: number): Promise<any[]> {
     const follows = await this.followRepository.find({
-      where: { follower: { id: userId } },
-      relations: ['follower'],
+      where: { following: { id: userId } }, // 내가 팔로우 당한 사람들 = 나를 팔로우한 사람들
+      relations: ['follower', 'follower.dogs'],
     });
-    return follows.map((x) => x.follower);
+
+    return follows.map((follow) => {
+      const follower = follow.follower;
+      return {
+        id: follower.id,
+        nickName: follower.nickName,
+        dogImage: follower.dogs?.[0]?.dog_image || null,
+      };
+    });
   }
 
   // 팔로잉 목록
-  async getFollowings(userId: number): Promise<User[]> {
+  async getFollowings(userId: number): Promise<any[]> {
     const follows = await this.followRepository.find({
-      where: { follower: { id: userId } },
-      relations: ['following'],
+      where: { follower: { id: userId } }, // 내가 팔로우한 사람들
+      relations: ['following', 'following.dogs'],
     });
-    return follows.map((x) => x.following);
+
+    return follows.map((follow) => {
+      const following = follow.following;
+      return {
+        id: following.id,
+        nickName: following.nickName,
+        dogImage: following.dogs?.[0]?.dog_image || null,
+      };
+    });
   }
 
   // 팔로우 팔로워 개수
