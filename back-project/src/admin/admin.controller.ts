@@ -1,19 +1,8 @@
-import {
-  Controller,
-  Get,
-  Delete,
-  Param,
-  Patch,
-  Body,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Delete, Param, Patch, Body } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
-import { AuthGuard } from '@nestjs/passport';
-import { UserRole } from 'src/users/users.entity';
 
 @Controller('admin')
-@UseGuards(AuthGuard('jwt'))
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 

@@ -22,7 +22,7 @@ export class AdminService {
   async deleteUserAsAdmin(userId: number) {
     return await this.usersService.deleteUser({
       targetUserId: userId,
-      requester: { id: 0, role: UserRole.ADMIN }, // 관리자 권한으로 삭제
+      requester: { id: 0, role: UserRole.USER },
     });
   }
 
