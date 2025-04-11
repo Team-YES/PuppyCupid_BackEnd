@@ -193,16 +193,22 @@ export class UsersController {
     }
   }
 
+  @Get('otherpage/:otherUserId')
   @UseGuards(AuthGuard('jwt'))
-  @Get('otherpage')
   async getOtherpageData(
+    @Param('otherUserId') otherUserId: string,
     @Req() req: Request,
     @Query() query: Record<string, string>,
   ) {
-    const currentUser = req.user as any;
-    const currentUserId = currentUser.id;
+    const targetUserId = parseInt(otherUserId);
 
-    const targetUserId = parseInt(query.userId ?? `${currentUserId}`);
+    if (!targetUserId) {
+      return {
+        ok: false,
+        error: '올바른 userId가 필요합니다.',
+      };
+    }
+
     const limit = parseInt(query.limit ?? '9');
     const pageKey = Object.keys(query).find((key) => key.endsWith('Page'));
 
@@ -233,6 +239,13 @@ export class UsersController {
         this.usersService.findUserWithDogs(targetUserId),
       ]);
 
+      if (!targetUser) {
+        return {
+          ok: false,
+          error: '대상 유저를 찾을 수 없습니다.',
+        };
+      }
+
       const stats = {
         postCount,
         followerCount,
@@ -240,6 +253,7 @@ export class UsersController {
         followers,
         followings,
         dogs: targetUser?.dogs ?? [],
+        nickName: targetUser.nickName ?? '알 수 없음',
       };
 
       if (type === 'posts') {
@@ -258,6 +272,11 @@ export class UsersController {
           ...stats,
         };
       }
+
+      return {
+        ok: false,
+        error: `알 수 없는 타입: ${type}`,
+      };
     } catch (err) {
       console.error(err);
       return {
