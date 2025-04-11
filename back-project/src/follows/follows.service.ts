@@ -16,11 +16,11 @@ export class FollowsService {
 
   // 팔로우, 언팔로우
   async toggleFollow(
-    FollowerId: number,
+    followerId: number,
     followingId: number,
   ): Promise<{ followed: boolean }> {
     const existing = await this.followRepository.findOne({
-      where: { follower: { id: followingId }, following: { id: followingId } },
+      where: { follower: { id: followerId }, following: { id: followingId } },
     });
 
     if (existing) {
@@ -29,12 +29,31 @@ export class FollowsService {
     }
 
     const follow = this.followRepository.create({
-      follower: { id: followingId } as User,
+      follower: { id: followerId } as User,
       following: { id: followingId } as User,
     });
 
     await this.followRepository.save(follow);
     return { followed: true };
+  }
+
+  // 팔로우 상태 확인
+  async followStatus(
+    userId: number,
+    targetUserId: number,
+  ): Promise<{ isFollowing: boolean; isFollowedBy: boolean }> {
+    const isFollowing = await this.followRepository.findOne({
+      where: { follower: { id: userId }, following: { id: targetUserId } },
+    });
+
+    const isFollowedBy = await this.followRepository.findOne({
+      where: { follower: { id: targetUserId }, following: { id: userId } },
+    });
+
+    return {
+      isFollowing: !!isFollowing,
+      isFollowedBy: !!isFollowedBy,
+    };
   }
 
   // 팔로워 목록
@@ -60,14 +79,14 @@ export class FollowsService {
   // 나를 팔로우한 사람들
   async countFollowers(userId: number): Promise<number> {
     return this.followRepository.count({
-      where: { follower: { id: userId } },
+      where: { following: { id: userId } },
     });
   }
 
   // 내가 팔로우한 사람들
   async countFollowings(userId: number): Promise<number> {
     return this.followRepository.count({
-      where: { following: { id: userId } },
+      where: { follower: { id: userId } },
     });
   }
 }

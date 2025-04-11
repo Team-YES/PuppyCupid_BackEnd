@@ -29,4 +29,15 @@ export class FollowsController {
     const users = await this.followsService.getFollowings(userId);
     return { ok: true, users };
   }
+
+  // 팔로우 상태 가져오기
+  @Get('status/:targetUserId')
+  async getStatus(
+    @Param('targetUserId') targetUserId: number,
+    @Req() req: AuthRequest,
+  ) {
+    const userId = req.user.id;
+    const status = await this.followsService.followStatus(userId, targetUserId);
+    return { ok: true, ...status };
+  }
 }
