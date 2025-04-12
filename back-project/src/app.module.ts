@@ -34,8 +34,6 @@ import { AppController } from './app.controller';
 import { Weather } from './weather/weather.entity';
 import { ReportsModule } from './report/report.module';
 import { ChatCondition } from './messages/chatCondition.entity';
-import { SchedulerService } from './scheduler/scheduler.service';
-import { SchedulerModule } from './scheduler/scheduler.module';
 import { Report } from './report/report.entity';
 @Module({
   imports: [
@@ -80,9 +78,7 @@ import { Report } from './report/report.entity';
     PaymentsModule,
     WeatherModule,
     ReportsModule,
-    SchedulerModule,
   ],
   controllers: [AppController],
-  providers: [SchedulerService],
 })
 export class AppModule {}
