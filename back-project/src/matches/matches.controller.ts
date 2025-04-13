@@ -1,40 +1,26 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  Get,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { MatchesService } from './matches.service';
-import { AuthGuard } from '@nestjs/passport';
 
-interface MatchRequest {
-  fromDogId: number;
-  toDogId: number;
-}
-
-@Controller('matches')
-@UseGuards(AuthGuard('jwt'))
+@Controller('match')
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
-  @Post('request')
-  async requestMatch(@Body() body: MatchRequest) {
-    const { fromDogId, toDogId } = body;
-    return await this.matchesService.requestMatch(fromDogId, toDogId);
-  }
-  @Post(':matchId/respond')
-  async respondMatch(
-    @Param('matchId') matchId: number,
-    @Body('action') action: 'accept' | 'reject',
-  ) {
-    return await this.matchesService.respondToMatch(matchId, action);
-  }
+  @Get()
+  async getMatch(@Query('rejected') rejected: string) {
+    const userId = 1; // 🔥 테스트용 userId로 고정
 
-  @Get('mine/:dogId')
-  async getMyMatches(@Param('dogId') dogId: number) {
-    return await this.matchesService.getMyMatches(dogId);
+    let parsedRejected: { mbti: string; personality: string[] }[] = [];
+    try {
+      parsedRejected = rejected ? JSON.parse(rejected) : [];
+    } catch (err) {
+      return { ok: false, error: 'rejected 파라미터 형식이 잘못되었습니다.' };
+    }
+
+    try {
+      const match = await this.matchesService.recommend(userId, parsedRejected);
+      return { ok: true, match };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
   }
 }

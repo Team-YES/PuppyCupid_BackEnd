@@ -1,54 +1,74 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Match } from './matches.entity';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { DogsService } from 'src/dogs/dogs.service';
 import { Dog } from 'src/dogs/dogs.entity';
-import { Repository } from 'typeorm';
+
 @Injectable()
 export class MatchesService {
-  constructor(
-    @InjectRepository(Match)
-    private matchRepository: Repository<Match>,
-    @InjectRepository(Dog)
-    private dogRepository: Repository<Dog>,
-  ) {}
+  constructor(private readonly dogsService: DogsService) {}
 
-  async requestMatch(dog1Id: number, dog2Id: number): Promise<Match> {
-    const existing = await this.matchRepository.findOne({
-      where: [
-        { dog1: { id: dog1Id }, dog2: { id: dog2Id } },
-        { dog1: { id: dog2Id }, dog2: { id: dog1Id } },
-      ],
-    });
+  private genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-    if (existing) {
-      throw new Error('이미 매칭 요청이 존재합니다.');
+  async recommend(
+    userId: number,
+    rejected: { mbti: string; personality: string[] }[] = [],
+  ): Promise<Dog | null> {
+    const myDog = await this.dogsService.findDogByUserID(userId);
+    if (!myDog) throw new Error('강아지 정보를 찾을 수 없습니다.');
+
+    const dogInput = {
+      mbti: myDog.mbti,
+      personality: myDog.personality.split(',').map((s) => s.trim()),
+      traits: [],
+    };
+
+    const prompt = `
+다음은 한 강아지의 MBTI, 성격, 특징이야.
+MBTI: ${dogInput.mbti}
+성격: ${dogInput.personality.join(', ')}
+특징: ${dogInput.traits.join(', ')}
+
+궁합이 잘 맞는 다른 강아지의 MBTI와 성격 조합을 3개 추천해줘.
+아래 형식의 JSON 배열로 정확하게 출력해줘:
+
+[
+  { "mbti": "ISFP", "personality": ["차분함", "애정많음"] },
+  ...
+]
+`;
+
+    const model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const result = await model.generateContent(prompt);
+    const text = await result.response.text();
+
+    let recommendedCombos: { mbti: string; personality: string[] }[] = [];
+    try {
+      recommendedCombos = JSON.parse(text);
+    } catch (err) {
+      console.error('Gemini 응답 파싱 실패:', text);
+      return null;
     }
-    const match = this.matchRepository.create({
-      dog1: { id: dog1Id } as Dog,
-      dog2: { id: dog2Id } as Dog,
-    });
-    return await this.matchRepository.save(match);
-  }
 
-  async respondToMatch(
-    matchId: number,
-    action: 'accept' | 'reject',
-  ): Promise<Match> {
-    const match = await this.matchRepository.findOne({
-      where: { id: matchId },
-    });
+    const allDogs = await this.dogsService.findNearbyDogs(myDog.id);
 
-    if (!match) {
-      throw new Error('매칭 요청이 존재하지 않습니다');
+    for (const combo of recommendedCombos) {
+      const isRejected = rejected.some(
+        (r) =>
+          r.mbti === combo.mbti &&
+          JSON.stringify(r.personality.sort()) ===
+            JSON.stringify(combo.personality.sort()),
+      );
+      if (isRejected) continue;
+
+      const match = allDogs.find((dog) => {
+        if (dog.mbti !== combo.mbti) return false;
+        const dogPersonality = dog.personality.split(',').map((s) => s.trim());
+        return combo.personality.every((p) => dogPersonality.includes(p));
+      });
+
+      if (match) return match;
     }
 
-    return await this.matchRepository.save(match);
-  }
-
-  async getMyMatches(dogId: number): Promise<Match[]> {
-    return await this.matchRepository.find({
-      where: [{ dog1: { id: dogId } }, { dog2: { id: dogId } }],
-      relations: ['dog1', 'dog2'],
-    });
+    return null;
   }
 }

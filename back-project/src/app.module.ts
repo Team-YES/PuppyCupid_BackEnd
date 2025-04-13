@@ -24,13 +24,11 @@ import { Post } from './posts/posts.entity';
 import { PostImage } from './posts/post_images.entity';
 import { Comment } from './interactions/comments.entity';
 import { Inquiry } from './inquiries/inquiries.entity';
-import { Match } from './matches/matches.entity';
 import { Message } from './messages/messages.entity';
 import { Notification } from './notifications/notifications.entity';
 import { Follow } from './follows/follows.entity';
 import { Payment } from './payments/payments.entity';
 
-import { AppController } from './app.controller';
 import { Weather } from './weather/weather.entity';
 import { ReportsModule } from './report/report.module';
 import { ChatCondition } from './messages/chatCondition.entity';
@@ -53,7 +51,6 @@ import { Report } from './report/report.entity';
         Comment,
         Like,
         Inquiry,
-        Match,
         Message,
         Notification,
         Follow,
@@ -79,6 +76,5 @@ import { Report } from './report/report.entity';
     WeatherModule,
     ReportsModule,
   ],
-  controllers: [AppController],
 })
 export class AppModule {}
