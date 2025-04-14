@@ -22,7 +22,7 @@ export class AdminService {
   async deleteUserAsAdmin(userId: number) {
     return await this.usersService.deleteUser({
       targetUserId: userId,
-      requester: { id: 0, role: UserRole.USER },
+      requester: { id: 0, role: UserRole.ADMIN },
     });
   }
 
