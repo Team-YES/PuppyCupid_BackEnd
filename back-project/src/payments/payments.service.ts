@@ -70,4 +70,9 @@ export class PaymentsService {
       order: { created_at: 'DESC' },
     });
   }
+
+  // 관리자 페이지 결제 내역
+  async allPayments() {
+    return this.paymentRepository.find();
+  }
 }

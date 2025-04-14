@@ -184,7 +184,7 @@ export class PostsService {
     const [items, totalCount]: [Post[], number] =
       await this.postRepository.findAndCount({
         where: { user: { id: userId } },
-        relations: ['user', 'images', 'likes', 'likes.user'],
+        relations: ['user', 'images', 'likes', 'likes.user', 'user.dogs'],
         order: { created_at: 'DESC' },
         skip: (page - 1) * limit,
         take: limit,
