@@ -5,16 +5,12 @@ import { Report, report_type } from './report.entity';
 import { Post } from 'src/posts/posts.entity';
 import { Comment } from 'src/interactions/comments.entity';
 import { User } from 'src/users/users.entity';
-import { Blacklist } from './blacklist.entity';
 
 @Injectable()
 export class ReportsService {
   constructor(
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
-
-    @InjectRepository(Blacklist)
-    private readonly blacklistRepository: Repository<Blacklist>,
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,

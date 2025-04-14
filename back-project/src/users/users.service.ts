@@ -79,6 +79,7 @@ export class UsersService {
     });
   }
 
+  // 유저 정보 수정
   async save(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }

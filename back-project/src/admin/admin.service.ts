@@ -7,10 +7,16 @@ import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 import { PaymentsService } from 'src/payments/payments.service';
 import { PostsService } from 'src/posts/posts.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Blacklist } from './blacklist.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AdminService {
   constructor(
+    @InjectRepository(Blacklist)
+    private readonly blacklistRepository: Repository<Blacklist>,
+
     private readonly usersService: UsersService,
     private readonly reportsService: ReportsService,
     private readonly inquiriesService: InquiriesService,
@@ -22,6 +28,23 @@ export class AdminService {
   // 유저 목록 전체 조회
   async getAllUsers() {
     return await this.usersService.findAllUser();
+  }
+
+  // 블랙리스트에 넣기
+  async addToBlacklist(userId: number, reason: string): Promise<void> {
+    const user = await this.usersService.findUserById(userId);
+
+    if (!user) throw new NotFoundException('유저를 찾을 수 없습니다');
+
+    user.role = UserRole.BLACKLIST;
+    await this.usersService.save(user);
+
+    const blacklist = this.blacklistRepository.create({
+      targetUser: user,
+      reason,
+    });
+
+    await this.blacklistRepository.save(blacklist);
   }
 
   // 유저 삭제 (강제 탈퇴)

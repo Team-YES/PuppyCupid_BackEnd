@@ -1,4 +1,13 @@
-import { Controller, Get, Delete, Param, Patch, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Param,
+  Patch,
+  Body,
+  Post,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 
@@ -11,6 +20,16 @@ export class AdminController {
   async getUsers() {
     const users = await this.adminService.getAllUsers();
     return { ok: true, users };
+  }
+
+  // 블랙리스트에 추가
+  @Post('blacklist/:userId')
+  async addToBlacklist(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() body: { reason: string },
+  ) {
+    await this.adminService.addToBlacklist(userId, body.reason);
+    return { ok: true };
   }
 
   // 유저 삭제

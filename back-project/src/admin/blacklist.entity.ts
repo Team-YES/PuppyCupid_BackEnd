@@ -11,14 +11,10 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-@Entity()
+@Entity('blacklists')
 export class Blacklist {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'reporter_id' })
-  reporter: User;
 
   @ManyToOne(() => User, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'target_user_id' })
