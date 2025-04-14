@@ -78,7 +78,13 @@ export class InteractionsService {
 
     const likes = await this.likeRepository.find({
       where: { user: { id: userId } },
-      relations: ['post'],
+      relations: [
+        'post',
+        'post.images',
+        'post.likes',
+        'post.user',
+        'post.user.dogs',
+      ],
       skip: (page - 1) * limit,
       take: limit,
       order: { created_at: 'DESC' },

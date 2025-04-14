@@ -160,6 +160,7 @@ export class UsersController {
             return {
               ...post,
               commentCount,
+              liked: true,
             };
           }),
         );
