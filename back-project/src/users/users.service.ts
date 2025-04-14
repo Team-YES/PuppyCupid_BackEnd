@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 
 import { User, Gender, UserRole } from './users.entity';
 
@@ -22,6 +22,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  // 모든 유저 찾기
   findAllUser() {
     return this.userRepository.find();
   }
@@ -41,6 +42,7 @@ export class UsersService {
   findUserByNickname(nickName: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { nickName } });
   }
+
   async findUserWithDogs(userId: number): Promise<User | null> {
     return this.userRepository.findOne({
       where: { id: userId },
@@ -81,6 +83,7 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
+  // 유저 삭제
   async deleteUser(params: {
     targetUserId: number;
     requester: { id: number; role: UserRole };
@@ -99,5 +102,18 @@ export class UsersService {
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다.');
 
     return this.userRepository.remove(user);
+  }
+
+  // 유효기간 지난 유저
+  async findExpiredUsers(currentDate: Date) {
+    return this.userRepository.find({
+      where: [
+        {
+          role: UserRole.POWER_MONTH,
+          power_expired_at: LessThan(currentDate),
+        },
+        { role: UserRole.POWER_YEAR, power_expired_at: LessThan(currentDate) },
+      ],
+    });
   }
 }
