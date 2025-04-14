@@ -51,6 +51,7 @@ export class PostsService {
     private readonly interactionsService: InteractionsService,
   ) {}
 
+  // id로 게시글 찾기
   async findPostById(postId: number): Promise<Post> {
     const post = await this.postRepository.findOne({
       where: { id: postId },
@@ -64,6 +65,7 @@ export class PostsService {
     return post;
   }
 
+  // 게시글 작성하기
   async createPost(input: CreatePostInput): Promise<Post> {
     const { user, category, content, mainImageUrl, imageUrls } = input;
 
@@ -83,6 +85,7 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
+  // 게시글 수정하기
   async updatePost(input: UpdatePostInput): Promise<Post> {
     const { postId, content } = input;
 
@@ -99,6 +102,7 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
+  // 게시글 삭제하기
   async deletePost(input: DeletePostInput): Promise<boolean> {
     const { postId, user } = input;
 
@@ -122,6 +126,7 @@ export class PostsService {
     return true;
   }
 
+  // 검색으로 게시글 찾기
   async findPostsBySearch(keyword: string, userId: number): Promise<Post[]> {
     const posts = await this.postRepository.find({
       where: {
@@ -139,6 +144,7 @@ export class PostsService {
     }));
   }
 
+  // 모든 게시글 + 무한 스크롤
   async findAllPosts(
     userId: number,
     page: number,
@@ -176,6 +182,7 @@ export class PostsService {
     return { items, totalCount };
   }
 
+  // UserId로 게시글 찾기 + 무한스크롤
   async findPostsByUser(
     userId: number,
     page: number,
@@ -210,14 +217,20 @@ export class PostsService {
     return { items: finalItems, totalCount };
   }
 
+  // 좋아요 개수
   async updateLikeCount(postId: number, count: number): Promise<void> {
     await this.postRepository.update(postId, { like_count: count });
   }
 
-  // 작성글 개수
+  // 유저당 작성글 개수
   async countPostsByUser(userId: number): Promise<number> {
     return this.postRepository.count({
       where: { user: { id: userId } },
     });
+  }
+
+  // 총 작성글 개수
+  async countAllPosts() {
+    return this.postRepository.count();
   }
 }

@@ -5,6 +5,7 @@ import { InquiriesService } from 'src/inquiries/inquiries.service';
 import { UserRole } from 'src/users/users.entity';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 import { PaymentsService } from 'src/payments/payments.service';
+import { PostsService } from 'src/posts/posts.service';
 
 @Injectable()
 export class AdminService {
@@ -13,6 +14,7 @@ export class AdminService {
     private readonly reportsService: ReportsService,
     private readonly inquiriesService: InquiriesService,
     private readonly paymentsService: PaymentsService,
+    private readonly postsService: PostsService,
   ) {}
 
   // 유저 목록 전체 조회
@@ -33,6 +35,21 @@ export class AdminService {
     return await this.reportsService.getAllReports();
   }
 
+  // 게시글 개수
+  async countAllPosts() {
+    return await this.postsService.countAllPosts();
+  }
+
+  // 게시글 삭제
+  async deleteReportPost(postId: number): Promise<boolean> {
+    return await this.postsService.deletePost({
+      postId,
+      user: { id: 0, role: UserRole.USER },
+    });
+  }
+
+  // 댓글 삭제
+
   // 전체 문의 목록
   async getAllInquiries() {
     return await this.inquiriesService.findAllInquiries();
@@ -48,6 +65,7 @@ export class AdminService {
     return await this.inquiriesService.remove(id);
   }
 
+  // 결제 내역
   async getAllPayments() {
     return await this.paymentsService.allPayments();
   }
