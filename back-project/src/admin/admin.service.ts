@@ -4,6 +4,7 @@ import { ReportsService } from 'src/report/report.service';
 import { InquiriesService } from 'src/inquiries/inquiries.service';
 import { UserRole } from 'src/users/users.entity';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
+import { PaymentsService } from 'src/payments/payments.service';
 
 @Injectable()
 export class AdminService {
@@ -11,6 +12,7 @@ export class AdminService {
     private readonly usersService: UsersService,
     private readonly reportsService: ReportsService,
     private readonly inquiriesService: InquiriesService,
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   // 유저 목록 전체 조회
@@ -44,5 +46,9 @@ export class AdminService {
   // 문의 삭제
   async deleteInquiry(id: number) {
     return await this.inquiriesService.remove(id);
+  }
+
+  async getAllPayments() {
+    return await this.paymentsService.allPayments();
   }
 }

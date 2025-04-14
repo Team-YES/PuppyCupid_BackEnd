@@ -4,9 +4,10 @@ import { AdminService } from './admin.service';
 import { UsersModule } from 'src/users/users.module';
 import { ReportsModule } from 'src/report/report.module';
 import { InquiriesModule } from 'src/inquiries/inquiries.module';
+import { PaymentsModule } from 'src/payments/payments.module';
 
 @Module({
-  imports: [UsersModule, ReportsModule, InquiriesModule],
+  imports: [UsersModule, ReportsModule, InquiriesModule, PaymentsModule],
   controllers: [AdminController],
   providers: [AdminService],
 })

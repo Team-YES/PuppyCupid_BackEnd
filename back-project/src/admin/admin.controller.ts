@@ -47,4 +47,10 @@ export class AdminController {
     const result = await this.adminService.deleteInquiry(id);
     return { ok: true, result };
   }
+
+  @Get('payments')
+  async getPayments() {
+    const payments = await this.adminService.getAllPayments();
+    return { ok: true, payments };
+  }
 }
