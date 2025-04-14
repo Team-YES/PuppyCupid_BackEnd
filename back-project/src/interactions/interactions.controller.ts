@@ -7,14 +7,17 @@ import {
   Body,
   Get,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InteractionsService } from './interactions.service';
 import { Request } from 'express';
+import { UserRole } from 'src/users/users.entity';
 
 interface AuthRequest extends Request {
   user: {
     id: number;
+    role: UserRole;
   };
 }
 
@@ -68,10 +71,13 @@ export class InteractionsController {
   @Delete('comment/:commentId')
   @UseGuards(AuthGuard('jwt'))
   async deleteComment(
-    @Param('commentId') commentId: number,
+    @Param('commentId', ParseIntPipe) commentId: number,
     @Req() req: AuthRequest,
   ) {
-    const userId = req.user.id;
-    return await this.interactionsService.deleteComment(commentId, userId);
+    const user = {
+      id: req.user.id,
+      role: req.user.role,
+    };
+    return await this.interactionsService.deleteComment(commentId, user);
   }
 }

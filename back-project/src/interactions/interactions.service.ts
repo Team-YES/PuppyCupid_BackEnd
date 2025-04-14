@@ -5,6 +5,7 @@ import { Like } from './likes.entity';
 import { Post } from '../posts/posts.entity';
 import { PostsService } from 'src/posts/posts.service';
 import { Comment } from './comments.entity';
+import { UserRole } from 'src/users/users.entity';
 
 @Injectable()
 export class InteractionsService {
@@ -30,6 +31,7 @@ export class InteractionsService {
     await this.postsService.updateLikeCount(postId, count);
   }
 
+  // 좋아요 토글
   async toggleLike(
     userId: number,
     postId: number,
@@ -67,6 +69,7 @@ export class InteractionsService {
     };
   }
 
+  // userId로 좋아요한 게시물
   async findLikedPostsByUser(
     userId: number,
     page: number,
@@ -97,6 +100,7 @@ export class InteractionsService {
     return { items, totalCount };
   }
 
+  // 댓글 작성하기
   async createComment(
     userId: number,
     postId: number,
@@ -135,6 +139,7 @@ export class InteractionsService {
     };
   }
 
+  // 게시글 당 댓글
   async getCommentsByPost(postId: number): Promise<any[]> {
     const comments = await this.commentRepository.find({
       where: { post: { id: postId } },
@@ -160,7 +165,7 @@ export class InteractionsService {
     });
   }
 
-  // 좋아요 수
+  // 게시글 당 좋아요 수
   async countLikesByPostId(postId: number): Promise<number> {
     return this.likeRepository.count({
       where: { post: { id: postId } },
@@ -174,9 +179,10 @@ export class InteractionsService {
     });
   }
 
+  // 댓글 삭제
   async deleteComment(
     commentId: number,
-    userId: number,
+    user: { id: number; role: UserRole },
   ): Promise<{ ok: boolean }> {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
@@ -187,7 +193,10 @@ export class InteractionsService {
       throw new Error('댓글을 찾을 수 없습니다.');
     }
 
-    if (comment.user.id !== userId) {
+    const author = comment.user.id === user.id;
+    const admin = user.role === UserRole.ADMIN;
+
+    if (!author && !admin) {
       throw new Error('삭제 권한이 없습니다.');
     }
 
