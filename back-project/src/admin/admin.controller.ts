@@ -1,4 +1,13 @@
-import { Controller, Get, Delete, Param, Patch, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Param,
+  Patch,
+  Body,
+  Post,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 
@@ -13,11 +22,21 @@ export class AdminController {
     return { ok: true, users };
   }
 
+  // 블랙리스트에 추가
+  @Post('blacklist/:userId')
+  async addToBlacklist(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() body: { reason: string },
+  ) {
+    await this.adminService.addToBlacklist(userId, body.reason);
+    return { ok: true };
+  }
+
   // 유저 삭제
   @Delete('users/:id')
   async deleteUser(@Param('id') id: number) {
     const user = await this.adminService.deleteUserAsAdmin(id);
-    return { ok: true, user };
+    return { ok: true };
   }
 
   // 모든 신고 내역
@@ -27,6 +46,27 @@ export class AdminController {
     return { ok: true, reports };
   }
 
+  // 모든 게시글 개수
+  @Get('postsCount')
+  async getCountAllPosts() {
+    const count = await this.adminService.countAllPosts();
+    return { ok: true, count };
+  }
+
+  // 게시글 삭제
+  @Delete('posts/:postId')
+  async deletePost(@Param('postId') postId: number) {
+    const post = await this.adminService.deleteReportPost(postId);
+    return { ok: true };
+  }
+
+  // 댓글 삭제
+  @Delete('comments/:commentId')
+  async deleteComment(@Param('commentId') commentId: number) {
+    const comment = await this.adminService.deleteReportComment(commentId);
+    return { ok: true };
+  }
+
   // 모든 문의 내역
   @Get('inquiries')
   async getInquiries() {
@@ -34,6 +74,7 @@ export class AdminController {
     return { ok: true, inquiries };
   }
 
+  // 문의하기 상태
   @Patch('inquiries/:id/status')
   async updateInquiryStatus(
     @Param('id') id: number,

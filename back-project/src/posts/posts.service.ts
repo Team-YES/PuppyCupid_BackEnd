@@ -51,20 +51,6 @@ export class PostsService {
     private readonly interactionsService: InteractionsService,
   ) {}
 
-  // id로 게시글 찾기
-  async findPostById(postId: number): Promise<Post> {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-      relations: ['user', 'images', 'likes', 'likes.user'],
-    });
-
-    if (!post) {
-      throw new Error('해당 게시글을 찾을 수 없습니다.');
-    }
-
-    return post;
-  }
-
   // 게시글 작성하기
   async createPost(input: CreatePostInput): Promise<Post> {
     const { user, category, content, mainImageUrl, imageUrls } = input;
@@ -124,24 +110,6 @@ export class PostsService {
 
     await this.postRepository.remove(post);
     return true;
-  }
-
-  // 검색으로 게시글 찾기
-  async findPostsBySearch(keyword: string, userId: number): Promise<Post[]> {
-    const posts = await this.postRepository.find({
-      where: {
-        content: Like(`%${keyword}%`),
-      },
-      relations: ['user', 'images', 'likes', 'likes.user'],
-      order: {
-        created_at: 'DESC',
-      },
-    });
-
-    return posts.map((post) => ({
-      ...post,
-      liked: post.likes.some((like) => like.user.id === userId),
-    }));
   }
 
   // 모든 게시글 + 무한 스크롤
@@ -215,6 +183,38 @@ export class PostsService {
     );
 
     return { items: finalItems, totalCount };
+  }
+
+  // id로 게시글 찾기
+  async findPostById(postId: number): Promise<Post> {
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['user', 'images', 'likes', 'likes.user'],
+    });
+
+    if (!post) {
+      throw new Error('해당 게시글을 찾을 수 없습니다.');
+    }
+
+    return post;
+  }
+
+  // 검색으로 게시글 찾기
+  async findPostsBySearch(keyword: string, userId: number): Promise<Post[]> {
+    const posts = await this.postRepository.find({
+      where: {
+        content: Like(`%${keyword}%`),
+      },
+      relations: ['user', 'images', 'likes', 'likes.user'],
+      order: {
+        created_at: 'DESC',
+      },
+    });
+
+    return posts.map((post) => ({
+      ...post,
+      liked: post.likes.some((like) => like.user.id === userId),
+    }));
   }
 
   // 좋아요 개수

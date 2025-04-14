@@ -17,6 +17,7 @@ export enum UserRole {
   POWER_MONTH = 'power_month',
   POWER_YEAR = 'power_year',
   ADMIN = 'admin',
+  BLACKLIST = 'blacklist',
 }
 
 @Entity('users')
