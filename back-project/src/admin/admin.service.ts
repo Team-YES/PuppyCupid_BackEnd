@@ -6,6 +6,7 @@ import { UserRole } from 'src/users/users.entity';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 import { PaymentsService } from 'src/payments/payments.service';
 import { PostsService } from 'src/posts/posts.service';
+import { InteractionsService } from 'src/interactions/interactions.service';
 
 @Injectable()
 export class AdminService {
@@ -15,6 +16,7 @@ export class AdminService {
     private readonly inquiriesService: InquiriesService,
     private readonly paymentsService: PaymentsService,
     private readonly postsService: PostsService,
+    private readonly interactionsService: InteractionsService,
   ) {}
 
   // 유저 목록 전체 조회
@@ -49,6 +51,12 @@ export class AdminService {
   }
 
   // 댓글 삭제
+  async deleteReportComment(commentId: number): Promise<{ ok: boolean }> {
+    return await this.interactionsService.deleteComment(commentId, {
+      id: 0,
+      role: UserRole.USER,
+    });
+  }
 
   // 전체 문의 목록
   async getAllInquiries() {

@@ -6,6 +6,7 @@ import { ReportsModule } from 'src/report/report.module';
 import { InquiriesModule } from 'src/inquiries/inquiries.module';
 import { PaymentsModule } from 'src/payments/payments.module';
 import { PostsModule } from 'src/posts/posts.module';
+import { InteractionsModule } from 'src/interactions/interactions.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PostsModule } from 'src/posts/posts.module';
     InquiriesModule,
     PaymentsModule,
     PostsModule,
+    InteractionsModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],
