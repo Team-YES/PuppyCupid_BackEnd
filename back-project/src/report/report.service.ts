@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Report, report_type } from './report.entity';
+import { Post } from 'src/posts/posts.entity';
+import { Comment } from 'src/interactions/comments.entity';
 import { User } from 'src/users/users.entity';
 import { Blacklist } from './blacklist.entity';
 
@@ -16,6 +18,12 @@ export class ReportsService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
+
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
   ) {}
 
   async createReport(
@@ -66,10 +74,70 @@ export class ReportsService {
     return report;
   }
 
-  async getAllReports(): Promise<Report[]> {
-    return this.reportRepository.find({
+  async getAllReports(): Promise<any[]> {
+    const reports = await this.reportRepository.find({
       relations: ['reporter'],
       order: { created_at: 'DESC' },
     });
+
+    const reportInfo = await Promise.all(
+      reports.map(async (report) => {
+        let targetInfo: {
+          id: number;
+          nickName?: string | null;
+          email?: string;
+          content?: string;
+          writer?: string | null;
+        } | null = null;
+
+        if (report.reportType === 'user') {
+          const user = await this.userRepository.findOne({
+            where: { id: report.targetId },
+          });
+          if (user) {
+            targetInfo = {
+              id: user.id,
+              nickName: user.nickName,
+              email: user.email,
+            };
+          }
+        }
+
+        if (report.reportType === 'post') {
+          const post = await this.postRepository.findOne({
+            where: { id: report.targetId },
+            relations: ['user'],
+          });
+          if (post) {
+            targetInfo = {
+              id: post.id,
+              content: post.content,
+              nickName: post.user?.nickName || null,
+            };
+          }
+        }
+
+        if (report.reportType === 'comment') {
+          const comment = await this.commentRepository.findOne({
+            where: { id: report.targetId },
+            relations: ['user'],
+          });
+          if (comment) {
+            targetInfo = {
+              id: comment.id,
+              content: comment.content,
+              nickName: comment.user?.nickName || null,
+            };
+          }
+        }
+
+        return {
+          ...report,
+          targetInfo,
+        };
+      }),
+    );
+
+    return reportInfo;
   }
 }

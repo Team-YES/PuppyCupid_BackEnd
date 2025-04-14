@@ -163,8 +163,8 @@ export class PostsService {
 
         return {
           ...post,
+          commentCount,
           liked,
-          comment_count: commentCount,
           user: {
             ...post.user,
             dogImage,

@@ -101,7 +101,6 @@ export class UsersController {
     const userId = user.id;
 
     const limit = parseInt(query.limit ?? '9');
-
     const pageKey = Object.keys(query).find((key) => key.endsWith('Page'));
 
     if (!pageKey) {
@@ -154,10 +153,21 @@ export class UsersController {
           page,
           limit,
         );
+        const enrichedItems = await Promise.all(
+          result.items.map(async (post) => {
+            const commentCount =
+              await this.interactionsService.countCommentsByPostId(post.id);
+            return {
+              ...post,
+              commentCount,
+            };
+          }),
+        );
+
         return {
           ok: true,
           liked: {
-            items: result.items,
+            items: enrichedItems,
             totalCount: result.totalCount,
             hasMore: page * limit < result.totalCount,
           },
@@ -262,10 +272,23 @@ export class UsersController {
           page,
           limit,
         );
+
+        const enrichedItems = result.items.map((post) => {
+          const dogImage = post.user?.dogs?.[0]?.dog_image || null;
+          return {
+            ...post,
+            user: {
+              ...post.user,
+              dogs: post.user?.dogs || [],
+              dogImage,
+            },
+          };
+        });
+
         return {
           ok: true,
           posts: {
-            items: result.items,
+            items: enrichedItems,
             totalCount: result.totalCount,
             hasMore: page * limit < result.totalCount,
           },
