@@ -1,13 +1,16 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { MatchesService } from './matches.service';
+import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('match')
+@UseGuards(AuthGuard('jwt'))
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
   @Get()
-  async getMatch(@Query('rejected') rejected: string) {
-    const userId = 19;
+  async getMatch(@Req() req: Request, @Query('rejected') rejected: string) {
+    const userId = (req as any).user?.id;
 
     let parsedRejected: { mbti: string; personality: string[] }[] = [];
     try {

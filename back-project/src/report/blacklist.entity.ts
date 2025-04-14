@@ -24,10 +24,6 @@ export class Blacklist {
   @JoinColumn({ name: 'target_user_id' })
   targetUser: User | null;
 
-  @ManyToOne(() => Dog, { nullable: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'target_dog_id' })
-  targetDog: Dog | null;
-
   @Column({ type: 'text' })
   reason: string;
 
