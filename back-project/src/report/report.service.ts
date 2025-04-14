@@ -42,35 +42,6 @@ export class ReportsService {
       reason,
     });
     await this.reportRepository.save(report);
-
-    if (reportType === report_type.USER) {
-      const reportCount = await this.reportRepository.count({
-        where: { reportType, targetId },
-      });
-
-      if (reportCount >= 3) {
-        const targetUser = await this.userRepository.findOneBy({
-          id: targetId,
-        });
-
-        if (targetUser) {
-          const alreadyBlacklisted = await this.blacklistRepository.findOne({
-            where: { targetUser },
-          });
-
-          if (!alreadyBlacklisted) {
-            const blacklist = this.blacklistRepository.create({
-              reporter,
-              targetUser,
-              targetDog: null,
-              reason: '신고 누적 3회',
-            });
-            await this.blacklistRepository.save(blacklist);
-          }
-        }
-      }
-    }
-
     return report;
   }
 
@@ -83,11 +54,12 @@ export class ReportsService {
     const reportInfo = await Promise.all(
       reports.map(async (report) => {
         let targetInfo: {
-          id: number;
+          userId: number;
+          postId?: number;
+          commentId?: number;
           nickName?: string | null;
           email?: string;
           content?: string;
-          writer?: string | null;
         } | null = null;
 
         if (report.reportType === 'user') {
@@ -96,7 +68,7 @@ export class ReportsService {
           });
           if (user) {
             targetInfo = {
-              id: user.id,
+              userId: user.id,
               nickName: user.nickName,
               email: user.email,
             };
@@ -110,9 +82,11 @@ export class ReportsService {
           });
           if (post) {
             targetInfo = {
-              id: post.id,
+              userId: post.user?.id,
+              postId: post.id,
               content: post.content,
               nickName: post.user?.nickName || null,
+              email: post.user?.email,
             };
           }
         }
@@ -124,15 +98,25 @@ export class ReportsService {
           });
           if (comment) {
             targetInfo = {
-              id: comment.id,
+              userId: comment.user?.id,
+              commentId: comment.id,
               content: comment.content,
               nickName: comment.user?.nickName || null,
+              email: comment.user?.email,
             };
           }
         }
 
         return {
-          ...report,
+          id: report.id,
+          reportType: report.reportType,
+          reason: report.reason,
+          created_at: report.created_at,
+          reporter: {
+            id: report.reporter.id,
+            email: report.reporter.email,
+            nickName: report.reporter.nickName,
+          },
           targetInfo,
         };
       }),
