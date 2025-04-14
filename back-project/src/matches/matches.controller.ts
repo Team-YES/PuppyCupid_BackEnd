@@ -7,7 +7,7 @@ export class MatchesController {
 
   @Get()
   async getMatch(@Query('rejected') rejected: string) {
-    const userId = 1; // 🔥 테스트용 userId로 고정
+    const userId = 19;
 
     let parsedRejected: { mbti: string; personality: string[] }[] = [];
     try {
