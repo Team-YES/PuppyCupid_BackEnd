@@ -56,10 +56,10 @@ export class MessagesController {
   }
 
   // 안읽은 메세지 확인
-  @Patch('read/:senderId')
-  async readMark(@Param('senderId') senderId: number, @Req() req: any) {
+  @Patch('read/:otherUserId')
+  async readMark(@Param('otherUserId') otherUserId: number, @Req() req: any) {
     const receiverId = req.user.id;
-    await this.messagesService.messagesRead(receiverId, senderId);
+    await this.messagesService.messagesRead(receiverId, otherUserId);
     return { ok: true, message: '읽음 처리 완료' };
   }
 
