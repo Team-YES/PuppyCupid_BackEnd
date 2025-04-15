@@ -150,9 +150,9 @@ export class AdminController {
   async getChatCount(@Req() req: Request) {
     const user = req.user as JwtUser;
 
-    const chatsCount = await this.adminService.getChatCount(user);
-    const paymentsCount = await this.adminService.getPaymentsCount(user);
-    const postsCount = await this.adminService.countAllPosts(user);
+    const chatsCount = (await this.adminService.getChatCount(user)) ?? 0;
+    const paymentsCount = (await this.adminService.getPaymentsCount(user)) ?? 0;
+    const postsCount = (await this.adminService.countAllPosts(user)) ?? 0;
 
     const today = new Date().toISOString().split('T')[0];
 
