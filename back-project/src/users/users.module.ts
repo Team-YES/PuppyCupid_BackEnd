@@ -11,7 +11,7 @@ import { FollowsModule } from 'src/follows/follows.module';
   imports: [
     TypeOrmModule.forFeature([User]),
     PostsModule,
-    InteractionsModule,
+    forwardRef(() => InteractionsModule),
     NotificationsModule,
     forwardRef(() => FollowsModule),
   ],

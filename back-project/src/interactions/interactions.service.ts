@@ -6,7 +6,8 @@ import { Post } from '../posts/posts.entity';
 import { PostsService } from 'src/posts/posts.service';
 import { Comment } from './comments.entity';
 import { UserRole } from 'src/users/users.entity';
-
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class InteractionsService {
   constructor(
@@ -16,11 +17,10 @@ export class InteractionsService {
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
 
-    @InjectRepository(Post)
-    private readonly postRepository: Repository<Post>,
-
     @Inject(forwardRef(() => PostsService))
     private readonly postsService: PostsService,
+    private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   private async updateLikeCount(postId: number): Promise<void> {
@@ -55,6 +55,17 @@ export class InteractionsService {
       });
       await this.likeRepository.save(newLike);
       liked = true;
+    }
+
+    const post = await this.postsService.findPostById(postId);
+
+    if (post && post.user.id !== userId) {
+      const userNickName = await this.usersService.getUserNickName(userId);
+
+      await this.notificationsService.createNotification(
+        post.user.id,
+        `${userNickName}님이 회원님의 게시글을 좋아합니다.`,
+      );
     }
 
     const likeCount = await this.likeRepository.count({
@@ -118,11 +129,18 @@ export class InteractionsService {
 
     const fullComment = await this.commentRepository.findOne({
       where: { id: savedComment.id },
-      relations: ['user', 'user.dogs', 'post', 'parentComment'],
+      relations: ['user', 'user.dogs', 'post', 'post.user', 'parentComment'],
     });
 
     if (!fullComment || !fullComment.user || !fullComment.post) {
       throw new Error('댓글 조회 실패: 필요한 관계 데이터가 없습니다.');
+    }
+
+    if (fullComment.user.id !== fullComment.post.user.id) {
+      await this.notificationsService.createNotification(
+        fullComment.post.user.id,
+        `${fullComment.user.nickName}님이 회원님의 게시글에 댓글을 남겼습니다.`,
+      );
     }
 
     return {

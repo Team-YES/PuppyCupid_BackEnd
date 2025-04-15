@@ -3,15 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Follow } from './follows.entity';
 import { User } from 'src/users/users.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class FollowsService {
   constructor(
     @InjectRepository(Follow)
     private readonly followRepository: Repository<Follow>,
-
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   // 팔로우, 언팔로우
@@ -34,6 +35,13 @@ export class FollowsService {
     });
 
     await this.followRepository.save(follow);
+
+    const followerUser = await this.usersService.findUserById(followerId);
+
+    await this.notificationsService.createNotification(
+      followingId,
+      `${followerUser?.nickName || '누군가'}님이 회원님을 팔로우했습니다.`,
+    );
     return { followed: true };
   }
 

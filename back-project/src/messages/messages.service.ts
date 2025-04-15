@@ -5,6 +5,7 @@ import { Message } from './messages.entity';
 import { ChatCondition } from 'src/messages/chatCondition.entity';
 import { User } from 'src/users/users.entity';
 import { UsersService } from 'src/users/users.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class MessagesService {
@@ -14,6 +15,7 @@ export class MessagesService {
     @InjectRepository(ChatCondition)
     private readonly chatConditionRepository: Repository<ChatCondition>,
     private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async sendMessage(
@@ -32,6 +34,15 @@ export class MessagesService {
         where: { userId: receiverId, otherUserId: sendId },
       }),
     ]);
+
+    if (isRequest) {
+      const userNickName = await this.usersService.getUserNickName(sendId);
+
+      await this.notificationsService.createNotification(
+        receiverId,
+        `${userNickName}님이 회원님이 채팅을 보냈습니다.`,
+      );
+    }
 
     if (!isRequest) {
       if (otherExit?.exited) return null;

@@ -56,6 +56,7 @@ export class InteractionsController {
         body.content,
         body.parentCommentId,
       );
+
       return { ok: true, content: commentResponse };
     } catch (err) {
       return { ok: false, error: err.message || 'Internal server error' };
