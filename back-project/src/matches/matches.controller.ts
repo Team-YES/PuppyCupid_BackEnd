@@ -9,8 +9,24 @@ export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
   @Get()
-  async getMatch(@Req() req: Request, @Query('rejected') rejected: string) {
+  async getMatch(
+    @Req() req: Request,
+    @Query('lat') lat: string,
+    @Query('lng') lng: string,
+    @Query('rejected') rejected: string,
+  ) {
     const userId = (req as any).user?.id;
+
+    // 위도/경도 필수 확인
+    if (!lat || !lng) {
+      return { ok: false, error: '위도와 경도를 쿼리로 전달해주세요.' };
+    }
+
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(lng);
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return { ok: false, error: '위도/경도 형식이 잘못되었습니다.' };
+    }
 
     let parsedRejected: { mbti: string; personality: string[] }[] = [];
     try {
@@ -20,7 +36,12 @@ export class MatchesController {
     }
 
     try {
-      const match = await this.matchesService.recommend(userId, parsedRejected);
+      const match = await this.matchesService.recommend(
+        userId,
+        latitude,
+        longitude,
+        parsedRejected,
+      );
       return { ok: true, match };
     } catch (err) {
       return { ok: false, error: err.message };
