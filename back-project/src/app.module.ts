@@ -37,6 +37,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 // schedule
 import { ScheduleModule } from '@nestjs/schedule';
+import { Blacklist } from './admin/blacklist.entity';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -63,6 +64,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         Weather,
         ChatCondition,
         Report,
+        Blacklist,
       ],
       synchronize: true,
     }),

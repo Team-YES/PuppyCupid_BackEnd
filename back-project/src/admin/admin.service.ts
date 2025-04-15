@@ -47,6 +47,31 @@ export class AdminService {
     await this.blacklistRepository.save(blacklist);
   }
 
+  // 블랙리스트 전체 조회
+  async getAllBlacklist() {
+    return await this.blacklistRepository.find();
+  }
+
+  // 블랙리스트 -> 유저로
+  async removeToBlacklist(userId: number): Promise<void> {
+    const user = await this.usersService.findUserById(userId);
+
+    if (!user) throw new NotFoundException('유저를 찾을 수 없습니다');
+
+    const blacklist = await this.blacklistRepository.findOne({
+      where: { targetUser: { id: userId } },
+      relations: ['targetUser'],
+    });
+
+    if (!blacklist)
+      throw new NotFoundException('블랙리스트에 존재하지 않습니다');
+
+    await this.blacklistRepository.remove(blacklist);
+
+    user.role = UserRole.USER;
+    await this.usersService.save(user);
+  }
+
   // 유저 삭제 (강제 탈퇴)
   async deleteUserAsAdmin(userId: number) {
     return await this.usersService.deleteUser({

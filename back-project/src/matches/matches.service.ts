@@ -11,6 +11,8 @@ export class MatchesService {
 
   async recommend(
     userId: number,
+    latitude: number,
+    longitude: number,
     rejected: { mbti: string; personality: string[] }[] = [],
   ): Promise<Dog | null> {
     const myDog = await this.dogsService.findDogByUserID(userId);
@@ -61,7 +63,11 @@ export class MatchesService {
       return null;
     }
 
-    const allDogs = await this.dogsService.findNearbyDogs(myDog.id);
+    const allDogs = await this.dogsService.findNearbyDogsForAI(
+      latitude,
+      longitude,
+      myDog.id,
+    );
 
     for (const combo of recommendedCombos) {
       const isRejected = rejected.some(
