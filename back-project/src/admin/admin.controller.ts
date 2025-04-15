@@ -32,6 +32,20 @@ export class AdminController {
     return { ok: true };
   }
 
+  // 모든 블랙리스트 조회
+  @Get('blacklist')
+  async getBlacklists() {
+    const blacklists = await this.adminService.getAllBlacklist();
+    return { ok: true, blacklists };
+  }
+
+  // 블랙리스트 -> 유저
+  @Delete('blacklist/:userId')
+  async removeBlacklist(@Param('userId', ParseIntPipe) userId: number) {
+    await this.adminService.removeToBlacklist(userId);
+    return { ok: true };
+  }
+
   // 유저 삭제
   @Delete('users/:id')
   async deleteUser(@Param('id') id: number) {
