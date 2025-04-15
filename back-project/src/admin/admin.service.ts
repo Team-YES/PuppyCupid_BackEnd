@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { ReportsService } from 'src/report/report.service';
 import { InquiriesService } from 'src/inquiries/inquiries.service';
@@ -10,6 +14,11 @@ import { InteractionsService } from 'src/interactions/interactions.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blacklist } from './blacklist.entity';
 import { Repository } from 'typeorm';
+
+interface AdminRequest {
+  id: number;
+  role: UserRole;
+}
 
 @Injectable()
 export class AdminService {
@@ -25,15 +34,28 @@ export class AdminService {
     private readonly interactionsService: InteractionsService,
   ) {}
 
+  // 관리자 확인
+  private checkAdmin(requester: AdminRequest) {
+    if (requester.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('관리자만 접근할 수 있습니다.');
+    }
+  }
+
   // 유저 목록 전체 조회
-  async getAllUsers() {
-    return await this.usersService.findAllUser();
+  async getAllUsers(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.usersService.findAllUser();
   }
 
   // 블랙리스트에 넣기
-  async addToBlacklist(userId: number, reason: string): Promise<void> {
-    const user = await this.usersService.findUserById(userId);
+  async addToBlacklist(
+    userId: number,
+    reason: string,
+    requester: AdminRequest,
+  ) {
+    this.checkAdmin(requester);
 
+    const user = await this.usersService.findUserById(userId);
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다');
 
     user.role = UserRole.BLACKLIST;
@@ -48,14 +70,16 @@ export class AdminService {
   }
 
   // 블랙리스트 전체 조회
-  async getAllBlacklist() {
-    return await this.blacklistRepository.find();
+  async getAllBlacklist(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.blacklistRepository.find();
   }
 
   // 블랙리스트 -> 유저로
-  async removeToBlacklist(userId: number): Promise<void> {
-    const user = await this.usersService.findUserById(userId);
+  async removeToBlacklist(userId: number, requester: AdminRequest) {
+    this.checkAdmin(requester);
 
+    const user = await this.usersService.findUserById(userId);
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다');
 
     const blacklist = await this.blacklistRepository.findOne({
@@ -73,56 +97,65 @@ export class AdminService {
   }
 
   // 유저 삭제 (강제 탈퇴)
-  async deleteUserAsAdmin(userId: number) {
-    return await this.usersService.deleteUser({
+  async deleteUserAsAdmin(userId: number, requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.usersService.deleteUser({
       targetUserId: userId,
-      requester: { id: 0, role: UserRole.ADMIN },
+      requester,
     });
   }
 
   // 전체 신고 내역
-  async getAllReports() {
-    return await this.reportsService.getAllReports();
+  async getAllReports(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.reportsService.getAllReports();
   }
 
   // 게시글 개수
-  async countAllPosts() {
-    return await this.postsService.countAllPosts();
+  async countAllPosts(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.postsService.countAllPosts();
   }
 
   // 게시글 삭제
-  async deleteReportPost(postId: number): Promise<boolean> {
-    return await this.postsService.deletePost({
+  async deleteReportPost(postId: number, requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.postsService.deletePost({
       postId,
-      user: { id: 0, role: UserRole.USER },
+      user: requester,
     });
   }
-
   // 댓글 삭제
-  async deleteReportComment(commentId: number): Promise<{ ok: boolean }> {
-    return await this.interactionsService.deleteComment(commentId, {
-      id: 0,
-      role: UserRole.USER,
-    });
+  async deleteReportComment(commentId: number, requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.interactionsService.deleteComment(commentId, requester);
   }
 
   // 전체 문의 목록
-  async getAllInquiries() {
-    return await this.inquiriesService.findAllInquiries();
+  async getAllInquiries(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.inquiriesService.findAllInquiries();
   }
 
   // 문의 상태 업데이트
-  async updateInquiryStatus(id: number, status: InquiryStatus) {
-    return await this.inquiriesService.updateStatus(id, status);
+  async updateInquiryStatus(
+    id: number,
+    status: InquiryStatus,
+    requester: AdminRequest,
+  ) {
+    this.checkAdmin(requester);
+    return this.inquiriesService.updateStatus(id, status);
   }
 
   // 문의 삭제
-  async deleteInquiry(id: number) {
-    return await this.inquiriesService.remove(id);
+  async deleteInquiry(id: number, requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.inquiriesService.remove(id);
   }
 
   // 결제 내역
-  async getAllPayments() {
-    return await this.paymentsService.allPayments();
+  async getAllPayments(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.paymentsService.allPayments();
   }
 }
