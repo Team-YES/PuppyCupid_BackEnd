@@ -120,14 +120,17 @@ export class AdminService {
   // 게시글 삭제
   async deleteReportPost(postId: number, requester: AdminRequest) {
     this.checkAdmin(requester);
+    await this.reportsService.deletePostReports(postId);
     return this.postsService.deletePost({
       postId,
       user: requester,
     });
   }
+
   // 댓글 삭제
   async deleteReportComment(commentId: number, requester: AdminRequest) {
     this.checkAdmin(requester);
+    await this.reportsService.deleteCommentReports(commentId);
     return this.interactionsService.deleteComment(commentId, requester);
   }
 
