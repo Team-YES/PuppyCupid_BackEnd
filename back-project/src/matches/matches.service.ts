@@ -18,6 +18,13 @@ export class MatchesService {
     const myDog = await this.dogsService.findDogByUserID(userId);
     if (!myDog) throw new Error('강아지 정보를 찾을 수 없습니다.');
 
+    await this.dogsService.updateLocation(
+      userId,
+      myDog.id,
+      latitude,
+      longitude,
+    );
+
     const dogInput = {
       mbti: myDog.mbti,
       personality: myDog.personality.split(',').map((s) => s.trim()),
