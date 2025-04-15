@@ -205,7 +205,7 @@ export class PostsService {
       where: {
         content: Like(`%${keyword}%`),
       },
-      relations: ['user', 'images', 'likes', 'likes.user'],
+      relations: ['user', 'images', 'likes', 'likes.user', 'user.dogs'],
       order: {
         created_at: 'DESC',
       },

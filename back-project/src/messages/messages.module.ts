@@ -15,5 +15,6 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
   ],
   providers: [MessagesService],
   controllers: [MessagesController],
+  exports: [MessagesService],
 })
 export class MessagesModule {}

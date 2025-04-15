@@ -18,6 +18,13 @@ export class MatchesService {
     const myDog = await this.dogsService.findDogByUserID(userId);
     if (!myDog) throw new Error('강아지 정보를 찾을 수 없습니다.');
 
+    await this.dogsService.updateLocation(
+      userId,
+      myDog.id,
+      latitude,
+      longitude,
+    );
+
     const dogInput = {
       mbti: myDog.mbti,
       personality: myDog.personality.split(',').map((s) => s.trim()),
@@ -41,8 +48,17 @@ export class MatchesService {
       model: 'gemini-1.5-pro-001',
     });
 
-    const result = await model.generateContent([prompt]);
-    const rawText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+    let rawText: string | undefined;
+
+    try {
+      const result = await model.generateContent([prompt]);
+      console.log(JSON.stringify(result, null, 2));
+
+      rawText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+    } catch (error) {
+      console.error('Gemini API 호출 에러:', error);
+      return null;
+    }
 
     let recommendedCombos: { mbti: string; personality: string[] }[] = [];
 
@@ -52,12 +68,18 @@ export class MatchesService {
           .trim()
           .replace(/^```json\n?/, '')
           .replace(/^```/, '')
-          .replace(/```$/, '');
+          .replace(/```$/, '')
+          .replaceAll('```', '');
 
-        recommendedCombos = JSON.parse(cleanText);
+        const parsed = JSON.parse(cleanText);
+
+        recommendedCombos = parsed.map((combo) => ({
+          mbti: combo.mbti,
+          personality: combo.personality.map((p: string) => p.trim()),
+        }));
+
+        console.log('파싱 성공:', recommendedCombos);
       }
-
-      console.log(recommendedCombos);
     } catch (err) {
       console.error('Gemini 응답 파싱 실패:', rawText);
       return null;

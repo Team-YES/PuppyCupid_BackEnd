@@ -33,6 +33,9 @@ export class Message {
   @Column({ default: false })
   system: boolean;
 
+  @Column({ default: false })
+  isRead: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 }

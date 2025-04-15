@@ -13,7 +13,8 @@ import { PostsService } from 'src/posts/posts.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blacklist } from './blacklist.entity';
-import { Repository } from 'typeorm';
+import { Admin, Repository } from 'typeorm';
+import { MessagesService } from 'src/messages/messages.service';
 
 interface AdminRequest {
   id: number;
@@ -32,6 +33,7 @@ export class AdminService {
     private readonly paymentsService: PaymentsService,
     private readonly postsService: PostsService,
     private readonly interactionsService: InteractionsService,
+    private readonly messagesService: MessagesService,
   ) {}
 
   // 관리자 확인
@@ -156,9 +158,21 @@ export class AdminService {
     return this.inquiriesService.remove(id);
   }
 
+  // 채팅방 수
+  async getChatCount(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.messagesService.countChat();
+  }
+
   // 결제 내역
   async getAllPayments(requester: AdminRequest) {
     this.checkAdmin(requester);
     return this.paymentsService.allPayments();
+  }
+
+  // 결제 내역 수
+  async getPaymentsCount(requester: AdminRequest) {
+    this.checkAdmin(requester);
+    return this.paymentsService.countPayments();
   }
 }
