@@ -160,6 +160,31 @@ export class DogsService {
       .getMany();
   }
 
+  // AI용 3km 강아지 찾기
+  async findNearbyDogsForAI(
+    latitude: number,
+    longitude: number,
+    excludeDogId: number,
+  ): Promise<Dog[]> {
+    return this.dogRepository
+      .createQueryBuilder('dog')
+      .leftJoinAndSelect('dog.user', 'user')
+      .where('dog.id != :excludeDogId', { excludeDogId })
+      .andWhere('dog.latitude IS NOT NULL AND dog.longitude IS NOT NULL')
+      .andWhere(
+        `ST_Distance_Sphere(
+          point(dog.longitude, dog.latitude),
+          point(:lng, :lat)
+        ) <= :radius`,
+        {
+          lat: latitude,
+          lng: longitude,
+          radius: 3000,
+        },
+      )
+      .getMany();
+  }
+
   // 유저 프로필에 강아지 정보
   async findDogByUserID(userId: number): Promise<Dog | null> {
     return await this.dogRepository.findOne({
