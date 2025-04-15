@@ -22,6 +22,7 @@ export class ReportsService {
     private readonly postRepository: Repository<Post>,
   ) {}
 
+  // 신고
   async createReport(
     reporterId: number,
     reportType: report_type,
@@ -41,6 +42,7 @@ export class ReportsService {
     return report;
   }
 
+  // 모든 신고 내역 확인
   async getAllReports(): Promise<any[]> {
     const reports = await this.reportRepository.find({
       relations: ['reporter'],
@@ -119,5 +121,21 @@ export class ReportsService {
     );
 
     return reportInfo;
+  }
+
+  // 게시글 신고 내역 삭제
+  async deletePostReports(postId: number) {
+    await this.reportRepository.delete({
+      reportType: 'post',
+      targetId: postId,
+    });
+  }
+
+  // 댓글 신고 내역 삭제
+  async deleteCommentReports(commentId: number) {
+    await this.reportRepository.delete({
+      reportType: 'comment',
+      targetId: commentId,
+    });
   }
 }

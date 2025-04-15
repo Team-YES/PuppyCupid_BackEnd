@@ -10,11 +10,7 @@ export class NotificationsService {
     private readonly notificationRepository: Repository<Notification>,
   ) {}
 
-  async findByUser(
-    userId: number,
-    page: number,
-    limit: number,
-  ): Promise<{ items: Notification[]; totalCount: number }> {
+  async findByUser(userId: number, page: number, limit: number) {
     const [items, totalCount] = await this.notificationRepository.findAndCount({
       where: { user: { id: userId } },
       order: { created_at: 'DESC' },
@@ -23,5 +19,17 @@ export class NotificationsService {
     });
 
     return { items, totalCount };
+  }
+
+  async createNotification(userId: number, message: string) {
+    const notification = this.notificationRepository.create({
+      user: { id: userId },
+      message,
+    });
+    return await this.notificationRepository.save(notification);
+  }
+
+  async markAsRead(id: number) {
+    await this.notificationRepository.update({ id }, { is_read: true });
   }
 }

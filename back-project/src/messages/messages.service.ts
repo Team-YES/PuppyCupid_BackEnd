@@ -5,6 +5,7 @@ import { Message } from './messages.entity';
 import { ChatCondition } from 'src/messages/chatCondition.entity';
 import { User } from 'src/users/users.entity';
 import { UsersService } from 'src/users/users.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class MessagesService {
@@ -14,8 +15,10 @@ export class MessagesService {
     @InjectRepository(ChatCondition)
     private readonly chatConditionRepository: Repository<ChatCondition>,
     private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
+  // 메세지 보내기
   async sendMessage(
     sendId: number,
     receiverId: number,
@@ -32,6 +35,16 @@ export class MessagesService {
         where: { userId: receiverId, otherUserId: sendId },
       }),
     ]);
+
+    // 채팅 시작할때만 알림으로 보내기
+    if (isRequest) {
+      const userNickName = await this.usersService.getUserNickName(sendId);
+
+      await this.notificationsService.createNotification(
+        receiverId,
+        `${userNickName}님이 회원님이 채팅을 보냈습니다.`,
+      );
+    }
 
     if (!isRequest) {
       if (otherExit?.exited) return null;
@@ -73,6 +86,7 @@ export class MessagesService {
     return this.messageRepository.save(newMessage);
   }
 
+  // 나랑 채팅하는 유저 명단
   async getChatUsers(userId: number): Promise<
     {
       id: number;
@@ -116,6 +130,7 @@ export class MessagesService {
     return Array.from(result.values());
   }
 
+  // 대화 내용
   async getConversation(
     userId: number,
     otherUserId: number,
@@ -150,6 +165,19 @@ export class MessagesService {
     });
   }
 
+  // 채팅 읽음 표시
+  async messagesRead(receiverId: number, senderId: number) {
+    await this.messageRepository.update(
+      {
+        sender: { id: senderId },
+        receiver: { id: receiverId },
+        isRead: false, // 아직 읽지 않은 메세지
+      },
+      { isRead: true }, // 읽음 표시로 변환
+    );
+  }
+
+  // 채팅 삭제
   async deleteConversation(userId: number, otherUserId: number): Promise<void> {
     let myCondition = await this.chatConditionRepository.findOne({
       where: { userId, otherUserId },
