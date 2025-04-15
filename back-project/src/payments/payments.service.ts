@@ -14,6 +14,7 @@ export class PaymentsService {
     private readonly userService: UsersService,
   ) {}
 
+  // 결제하기
   async createPayment(userId: number, amount: number, method: PaymentMethod) {
     const user = await this.userService.findUserById(userId);
     if (!user) throw new Error('User 정보가 없습니다.');
@@ -31,6 +32,7 @@ export class PaymentsService {
     return this.paymentRepository.save(payment);
   }
 
+  // 결제 상태 업로드
   async updatePaymentStatus(
     orderId: string,
     status: PaymentStatus,
@@ -74,5 +76,10 @@ export class PaymentsService {
   // 관리자 페이지 결제 내역
   async allPayments() {
     return this.paymentRepository.find();
+  }
+
+  // 관리자 페이지 결제 내역 수
+  async countPayments() {
+    return this.paymentRepository.count();
   }
 }

@@ -228,4 +228,9 @@ export class MessagesService {
       await this.chatConditionRepository.remove([myCondition, otherCondition]);
     }
   }
+
+  // 관리자 페이지용 전체 채팅방 수
+  async countChat() {
+    return this.chatConditionRepository.count();
+  }
 }

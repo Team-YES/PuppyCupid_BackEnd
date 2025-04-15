@@ -9,6 +9,7 @@ import { PostsModule } from 'src/posts/posts.module';
 import { InteractionsModule } from 'src/interactions/interactions.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blacklist } from './blacklist.entity';
+import { MessagesModule } from 'src/messages/messages.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { Blacklist } from './blacklist.entity';
     PaymentsModule,
     PostsModule,
     InteractionsModule,
+    MessagesModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],

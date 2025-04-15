@@ -15,7 +15,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { AdminService } from './admin.service';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 import { UserRole } from 'src/users/users.entity';
-
 interface JwtUser {
   id: number;
   role: UserRole;
@@ -144,6 +143,20 @@ export class AdminController {
     const user = req.user as JwtUser;
     const result = await this.adminService.deleteInquiry(id, user);
     return { ok: true, result };
+  }
+
+  // 채팅방 수 + 결제 내역 수 + 게시글 수
+  @Get('count')
+  async getChatCount(@Req() req: Request) {
+    const user = req.user as JwtUser;
+
+    const chatsCount = await this.adminService.getChatCount(user);
+    const paymentsCount = await this.adminService.getPaymentsCount(user);
+    const postsCount = await this.adminService.countAllPosts(user);
+
+    const today = new Date().toISOString().split('T')[0];
+
+    return { date: today, chatsCount, paymentsCount, postsCount };
   }
 
   // 결제 내역
