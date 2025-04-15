@@ -13,8 +13,9 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
-import { Gender } from 'src/users/users.entity';
+import { Gender, UserRole } from 'src/users/users.entity';
 
 interface JwtUser {
   id: number;
@@ -181,6 +182,40 @@ export class AuthController {
     } catch {
       return { isLoggedIn: false };
     }
+  }
+
+  // 관리자 로그인
+  @Post('/adminLogin')
+  async adminLogin(
+    @Body() body: { email: string; password: string },
+    @Res() res: Response,
+  ) {
+    const user = await this.usersService.findUserByEmail(body.email);
+
+    if (!user || user.role !== UserRole.ADMIN) {
+      return res
+        .status(403)
+        .json({ ok: false, error: '관리자 계정을 찾을 수 없습니다.' });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      body.password,
+      user.admin_password,
+    );
+
+    if (!isPasswordCorrect) {
+      return res
+        .status(401)
+        .json({ ok: false, error: '비밀번호가 틀렸습니다.' });
+    }
+
+    const tokens = await this.authService.issueTokensAndSetCookies(user, res);
+
+    return res.status(200).json({
+      ok: true,
+      message: '관리자 로그인 성공',
+      access_token: tokens.accessToken,
+    });
   }
 
   @Get('/refresh')

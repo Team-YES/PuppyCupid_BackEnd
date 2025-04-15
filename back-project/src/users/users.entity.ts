@@ -25,6 +25,9 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  admin_password: string;
+
   @Column({ type: 'varchar', length: 50, unique: true })
   email: string;
 

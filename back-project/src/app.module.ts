@@ -38,6 +38,8 @@ import { ConfigModule } from '@nestjs/config';
 // schedule
 import { ScheduleModule } from '@nestjs/schedule';
 import { Blacklist } from './admin/blacklist.entity';
+import { AdminSeederService } from './seeder/admin-seeder.service';
+import { SeederModule } from './seeder/seeder.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -83,6 +85,7 @@ import { Blacklist } from './admin/blacklist.entity';
     WeatherModule,
     ReportsModule,
     SchedulerModule,
+    SeederModule,
   ],
 })
 export class AppModule {}
