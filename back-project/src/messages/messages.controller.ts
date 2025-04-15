@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -19,7 +20,6 @@ export class MessagesController {
 
   // 메세지
   @Post()
-  @UseGuards(AuthGuard('jwt'))
   async sendMessage(
     @Body() body: { receiverId: number; content: string },
     @Req() req: AuthRequest,
@@ -35,7 +35,6 @@ export class MessagesController {
 
   // 채팅한 유저 정보
   @Get('chatUsers')
-  @UseGuards(AuthGuard('jwt'))
   async getChatUsers(@Req() req: AuthRequest) {
     const userId = req.user.id;
     const users = await this.messagesService.getChatUsers(userId);
@@ -44,7 +43,6 @@ export class MessagesController {
 
   // 유저 간 메세지
   @Get(':otherUserId')
-  @UseGuards(AuthGuard('jwt'))
   async getMessages(
     @Param('otherUserId') otherUserId: number,
     @Req() req: AuthRequest,
@@ -57,6 +55,15 @@ export class MessagesController {
     return { ok: true, messages };
   }
 
+  // 안읽은 메세지 확인
+  @Patch('read/:senderId')
+  async readMark(@Param('senderId') senderId: number, @Req() req: any) {
+    const receiverId = req.user.id;
+    await this.messagesService.messagesRead(receiverId, senderId);
+    return { ok: true, message: '읽음 처리 완료' };
+  }
+
+  // 삭제
   @Delete('/:otherUserId')
   async deleteConversation(
     @Param('otherUserId') otherUserId: number,
