@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/users.entity';
+import { User, UserRole } from 'src/users/users.entity';
 
 @Injectable()
 export class AdminSeederService {
@@ -28,6 +28,7 @@ export class AdminSeederService {
         email: adminId,
         nickName: '관리자',
         admin_password: hashedPassword,
+        role: UserRole.ADMIN,
       });
       await this.usersRepository.save(user);
       console.log('[Seeder] 관리자 계정 생성 완료');
