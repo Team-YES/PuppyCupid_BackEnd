@@ -124,7 +124,7 @@ export class MessagesService {
             m.sender.id === otherUser.id &&
             m.receiver.id === userId &&
             m.isRead === false,
-        );
+        ).length;
         result.set(otherUser.id, {
           id: otherUser.id,
           nickName: otherUser.nickName,
