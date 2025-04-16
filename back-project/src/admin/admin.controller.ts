@@ -25,6 +25,8 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { UserInfoDto } from './dto/allUsers.dto';
+import { AddToBlacklistResDto } from './dto/addToBlacklistRes.dto';
 
 interface JwtUser {
   id: number;
@@ -38,6 +40,12 @@ export class AdminController {
 
   // 모든 유저 정보
   @Get('users')
+  @ApiOperation({ summary: '모든 유저 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '전체 유저 목록 반환',
+    type: UserInfoDto,
+  })
   async getUsers(@Req() req: Request) {
     const user = req.user as JwtUser;
     const users = await this.adminService.getAllUsers(user);
@@ -46,6 +54,18 @@ export class AdminController {
 
   // 블랙리스트에 추가
   @Post('blacklist/:userId')
+  @ApiOperation({ summary: '유저를 블랙리스트에 추가' })
+  @ApiParam({
+    name: 'userId',
+    type: Number,
+    description: '블랙리스트에 등록할 유저 ID',
+  })
+  @ApiBody({ type: AddToBlacklistDto })
+  @ApiResponse({
+    status: 201,
+    description: '블랙리스트 등록 성공',
+    type: AddToBlacklistResDto,
+  })
   async addToBlacklist(
     @Param('userId', ParseIntPipe) userId: number,
     @Body() body: AddToBlacklistDto,
@@ -58,6 +78,7 @@ export class AdminController {
 
   // 모든 블랙리스트 조회
   @Get('blacklist')
+  @ApiOperation({ summary: '블랙리스트 전체 조회' })
   async getBlacklists(@Req() req: Request) {
     const user = req.user as JwtUser;
     const blacklists = await this.adminService.getAllBlacklist(user);
@@ -66,6 +87,8 @@ export class AdminController {
 
   // 블랙리스트 -> 유저
   @Delete('blacklist/:userId')
+  @ApiOperation({ summary: '블랙리스트에서 일반 유저로 변경' })
+  @ApiParam({ name: 'userId', type: Number })
   async removeBlacklist(
     @Param('userId', ParseIntPipe) userId: number,
     @Req() req: Request,
@@ -77,6 +100,8 @@ export class AdminController {
 
   // 유저 삭제
   @Delete('users/:id')
+  @ApiOperation({ summary: '유저 삭제 (강제 탈퇴)' })
+  @ApiParam({ name: 'id', type: Number })
   async deleteUser(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
     const user = req.user as JwtUser;
     await this.adminService.deleteUserAsAdmin(id, user);
@@ -85,6 +110,7 @@ export class AdminController {
 
   // 모든 신고 내역
   @Get('reports')
+  @ApiOperation({ summary: '전체 신고 내역 조회' })
   async getReports(@Req() req: Request) {
     const user = req.user as JwtUser;
     const reports = await this.adminService.getAllReports(user);
@@ -93,6 +119,7 @@ export class AdminController {
 
   // 게시글 개수
   @Get('postsCount')
+  @ApiOperation({ summary: '전체 게시글 개수' })
   async getCountAllPosts(@Req() req: Request) {
     const user = req.user as JwtUser;
     const count = await this.adminService.countAllPosts(user);
@@ -101,6 +128,8 @@ export class AdminController {
 
   // 게시글 삭제
   @Delete('posts/:postId')
+  @ApiOperation({ summary: '신고된 게시글 삭제' })
+  @ApiParam({ name: 'postId', type: Number })
   async deletePost(
     @Param('postId', ParseIntPipe) postId: number,
     @Req() req: Request,
@@ -112,6 +141,8 @@ export class AdminController {
 
   // 댓글 삭제
   @Delete('comments/:commentId')
+  @ApiOperation({ summary: '신고된 댓글 삭제' })
+  @ApiParam({ name: 'commentId', type: Number })
   async deleteComment(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Req() req: Request,
@@ -123,6 +154,7 @@ export class AdminController {
 
   // 모든 문의 내역
   @Get('inquiries')
+  @ApiOperation({ summary: '전체 문의 내역 조회' })
   async getInquiries(@Req() req: Request) {
     const user = req.user as JwtUser;
     const inquiries = await this.adminService.getAllInquiries(user);
@@ -131,6 +163,8 @@ export class AdminController {
 
   // 문의 상태 수정
   @Patch('inquiries/:id/status')
+  @ApiOperation({ summary: '문의 상태 수정' })
+  @ApiParam({ name: 'id', type: Number })
   async updateInquiryStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateInquiryStatusDto,
@@ -147,6 +181,8 @@ export class AdminController {
 
   // 문의 삭제
   @Delete('inquiries/:id')
+  @ApiOperation({ summary: '문의 삭제' })
+  @ApiParam({ name: 'id', type: Number })
   async deleteInquiry(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
@@ -158,6 +194,7 @@ export class AdminController {
 
   // 채팅방 수 + 결제 내역 수 + 게시글 수
   @Get('count')
+  @ApiOperation({ summary: '통계 정보 조회 (채팅/결제/게시글)' })
   async getChatCount(@Req() req: Request) {
     const user = req.user as JwtUser;
 
@@ -172,6 +209,7 @@ export class AdminController {
 
   // 결제 내역
   @Get('payments')
+  @ApiOperation({ summary: '전체 결제 내역 조회' })
   async getPayments(@Req() req: Request) {
     const user = req.user as JwtUser;
     const payments = await this.adminService.getAllPayments(user);

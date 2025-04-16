@@ -218,6 +218,35 @@ export class AuthController {
     });
   }
 
+  // 관리자 로그인 확인
+  @Get('/adminCheck')
+  async checkAdminLogin(@Req() req: Request) {
+    const token = req.cookies['access_token'];
+    if (!token) return { isLoggedIn: false };
+
+    try {
+      const payload = jwt.verify(
+        token,
+        this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY')!,
+      ) as JwtUser;
+
+      const user = await this.usersService.findUserById(payload.id);
+      if (!user) {
+        return { isLoggedIn: false };
+      }
+
+      return {
+        isLoggedIn: true,
+        user: {
+          id: user.id,
+          email: user.email,
+        },
+      };
+    } catch {
+      return { isLoggedIn: false };
+    }
+  }
+
   @Get('/refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
     const refreshToken = req.cookies['eid_refresh_token'];
