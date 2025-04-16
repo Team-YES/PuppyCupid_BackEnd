@@ -8,7 +8,7 @@ import { Request } from 'express';
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  // 알림 만들기
+  // 알림 조회
   @Get()
   async getMyNotifications(
     @Req() req: Request,
