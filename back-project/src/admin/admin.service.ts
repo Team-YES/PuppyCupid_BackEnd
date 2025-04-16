@@ -83,7 +83,17 @@ export class AdminService {
   // 블랙리스트 전체 조회
   async getAllBlacklist(requester: AdminRequest) {
     this.checkAdmin(requester);
-    return this.blacklistRepository.find();
+    const blacklists = await this.blacklistRepository.find({
+      relations: ['targetUser'],
+      order: { created_at: 'DESC' },
+    });
+
+    return blacklists.map((x) => ({
+      id: x.id,
+      targetUserId: x.targetUser?.id ?? null,
+      reason: x.reason,
+      created_at: x.created_at,
+    }));
   }
 
   // 블랙리스트 -> 유저로
