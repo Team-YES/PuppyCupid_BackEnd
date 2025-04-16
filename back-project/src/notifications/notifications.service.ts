@@ -14,12 +14,24 @@ export class NotificationsService {
   async findByUser(userId: number, page: number, limit: number) {
     const [items, totalCount] = await this.notificationRepository.findAndCount({
       where: { user: { id: userId } },
+      relations: ['user', 'user.dogs'],
       order: { created_at: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
 
-    return { items, totalCount };
+    const formatted = items.map((notification) => {
+      const dogImage = notification.user?.dogs?.[0]?.dog_image || null;
+
+      return {
+        message: notification.message,
+        isRead: notification.isRead,
+        createdAt: notification.created_at,
+        dogImage,
+      };
+    });
+
+    return { items: formatted, totalCount };
   }
 
   // 알림 만들기
@@ -37,5 +49,13 @@ export class NotificationsService {
       { user: { id: userId }, isRead: false },
       { isRead: true },
     );
+  }
+
+  // 읽지 않은 알림 존재?
+  async hasUnread(userId: number): Promise<boolean> {
+    const count = await this.notificationRepository.count({
+      where: { user: { id: userId }, isRead: false },
+    });
+    return count > 0;
   }
 }

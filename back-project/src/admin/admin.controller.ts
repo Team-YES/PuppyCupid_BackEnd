@@ -15,11 +15,22 @@ import { AuthGuard } from '@nestjs/passport';
 import { AdminService } from './admin.service';
 import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 import { UserRole } from 'src/users/users.entity';
+import { AddToBlacklistDto } from './dto/addToBlacklist.dto';
+import { UpdateInquiryStatusDto } from './dto/updateInquiryStatus.dto';
+
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
+
 interface JwtUser {
   id: number;
   role: UserRole;
 }
-
+@ApiTags('관리자 API')
 @Controller('admin')
 @UseGuards(AuthGuard('jwt'))
 export class AdminController {
@@ -37,7 +48,7 @@ export class AdminController {
   @Post('blacklist/:userId')
   async addToBlacklist(
     @Param('userId', ParseIntPipe) userId: number,
-    @Body() body: { reason: string },
+    @Body() body: AddToBlacklistDto,
     @Req() req: Request,
   ) {
     const user = req.user as JwtUser;
@@ -122,7 +133,7 @@ export class AdminController {
   @Patch('inquiries/:id/status')
   async updateInquiryStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { status: InquiryStatus },
+    @Body() body: UpdateInquiryStatusDto,
     @Req() req: Request,
   ) {
     const user = req.user as JwtUser;

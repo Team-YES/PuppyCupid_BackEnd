@@ -94,6 +94,7 @@ export class MessagesService {
       dogImage: string | null;
       lastMessage: string;
       lastMessageTime: string;
+      unreadCount: number;
     }[]
   > {
     const [messages, myExitedConditions] = await Promise.all([
@@ -117,12 +118,20 @@ export class MessagesService {
       const dogImage = otherUser.dogs?.[0]?.dog_image || null;
 
       if (!result.has(otherUser.id)) {
+        // 안 읽은 메시지 개수
+        const unreadCount = messages.filter(
+          (m) =>
+            m.sender.id === otherUser.id &&
+            m.receiver.id === userId &&
+            m.isRead === false,
+        ).length;
         result.set(otherUser.id, {
           id: otherUser.id,
           nickName: otherUser.nickName,
           dogImage,
           lastMessage: msg.content,
           lastMessageTime: msg.created_at.toISOString(),
+          unreadCount,
         });
       }
     }

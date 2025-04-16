@@ -4,12 +4,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 @Controller('notifications')
+@UseGuards(AuthGuard('jwt'))
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  // 알림 만들기
+  // 알림 조회
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   async getMyNotifications(
     @Req() req: Request,
     @Query('page') page = '1',
@@ -37,5 +37,13 @@ export class NotificationsController {
     const userId = req.user.id;
     await this.notificationsService.markAsRead(userId);
     return { ok: true, message: '알림 읽음 처리 완료' };
+  }
+
+  // 알림 상태 확인 (읽지 않은 알림 존재?)
+  @Get('status')
+  async checkUnread(@Req() req: any) {
+    const userId = req.user.id;
+    const hasUnread = await this.notificationsService.hasUnread(userId);
+    return { ok: true, hasUnread };
   }
 }
