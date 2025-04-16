@@ -38,4 +38,12 @@ export class NotificationsController {
     await this.notificationsService.markAsRead(userId);
     return { ok: true, message: '알림 읽음 처리 완료' };
   }
+
+  // 알림 상태 확인 (읽지 않은 알림 존재?)
+  @Get('status')
+  async checkUnread(@Req() req: any) {
+    const userId = req.user.id;
+    const hasUnread = await this.notificationsService.hasUnread(userId);
+    return { ok: true, hasUnread };
+  }
 }
