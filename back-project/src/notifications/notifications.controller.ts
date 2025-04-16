@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards, Query, Patch } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
@@ -7,6 +7,7 @@ import { Request } from 'express';
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
+  // 알림 만들기
   @Get()
   @UseGuards(AuthGuard('jwt'))
   async getMyNotifications(
@@ -14,7 +15,7 @@ export class NotificationsController {
     @Query('page') page = '1',
     @Query('limit') limit = '10',
   ) {
-    const user = req.user as any; // JWT에서 가져온 유저 정보
+    const user = req.user as any;
     const userId = user.id;
 
     const { items, totalCount } = await this.notificationsService.findByUser(
@@ -28,5 +29,13 @@ export class NotificationsController {
       notifications: items,
       totalCount,
     };
+  }
+
+  // 알림 읽음 표시
+  @Patch('read')
+  async markNotificationsAsRead(@Req() req: any) {
+    const userId = req.user.id;
+    await this.notificationsService.markAsRead(userId);
+    return { ok: true, message: '알림 읽음 처리 완료' };
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -15,6 +16,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Blacklist } from './blacklist.entity';
 import { Admin, Repository } from 'typeorm';
 import { MessagesService } from 'src/messages/messages.service';
+import { error } from 'console';
 
 interface AdminRequest {
   id: number;
@@ -60,6 +62,13 @@ export class AdminService {
     const user = await this.usersService.findUserById(userId);
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다');
 
+    const existing = await this.blacklistRepository.findOne({
+      where: { targetUser: { id: userId } },
+    });
+    if (existing) {
+      throw new BadRequestException('이미 블랙리스트에 등록된 유저입니다');
+    }
+
     user.role = UserRole.BLACKLIST;
     await this.usersService.save(user);
 
@@ -74,7 +83,17 @@ export class AdminService {
   // 블랙리스트 전체 조회
   async getAllBlacklist(requester: AdminRequest) {
     this.checkAdmin(requester);
-    return this.blacklistRepository.find();
+    const blacklists = await this.blacklistRepository.find({
+      relations: ['targetUser'],
+      order: { created_at: 'DESC' },
+    });
+
+    return blacklists.map((x) => ({
+      id: x.id,
+      targetUserId: x.targetUser?.id ?? null,
+      reason: x.reason,
+      created_at: x.created_at,
+    }));
   }
 
   // 블랙리스트 -> 유저로
@@ -82,6 +101,7 @@ export class AdminService {
     this.checkAdmin(requester);
 
     const user = await this.usersService.findUserById(userId);
+
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다');
 
     const blacklist = await this.blacklistRepository.findOne({

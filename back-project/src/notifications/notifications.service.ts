@@ -10,6 +10,7 @@ export class NotificationsService {
     private readonly notificationRepository: Repository<Notification>,
   ) {}
 
+  // 유저 알림 찾기
   async findByUser(userId: number, page: number, limit: number) {
     const [items, totalCount] = await this.notificationRepository.findAndCount({
       where: { user: { id: userId } },
@@ -21,6 +22,7 @@ export class NotificationsService {
     return { items, totalCount };
   }
 
+  // 알림 만들기
   async createNotification(userId: number, message: string) {
     const notification = this.notificationRepository.create({
       user: { id: userId },
@@ -29,7 +31,11 @@ export class NotificationsService {
     return await this.notificationRepository.save(notification);
   }
 
-  async markAsRead(id: number) {
-    await this.notificationRepository.update({ id }, { is_read: true });
+  // 읽음 표시하기
+  async markAsRead(userId: number) {
+    await this.notificationRepository.update(
+      { user: { id: userId }, isRead: false },
+      { isRead: true },
+    );
   }
 }
