@@ -27,9 +27,7 @@ export class NotificationsService {
         message: notification.message,
         isRead: notification.isRead,
         createdAt: notification.created_at,
-        dogImage: dogImage
-          ? `http://localhost:5000${dogImage}`
-          : '/puppy_profile.png',
+        dogImage,
       };
     });
 
