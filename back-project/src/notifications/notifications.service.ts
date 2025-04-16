@@ -38,4 +38,12 @@ export class NotificationsService {
       { isRead: true },
     );
   }
+
+  // 읽지 않은 알림 존재?
+  async hasUnread(userId: number): Promise<boolean> {
+    const count = await this.notificationRepository.count({
+      where: { user: { id: userId }, isRead: false },
+    });
+    return count > 0;
+  }
 }
