@@ -4,12 +4,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 @Controller('notifications')
+@UseGuards(AuthGuard('jwt'))
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   // 알림 만들기
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   async getMyNotifications(
     @Req() req: Request,
     @Query('page') page = '1',
