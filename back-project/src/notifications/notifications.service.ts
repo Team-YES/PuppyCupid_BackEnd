@@ -14,12 +14,26 @@ export class NotificationsService {
   async findByUser(userId: number, page: number, limit: number) {
     const [items, totalCount] = await this.notificationRepository.findAndCount({
       where: { user: { id: userId } },
+      relations: ['user', 'user.dogs'],
       order: { created_at: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
 
-    return { items, totalCount };
+    const formatted = items.map((notification) => {
+      const dogImage = notification.user?.dogs?.[0]?.dog_image || null;
+
+      return {
+        message: notification.message,
+        isRead: notification.isRead,
+        createdAt: notification.created_at,
+        dogImage: dogImage
+          ? `http://localhost:5000${dogImage}`
+          : '/puppy_profile.png',
+      };
+    });
+
+    return { items: formatted, totalCount };
   }
 
   // 알림 만들기
