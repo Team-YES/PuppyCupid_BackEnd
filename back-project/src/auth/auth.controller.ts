@@ -215,7 +215,6 @@ export class AuthController {
       ok: true,
       message: '관리자 로그인 성공',
       access_token: tokens.accessToken,
-      redirectUrl: 'http://localhost:4000',
     });
   }
 
