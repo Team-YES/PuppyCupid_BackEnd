@@ -42,7 +42,7 @@ export class AdminController {
   ) {
     const user = req.user as JwtUser;
     await this.adminService.addToBlacklist(userId, body.reason, user);
-    return { ok: true };
+    return { ok: true, targetUserId: userId };
   }
 
   // 모든 블랙리스트 조회
