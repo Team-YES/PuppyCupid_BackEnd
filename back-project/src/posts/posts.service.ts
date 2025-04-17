@@ -200,7 +200,7 @@ export class PostsService {
   }
 
   // 검색으로 게시글 찾기
-  async findPostsBySearch(keyword: string, userId: number): Promise<Post[]> {
+  async findPostsBySearch(keyword: string, userId: number): Promise<any[]> {
     const posts = await this.postRepository.find({
       where: {
         content: Like(`%${keyword}%`),
@@ -211,10 +211,29 @@ export class PostsService {
       },
     });
 
-    return posts.map((post) => ({
-      ...post,
-      liked: post.likes.some((like) => like.user.id === userId),
-    }));
+    const items = await Promise.all(
+      posts.map(async (post) => {
+        const liked = post.likes.some((like) => like.user.id === userId);
+
+        const commentCount = await this.commentRepository.count({
+          where: { post: { id: post.id } },
+        });
+
+        const dogImage = post.user?.dogs?.[0]?.dog_image || null;
+
+        return {
+          ...post,
+          commentCount,
+          liked,
+          user: {
+            ...post.user,
+            dogImage,
+          },
+        };
+      }),
+    );
+
+    return items;
   }
 
   // 좋아요 개수
