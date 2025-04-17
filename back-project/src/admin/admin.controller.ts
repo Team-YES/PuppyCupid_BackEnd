@@ -27,6 +27,7 @@ import {
 } from '@nestjs/swagger';
 import { UserInfoDto } from './dto/allUsers.dto';
 import { AddToBlacklistResDto } from './dto/addToBlacklistRes.dto';
+import { AdminGuard } from './guards/admin.guard';
 
 interface JwtUser {
   id: number;
@@ -34,7 +35,7 @@ interface JwtUser {
 }
 @ApiTags('관리자 API')
 @Controller('admin')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), AdminGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 

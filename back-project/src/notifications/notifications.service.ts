@@ -24,6 +24,7 @@ export class NotificationsService {
       const dogImage = notification.user?.dogs?.[0]?.dog_image || null;
 
       return {
+        id: notification.id,
         message: notification.message,
         isRead: notification.isRead,
         createdAt: notification.created_at,

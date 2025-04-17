@@ -17,7 +17,7 @@ import { Comment } from 'src/interactions/comments.entity';
 export enum PostCategory {
   ADOPT = 'adopt',
   FREE = 'free',
-  WALKING = 'walk',
+  SUPPLY = 'supplies',
 }
 
 @Entity('posts')
