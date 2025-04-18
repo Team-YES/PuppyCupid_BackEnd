@@ -46,11 +46,11 @@ import { SeederModule } from './seeder/seeder.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '1234',
-      database: 'puppies',
+      host: process.env.DB_HOST,
+      port: +(process.env.DB_PORT || 3306),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
       entities: [
         User,
         Dog,
