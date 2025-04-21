@@ -5,7 +5,7 @@ import {
   OneToMany,
   CreateDateColumn,
 } from 'typeorm';
-import { Dog } from 'dogs/dogs.entity';
+import { Dog } from 'src/dogs/dogs.entity';
 
 export enum Gender {
   MALE = 'male',

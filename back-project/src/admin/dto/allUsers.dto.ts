@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender, UserRole } from '@/users/users.entity';
+import { Gender, UserRole } from 'src/users/users.entity';
 
 export class UserInfoDto {
   @ApiProperty({ example: 1, description: '유저 ID' })
