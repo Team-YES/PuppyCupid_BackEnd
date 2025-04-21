@@ -10,7 +10,7 @@ import {
 import { ReportsService } from './report.service';
 import { AuthGuard } from '@nestjs/passport';
 import { report_type } from './report.entity';
-import { AuthRequest } from 'src/users/users.controller';
+import { AuthRequest } from '@/users/users.controller';
 
 import { ApiOperation, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CreateReportDto } from './dto/createReport.dto';

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response, Request } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/users.entity';
+import { UsersService } from '@/users/users.service';
+import { User } from '@/users/users.entity';
 
 @Injectable()
 export class AuthService {

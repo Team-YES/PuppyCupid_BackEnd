@@ -4,18 +4,18 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
-import { ReportsService } from 'src/report/report.service';
-import { InquiriesService } from 'src/inquiries/inquiries.service';
-import { UserRole } from 'src/users/users.entity';
-import { InquiryStatus } from 'src/inquiries/inquiries.entity';
-import { PaymentsService } from 'src/payments/payments.service';
-import { PostsService } from 'src/posts/posts.service';
-import { InteractionsService } from 'src/interactions/interactions.service';
+import { UsersService } from '@/users/users.service';
+import { ReportsService } from '@/report/report.service';
+import { InquiriesService } from '@/inquiries/inquiries.service';
+import { UserRole } from '@/users/users.entity';
+import { InquiryStatus } from '@/inquiries/inquiries.entity';
+import { PaymentsService } from '@/payments/payments.service';
+import { PostsService } from '@/posts/posts.service';
+import { InteractionsService } from '@/interactions/interactions.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blacklist } from './blacklist.entity';
 import { Admin, Repository } from 'typeorm';
-import { MessagesService } from 'src/messages/messages.service';
+import { MessagesService } from '@/messages/messages.service';
 import { error } from 'console';
 
 interface AdminRequest {

@@ -13,12 +13,12 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UsersService } from './users.service';
-import { PostsService } from 'src/posts/posts.service';
-import { NotificationsService } from 'src/notifications/notifications.service';
-import { InteractionsService } from 'src/interactions/interactions.service';
+import { PostsService } from '@/posts/posts.service';
+import { NotificationsService } from '@/notifications/notifications.service';
+import { InteractionsService } from '@/interactions/interactions.service';
 import { UserRole } from './users.entity';
 import { Gender } from './users.entity';
-import { FollowsService } from 'src/follows/follows.service';
+import { FollowsService } from '@/follows/follows.service';
 export interface AuthRequest extends Request {
   user: {
     id: number;

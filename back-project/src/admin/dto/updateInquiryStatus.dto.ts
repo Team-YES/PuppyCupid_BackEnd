@@ -1,5 +1,5 @@
 import { IsEnum } from 'class-validator';
-import { InquiryStatus } from 'src/inquiries/inquiries.entity';
+import { InquiryStatus } from '@/inquiries/inquiries.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateInquiryStatusDto {

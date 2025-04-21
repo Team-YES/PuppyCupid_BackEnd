@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { DogsService } from 'src/dogs/dogs.service';
-import { Dog } from 'src/dogs/dogs.entity';
+import { DogsService } from '@/dogs/dogs.service';
+import { Dog } from '@/dogs/dogs.entity';
 
 @Injectable()
 export class MatchesService {

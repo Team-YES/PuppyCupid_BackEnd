@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Like } from './likes.entity';
 import { Post } from 'posts/posts.entity';
-import { PostsService } from 'src/posts/posts.service';
+import { PostsService } from '@/posts/posts.service';
 import { Comment } from './comments.entity';
-import { UserRole } from 'src/users/users.entity';
-import { NotificationsService } from 'src/notifications/notifications.service';
-import { UsersService } from 'src/users/users.service';
+import { UserRole } from '@/users/users.entity';
+import { NotificationsService } from '@/notifications/notifications.service';
+import { UsersService } from '@/users/users.service';
 @Injectable()
 export class InteractionsService {
   constructor(

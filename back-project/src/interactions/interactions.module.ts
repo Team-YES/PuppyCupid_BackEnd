@@ -4,10 +4,10 @@ import { InteractionsService } from './interactions.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Like } from './likes.entity';
 import { Comment } from './comments.entity';
-import { Post } from 'src/posts/posts.entity';
-import { PostsModule } from 'src/posts/posts.module';
-import { NotificationsModule } from 'src/notifications/notifications.module';
-import { UsersModule } from 'src/users/users.module';
+import { Post } from '@/posts/posts.entity';
+import { PostsModule } from '@/posts/posts.module';
+import { NotificationsModule } from '@/notifications/notifications.module';
+import { UsersModule } from '@/users/users.module';
 
 @Module({
   imports: [

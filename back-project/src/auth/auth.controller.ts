@@ -14,8 +14,8 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from 'src/users/users.service';
-import { Gender, UserRole } from 'src/users/users.entity';
+import { UsersService } from '@/users/users.service';
+import { Gender, UserRole } from '@/users/users.entity';
 
 interface JwtUser {
   id: number;

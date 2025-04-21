@@ -12,7 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { InteractionsService } from './interactions.service';
 import { Request } from 'express';
-import { UserRole } from 'src/users/users.entity';
+import { UserRole } from '@/users/users.entity';
 
 import {
   ApiTags,

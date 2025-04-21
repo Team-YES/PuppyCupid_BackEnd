@@ -1,5 +1,5 @@
-import { Post } from 'src/posts/posts.entity';
-import { User } from 'src/users/users.entity';
+import { Post } from '@/posts/posts.entity';
+import { User } from '@/users/users.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

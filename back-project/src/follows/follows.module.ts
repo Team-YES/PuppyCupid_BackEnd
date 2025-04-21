@@ -3,9 +3,9 @@ import { FollowsController } from './follows.controller';
 import { FollowsService } from './follows.service';
 import { Follow } from './follows.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/users.entity';
-import { UsersModule } from 'src/users/users.module';
-import { NotificationsModule } from 'src/notifications/notifications.module';
+import { User } from '@/users/users.entity';
+import { UsersModule } from '@/users/users.module';
+import { NotificationsModule } from '@/notifications/notifications.module';
 
 @Module({
   imports: [

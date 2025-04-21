@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Payment } from './payments.entity';
 import { PaymentMethod, PaymentStatus } from './payments.entity';
-import { UsersService } from 'src/users/users.service';
-import { UserRole } from 'src/users/users.entity';
+import { UsersService } from '@/users/users.service';
+import { UserRole } from '@/users/users.entity';
 import { addMonths, addYears } from 'date-fns';
 @Injectable()
 export class PaymentsService {

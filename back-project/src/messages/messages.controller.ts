@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { MessagesService } from './messages.service';
-import { AuthRequest } from 'src/users/users.controller';
+import { AuthRequest } from '@/users/users.controller';
 
 @Controller('messages')
 @UseGuards(AuthGuard('jwt'))

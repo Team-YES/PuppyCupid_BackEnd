@@ -4,13 +4,13 @@ import { Repository } from 'typeorm';
 
 import { Post } from './posts.entity';
 import { PostImage } from './post_images.entity';
-import { UserRole } from 'src/users/users.entity';
+import { UserRole } from '@/users/users.entity';
 import { PostCategory } from './posts.entity';
-import { Like as LikeEntity } from 'src/interactions/likes.entity';
+import { Like as LikeEntity } from '@/interactions/likes.entity';
 
 import { Like } from 'typeorm';
-import { Comment } from 'src/interactions/comments.entity';
-import { InteractionsService } from 'src/interactions/interactions.service';
+import { Comment } from '@/interactions/comments.entity';
+import { InteractionsService } from '@/interactions/interactions.service';
 
 const like = new LikeEntity();
 export interface CreatePostInput {

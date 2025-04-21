@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Report, report_type } from './report.entity';
-import { Post } from 'src/posts/posts.entity';
-import { Comment } from 'src/interactions/comments.entity';
-import { User } from 'src/users/users.entity';
+import { Post } from '@/posts/posts.entity';
+import { Comment } from '@/interactions/comments.entity';
+import { User } from '@/users/users.entity';
 
 @Injectable()
 export class ReportsService {

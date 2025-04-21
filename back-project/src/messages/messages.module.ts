@@ -3,9 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from './messages.entity';
 import { MessagesService } from './messages.service';
 import { MessagesController } from './messages.controller';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '@/users/users.module';
 import { ChatCondition } from './chatCondition.entity';
-import { NotificationsModule } from 'src/notifications/notifications.module';
+import { NotificationsModule } from '@/notifications/notifications.module';
 
 @Module({
   imports: [

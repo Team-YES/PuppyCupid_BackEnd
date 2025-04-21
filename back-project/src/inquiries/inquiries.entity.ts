@@ -6,7 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { User } from 'src/users/users.entity';
+import { User } from '@/users/users.entity';
 
 export enum InquiryType {
   SERVICE = 'service',

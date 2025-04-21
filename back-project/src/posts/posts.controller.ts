@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
-import { UserRole } from 'src/users/users.entity';
+import { UserRole } from '@/users/users.entity';
 import {
   CreatePostInput,
   UpdatePostInput,
@@ -25,7 +25,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
-import { InteractionsService } from 'src/interactions/interactions.service';
+import { InteractionsService } from '@/interactions/interactions.service';
 
 interface AuthRequest extends Request {
   user: {
