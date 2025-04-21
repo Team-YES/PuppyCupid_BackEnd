@@ -40,6 +40,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { Blacklist } from './admin/blacklist.entity';
 import { AdminSeederService } from './seeder/admin-seeder.service';
 import { SeederModule } from './seeder/seeder.module';
+import * as crypto from 'crypto';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
