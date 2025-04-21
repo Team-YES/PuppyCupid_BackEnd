@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Like } from './likes.entity';
-import { Post } from '../posts/posts.entity';
+import { Post } from 'posts/posts.entity';
 import { PostsService } from 'src/posts/posts.service';
 import { Comment } from './comments.entity';
 import { UserRole } from 'src/users/users.entity';
