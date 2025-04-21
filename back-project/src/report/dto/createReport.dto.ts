@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { report_type } from 'report.entity';
+import { report_type } from '../report.entity';
 
 export class CreateReportDto {
   @ApiProperty({
