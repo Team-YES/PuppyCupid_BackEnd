@@ -72,7 +72,7 @@ import * as crypto from 'crypto';
           Report,
           Blacklist,
         ],
-        synchronize: true,
+        synchronize: false,
       }),
     }),
     AuthModule,
