@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Dog, GenderType } from './dogs.entity';
-import { User } from 'users/users.entity';
+import { User } from 'src/users/users.entity';
 import { MbtiType } from './dogs.entity';
 
 export interface CreateInfoInput {

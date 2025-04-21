@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Follow } from './follows.entity';
-import { User } from '@/users/users.entity';
-import { NotificationsService } from '@/notifications/notifications.service';
-import { UsersService } from '@/users/users.service';
+import { User } from 'src/users/users.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class FollowsService {

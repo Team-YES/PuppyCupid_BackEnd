@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
-import { User } from '@/users/users.entity';
+import { User } from 'sr /users/users.entity';
 import { AdminSeederService } from './admin-seeder.service';
 import { SeederService } from './seeder.service';
-import { Dog } from '@/dogs/dogs.entity';
+import { Dog } from 'src/dogs/dogs.entity';
 
 @Module({
   imports: [

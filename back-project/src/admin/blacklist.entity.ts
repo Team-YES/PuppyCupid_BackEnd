@@ -1,5 +1,5 @@
-import { Dog } from '@/dogs/dogs.entity';
-import { User } from '@/users/users.entity';
+import { Dog } from 'src/dogs/dogs.entity';
+import { User } from 'src/users/users.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

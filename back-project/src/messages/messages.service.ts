@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Message } from './messages.entity';
-import { ChatCondition } from '@/messages/chatCondition.entity';
-import { User } from '@/users/users.entity';
-import { UsersService } from '@/users/users.service';
-import { NotificationsService } from '@/notifications/notifications.service';
-
-@Injectable()
+import { ChatCondition } from 'src/messages/chatCondition.entity';
+import { User } from 'src/users/users.entity';
+import { UsersService } from 'src/users/users.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 export class MessagesService {
   constructor(
     @InjectRepository(Message)

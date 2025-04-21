@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
-import { UsersModule } from '@/users/users.module';
-import { ReportsModule } from '@/report/report.module';
-import { InquiriesModule } from '@/inquiries/inquiries.module';
-import { PaymentsModule } from '@/payments/payments.module';
-import { PostsModule } from '@/posts/posts.module';
-import { InteractionsModule } from '@/interactions/interactions.module';
+import { UsersModule } from 'src/users/users.module';
+import { ReportsModule } from 'src/report/report.module';
+import { InquiriesModule } from 'src/inquiries/inquiries.module';
+import { PaymentsModule } from 'src/payments/payments.module';
+import { PostsModule } from 'src/posts/posts.module';
+import { InteractionsModule } from 'src/interactions/interactions.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blacklist } from './blacklist.entity';
-import { MessagesModule } from '@/messages/messages.module';
+import { MessagesModule } from 'src/messages/messages.module';
 
 @Module({
   imports: [

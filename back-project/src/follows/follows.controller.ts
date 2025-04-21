@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { FollowsService } from './follows.service';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthRequest } from '@/users/users.controller';
-import { User } from '@/users/users.entity';
+import { AuthRequest } from 'src/users/users.controller';
+import { User } from 'src/users/users.entity';
 
 @Controller('follows')
 @UseGuards(AuthGuard('jwt'))

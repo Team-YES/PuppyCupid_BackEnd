@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { UsersService } from '@/users/users.service';
-import { UserRole } from '@/users/users.entity';
+import { UsersService } from 'src/users/users.service';
+import { UserRole } from 'src/users/users.entity';
 
 @Injectable()
 export class SchedulerService {
