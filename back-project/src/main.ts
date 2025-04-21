@@ -1,10 +1,16 @@
+import * as crypto from 'crypto';
+
+if (!global.crypto) {
+  (global as any).crypto = crypto;
+}
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-(global as any).crypto = require('crypto');
+
+
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
