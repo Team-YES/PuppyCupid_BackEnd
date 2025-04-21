@@ -68,7 +68,7 @@ import { SeederModule } from './seeder/seeder.module';
         Report,
         Blacklist,
       ],
-      synchronize: true,
+      synchronize: false,
     }),
     AuthModule,
     UsersModule,
