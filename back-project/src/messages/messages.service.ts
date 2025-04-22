@@ -6,6 +6,7 @@ import { ChatCondition } from 'src/messages/chatCondition.entity';
 import { User } from 'src/users/users.entity';
 import { UsersService } from 'src/users/users.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { sensitiveHeaders } from 'http2';
 export class MessagesService {
   constructor(
     @InjectRepository(Message)
@@ -41,6 +42,7 @@ export class MessagesService {
       await this.notificationsService.createNotification(
         receiverId,
         `${userNickName}님이 회원님이 채팅을 보냈습니다.`,
+        sendId,
       );
     }
 

@@ -41,6 +41,7 @@ export class FollowsService {
     await this.notificationsService.createNotification(
       followingId,
       `${followerUser?.nickName || '누군가'}님이 회원님을 팔로우했습니다.`,
+      followerId
     );
     return { followed: true };
   }

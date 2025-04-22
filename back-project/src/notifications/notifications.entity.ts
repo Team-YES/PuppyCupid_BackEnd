@@ -14,8 +14,12 @@ export class Notification {
   id: number;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @JoinColumn({ name: 'receiver_user_id' })
+  receiver: User;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'sender_user_id'})
+  sender: User;
 
   @Column()
   message: string;

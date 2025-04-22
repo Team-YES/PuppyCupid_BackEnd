@@ -66,6 +66,7 @@ export class InteractionsService {
       await this.notificationsService.createNotification(
         post.user.id,
         `${userNickName}님이 회원님의 게시글을 좋아합니다.`,
+        userId,
       );
     }
 
@@ -141,6 +142,7 @@ export class InteractionsService {
       await this.notificationsService.createNotification(
         fullComment.post.user.id,
         `${fullComment.user.nickName}님이 회원님의 게시글에 댓글을 남겼습니다.`,
+        fullComment.user.id,
       );
     }
 

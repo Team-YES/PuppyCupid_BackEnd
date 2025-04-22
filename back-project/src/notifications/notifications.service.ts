@@ -13,15 +13,15 @@ export class NotificationsService {
   // 유저 알림 찾기
   async findByUser(userId: number, page: number, limit: number) {
     const [items, totalCount] = await this.notificationRepository.findAndCount({
-      where: { user: { id: userId } },
-      relations: ['user', 'user.dogs'],
+      where: { receiver: { id: userId } },
+      relations: ['sender', 'sender.dogs'],
       order: { created_at: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });
 
     const formatted = items.map((notification) => {
-      const dogImage = notification.user?.dogs?.[0]?.dog_image || null;
+      const dogImage = notification.sender?.dogs?.[0]?.dog_image || null;
 
       return {
         id: notification.id,
@@ -36,9 +36,14 @@ export class NotificationsService {
   }
 
   // 알림 만들기
-  async createNotification(userId: number, message: string) {
+  async createNotification(
+    receiverUserId: number,
+    message: string,
+    senderUserId?: number,
+  ) {
     const notification = this.notificationRepository.create({
-      user: { id: userId },
+      receiver: { id: receiverUserId },
+      sender: senderUserId ? { id: senderUserId } : undefined,
       message,
     });
     return await this.notificationRepository.save(notification);
@@ -47,16 +52,16 @@ export class NotificationsService {
   // 읽음 표시하기
   async markAsRead(userId: number) {
     await this.notificationRepository.update(
-      { user: { id: userId }, isRead: false },
+      { receiver: { id: userId }, isRead: false },
       { isRead: true },
     );
   }
-
-  // 읽지 않은 알림 존재?
+  
   async hasUnread(userId: number): Promise<boolean> {
     const count = await this.notificationRepository.count({
-      where: { user: { id: userId }, isRead: false },
+      where: { receiver: { id: userId }, isRead: false },
     });
     return count > 0;
   }
+  
 }
