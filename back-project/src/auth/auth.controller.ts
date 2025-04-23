@@ -83,6 +83,7 @@ export class AuthController {
     return res.redirect(`${FRONT_URL}`);
   }
 
+  // 임시토큰 확인
   @Post('/check-temp-token')
   @UseGuards(AuthGuard('jwt-temp'))
   async checkTempToken(@Req() req: Request) {
