@@ -43,7 +43,7 @@ import { SeederModule } from './seeder/seeder.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env', }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -71,7 +71,7 @@ import { SeederModule } from './seeder/seeder.module';
           Report,
           Blacklist,
         ],
-        synchronize: false,
+        synchronize: true,
       }),
     }),
     AuthModule,
