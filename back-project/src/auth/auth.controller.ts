@@ -58,7 +58,6 @@ export class AuthController {
     const result = await this.authService.kakaoLogin(req, res);
 
     const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
-    console.log('FRONT_URL', FRONT_URL);
     if (!result.ok) {
       return res.redirect(`${FRONT_URL}/login`);
     }
