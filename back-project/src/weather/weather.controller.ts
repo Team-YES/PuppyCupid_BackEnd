@@ -1,8 +1,13 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { WeatherService } from './weather.service';
-import { ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { WeatherResponseDto } from './dto/weather.dto';
-@ApiTags('Weather')
+@ApiTags('날씨')
 @Controller('weather')
 export class WeatherController {
   constructor(private readonly weatherService: WeatherService) {}

@@ -16,17 +16,34 @@ import { UsersService } from './users.service';
 import { PostsService } from 'src/posts/posts.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
-import { UserRole } from './users.entity';
-import { Gender } from './users.entity';
+import { User, UserRole } from './users.entity';
 import { FollowsService } from 'src/follows/follows.service';
+import {
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiQuery,
+} from '@nestjs/swagger';
+import {
+  NicknameCheckResponseDto,
+  UpdateUserProfileDto,
+  UserInfoDto,
+} from './dto/users.dto';
+import { PostCategory } from 'src/posts/posts.entity';
+import { PostImage } from 'src/posts/post_images.entity';
+import { Like } from 'src/interactions/likes.entity';
+
 export interface AuthRequest extends Request {
   user: {
     id: number;
     role: UserRole;
   };
 }
-
+@ApiTags('유저')
 @Controller('users')
+@UseGuards(AuthGuard('jwt'))
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -36,8 +53,12 @@ export class UsersController {
     private readonly followsService: FollowsService,
   ) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('info')
+  @ApiOperation({
+    summary: '내 정보 조회',
+    description: 'JWT를 통해 로그인한 유저의 정보를 조회합니다.',
+  })
+  @ApiOkResponse({ type: UserInfoDto })
   async findUserById(@Req() req: Request) {
     const user = req.user as any;
     const fullUser = await this.usersService.findUserById(user.id);
@@ -60,8 +81,12 @@ export class UsersController {
     };
   }
 
-  @Get('/nickName')
-  @UseGuards(AuthGuard('jwt'))
+  @Get('nickName')
+  @ApiOperation({
+    summary: '닉네임 중복 확인',
+    description: '닉네임이 사용 가능한지 확인합니다.',
+  })
+  @ApiOkResponse({ type: NicknameCheckResponseDto })
   async checkNickname(@Query('nickName') nickName: string) {
     if (!nickName) {
       return { ok: false, error: '닉네임을 입력해주세요.' };
@@ -76,12 +101,13 @@ export class UsersController {
     return { ok: true, message: '사용 가능한 닉네임입니다.' };
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Put('update')
-  async updateform(
-    @Req() req: Request,
-    @Body() body: { nickname: string; phone: string; gender: Gender },
-  ) {
+  @ApiOperation({
+    summary: '프로필 수정',
+    description: '전화번호, 닉네임, 성별을 수정합니다.',
+  })
+  @ApiBody({ type: UpdateUserProfileDto })
+  async updateform(@Req() req: Request, @Body() body: UpdateUserProfileDto) {
     const user = req.user as any;
     await this.usersService.updateProfile(user.id, {
       nickName: body.nickname,
@@ -91,8 +117,14 @@ export class UsersController {
     return { ok: true, message: '정보 수정 완료' };
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('mypage')
+  @ApiOperation({
+    summary: '마이페이지 조회',
+    description: '로그인한 유저의 마이페이지 데이터를 조회합니다.',
+  })
+  @ApiQuery({ name: 'postsPage', required: false })
+  @ApiQuery({ name: 'likedPage', required: false })
+  @ApiQuery({ name: 'notificationsPage', required: false })
   async getMypageData(
     @Req() req: Request,
     @Query() query: Record<string, string>,
@@ -205,7 +237,12 @@ export class UsersController {
   }
 
   @Get('otherpage/:otherUserId')
-  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '다른 유저 마이페이지',
+    description: '다른 유저의 마이페이지 정보를 조회합니다.',
+  })
+  @ApiParam({ name: 'otherUserId', type: Number, description: '다른 유저 ID' })
+  @ApiQuery({ name: 'postsPage', required: false })
   async getOtherpageData(
     @Param('otherUserId') otherUserId: string,
     @Req() req: Request,
@@ -311,7 +348,11 @@ export class UsersController {
   }
 
   @Delete(':userId')
-  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '유저 삭제',
+    description: '해당 유저를 삭제합니다. 관리자 또는 본인만 가능.',
+  })
+  @ApiParam({ name: 'userId', type: Number, description: '삭제할 유저 ID' })
   async deleteUser(
     @Param('userId', ParseIntPipe) userId: number,
     @Req() req: AuthRequest,

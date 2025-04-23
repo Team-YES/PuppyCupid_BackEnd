@@ -13,7 +13,7 @@ export class MatchesController {
 
   @Get()
   @ApiOperation({
-    summary: '궁합 강아지 추천',
+    summary: '강아지 추천',
     description:
       '현재 사용자의 강아지 MBTI와 성격을 기반으로 인근에 있는 궁합이 잘 맞는 강아지를 추천합니다.',
   })
