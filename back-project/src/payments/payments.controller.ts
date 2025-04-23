@@ -3,17 +3,15 @@ import {
   Get,
   Post,
   Body,
-  Param,
-  Put,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentMethod, PaymentStatus } from './payments.entity';
-import axios from 'axios';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('payments')
+@UseGuards(AuthGuard('jwt'))
 export class PaymentsController {
   constructor(private readonly paymentService: PaymentsService) {}
 
@@ -24,7 +22,6 @@ export class PaymentsController {
 
   // 결제
   @Post('create')
-  @UseGuards(AuthGuard('jwt'))
   async createPayment(
     @Body('amount') amount: number,
     @Body('method') method: PaymentMethod,
