@@ -83,6 +83,31 @@ export class AuthController {
     return res.redirect(`${FRONT_URL}`);
   }
 
+  @Post('/check-temp-token')
+  @UseGuards(AuthGuard('jwt-temp'))
+  async checkTempToken(@Req() req: Request) {
+    const user = req.user as JwtUser;
+
+    const foundUser = await this.usersService.findUserById(user.id);
+    if (!foundUser) {
+      return { isLoggedIn: false };
+    }
+
+    return {
+      isLoggedIn: true,
+      user: {
+        id: foundUser.id,
+        email: foundUser.email,
+        role: foundUser.role,
+        phoneNumber: foundUser.phone,
+        nickName: foundUser.nickName,
+        gender: foundUser.gender,
+        isPhoneVerified: foundUser.isPhoneVerified,
+        power_expired_at: foundUser.power_expired_at,
+      },
+    };
+  }
+
   // 닉네임 중복 검사
   @Get('/nickName')
   @UseGuards(AuthGuard('jwt-temp'))
