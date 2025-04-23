@@ -1,3 +1,8 @@
+import * as crypto from 'crypto';
+
+if (!global.crypto) {
+  (global as any).crypto = crypto;
+}
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
@@ -7,10 +12,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Swagger 설정
   const config = new DocumentBuilder()
     .setTitle('PuppyCupid API')
     .setDescription('PuppyCupid 백엔드 API 문서입니다.')
@@ -32,6 +38,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  await app.listen(5000);
+  await app.listen(process.env.PORT!);
 }
 bootstrap();

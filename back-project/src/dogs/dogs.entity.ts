@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { User } from '../users/users.entity';
+import { User } from 'src/users/users.entity';
 
 export enum MbtiType {
   ISTJ = 'ISTJ',

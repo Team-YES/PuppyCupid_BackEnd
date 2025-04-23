@@ -15,13 +15,28 @@ import { AuthGuard } from '@nestjs/passport';
 import { InquiryStatus } from './inquiries.entity';
 import { Request } from 'express';
 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiParam,
+  ApiOkResponse,
+} from '@nestjs/swagger';
+import { CreateInquiryDto, UpdateInquiryStatusDto } from './dto/inquiry.dto';
+
+@ApiTags('문의')
 @Controller('inquiries')
+@UseGuards(AuthGuard('jwt'))
 export class InquiriesController {
   constructor(private readonly inquiriesService: InquiriesService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('contact')
-  async createInquiry(@Req() req: Request, @Body() body: any) {
+  @ApiOperation({
+    summary: '문의 등록',
+    description: '문의 정보를 등록합니다.',
+  })
+  @ApiBody({ type: CreateInquiryDto })
+  async createInquiry(@Req() req: Request, @Body() body: CreateInquiryDto) {
     const user = req.user as any;
 
     const { name, email, phone, type, content } = body;
@@ -44,32 +59,47 @@ export class InquiriesController {
     return { ok: true, inquiry };
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
+  @ApiOperation({
+    summary: '문의 전체 조회',
+    description: '모든 문의를 조회합니다.',
+  })
   async getAllInquiries() {
     const inquiries = await this.inquiriesService.findAllInquiries();
     return { ok: true, inquiries };
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
+  @ApiOperation({
+    summary: '문의 상세 조회',
+    description: '특정 문의 내용을 조회합니다.',
+  })
   async getInquiry(@Param('id', ParseIntPipe) id: number) {
     const inquiry = await this.inquiriesService.findInquiryById(id);
     return { ok: true, inquiry };
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Put(':id/status')
+  @ApiOperation({
+    summary: '문의 상태 변경',
+    description: '문의 상태를 변경합니다.',
+  })
+  @ApiParam({ name: 'id', type: Number, description: '문의 ID' })
+  @ApiBody({ type: UpdateInquiryStatusDto })
   async updateStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body('status') status: InquiryStatus,
+    @Body() body: UpdateInquiryStatusDto,
   ) {
-    const updated = await this.inquiriesService.updateStatus(id, status);
+    const updated = await this.inquiriesService.updateStatus(id, body.status);
     return { ok: true, inquiry: updated };
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
+  @ApiOperation({
+    summary: '문의 삭제',
+    description: '특정 문의를 삭제합니다.',
+  })
+  @ApiParam({ name: 'id', type: Number, description: '문의 ID' })
   async deleteInquiry(@Param('id', ParseIntPipe) id: number) {
     await this.inquiriesService.remove(id);
     return { ok: true, message: '삭제 완료' };

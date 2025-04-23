@@ -8,7 +8,6 @@ import { Post } from 'src/posts/posts.entity';
 import { PostsModule } from 'src/posts/posts.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
 import { UsersModule } from 'src/users/users.module';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([Like, Comment, Post]),

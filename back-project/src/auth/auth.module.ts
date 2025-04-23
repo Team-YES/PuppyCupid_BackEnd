@@ -13,7 +13,16 @@ import { JwtGoogleStrategy } from './strategies/google.strategy';
 import { JwtTempStrategy } from './strategies/jwt-temp.strategy';
 
 @Module({
-  imports: [UsersModule, PassportModule, ConfigModule, JwtModule.register({})],
+  imports: [UsersModule, PassportModule, ConfigModule, JwtModule.registerAsync({
+    imports: [ConfigModule],
+    useFactory: async (configService: ConfigService) => ({
+      secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET_KEY'),
+      signOptions: {
+        expiresIn: configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+      },
+    }),
+    inject: [ConfigService],
+  }),],
   controllers: [AuthController],
   providers: [
     AuthService,

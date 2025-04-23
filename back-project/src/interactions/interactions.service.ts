@@ -2,12 +2,13 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Like } from './likes.entity';
-import { Post } from '../posts/posts.entity';
+import { Post } from 'src/posts/posts.entity';
 import { PostsService } from 'src/posts/posts.service';
 import { Comment } from './comments.entity';
 import { UserRole } from 'src/users/users.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { UsersService } from 'src/users/users.service';
+
 @Injectable()
 export class InteractionsService {
   constructor(
@@ -65,6 +66,7 @@ export class InteractionsService {
       await this.notificationsService.createNotification(
         post.user.id,
         `${userNickName}님이 회원님의 게시글을 좋아합니다.`,
+        userId,
       );
     }
 
@@ -140,6 +142,7 @@ export class InteractionsService {
       await this.notificationsService.createNotification(
         fullComment.post.user.id,
         `${fullComment.user.nickName}님이 회원님의 게시글에 댓글을 남겼습니다.`,
+        fullComment.user.id,
       );
     }
 

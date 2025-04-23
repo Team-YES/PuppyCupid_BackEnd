@@ -13,7 +13,6 @@ import { User } from 'src/users/users.entity';
 import { PostImage } from './post_images.entity';
 import { Like } from 'src/interactions/likes.entity';
 import { Comment } from 'src/interactions/comments.entity';
-
 export enum PostCategory {
   ADOPT = 'adopt',
   FREE = 'free',
