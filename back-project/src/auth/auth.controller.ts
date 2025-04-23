@@ -39,11 +39,12 @@ export class AuthController {
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.googleLogin(req, res);
 
-    if (!result.ok) {
-      return res.redirect('http://localhost:3000/login');
-    }
+    const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
-    return res.redirect(`http://localhost:3000`);
+    if (!result.ok) {
+      return res.redirect(`${FRONT_URL}/login`);
+    }
+    return res.redirect(`${FRONT_URL}`);
   }
 
   // // 카카오 로그인
@@ -56,11 +57,12 @@ export class AuthController {
   async kakaoAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.kakaoLogin(req, res);
 
-    if (!result.ok) {
-      return res.redirect('http://localhost:3000/login');
-    }
+    const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
-    return res.redirect(`http://localhost:3000`);
+    if (!result.ok) {
+      return res.redirect(`${FRONT_URL}/login`);
+    }
+    return res.redirect(`${FRONT_URL}`);
   }
 
   // 네이버 로그인
@@ -73,11 +75,12 @@ export class AuthController {
   async naverAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.naverLogin(req, res);
 
-    if (!result.ok) {
-      return res.redirect('http://localhost:3000/login');
-    }
+    const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
-    return res.redirect(`http://localhost:3000`);
+    if (!result.ok) {
+      return res.redirect(`${FRONT_URL}/login`);
+    }
+    return res.redirect(`${FRONT_URL}`);
   }
 
   // 닉네임 중복 검사
