@@ -94,7 +94,7 @@ export class AuthController {
       // 전화번호 필요 → 프론트에 임시 토큰과 상태 전달
       if (result.needPhoneNumber) {
         return res.redirect(
-          `${FRONT_URL}/phone?temp_token=${result.temp_access_token}`,
+          `${FRONT_URL}/phone?temp_access_token=${result.temp_access_token}`,
         );
       }
 
