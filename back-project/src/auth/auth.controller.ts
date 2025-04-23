@@ -87,6 +87,7 @@ export class AuthController {
   @Post('/check-temp-token')
   @UseGuards(AuthGuard('jwt-temp'))
   async checkTempToken(@Req() req: Request) {
+    console.log('🍪 쿠키:', req.cookies);
     const user = req.user as JwtUser;
 
     const foundUser = await this.usersService.findUserById(user.id);
