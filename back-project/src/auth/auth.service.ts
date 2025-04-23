@@ -51,14 +51,14 @@ export class AuthService {
     res.cookie('access_token', accessToken, {
       httpOnly: false,
       secure: false,
-      sameSite: isProd ? 'none' : 'lax',
+      sameSite: 'lax',
       maxAge: 1000 * 60 * 60,
     });
 
     res.cookie('eid_refresh_token', refreshToken, {
       httpOnly: false,
       secure: false,
-      sameSite: isProd ? 'none' : 'lax',
+      sameSite: 'lax',
       expires,
     });
 
