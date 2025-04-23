@@ -115,8 +115,8 @@ export class AuthService {
 
         res.cookie('temp_access_token', tempToken, {
           httpOnly: false,
-          secure: isProd,
-          sameSite: isProd ? 'none' : 'lax',
+          secure: false,
+          sameSite: 'lax',
           maxAge: 1000 * 60 * 10,
         });
 
