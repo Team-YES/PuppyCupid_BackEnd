@@ -12,12 +12,9 @@ export class AuthService {
     private readonly userService: UsersService,
   ) {}
 
-  async issueTokensAndSetCookies(
+  async issueTokens(
     user: User,
-    res: Response,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const isProd = process.env.NODE_ENV === 'production';
-
     const accessToken = jwt.sign(
       {
         id: user.id,
@@ -42,39 +39,17 @@ export class AuthService {
     user.eid_refresh_token = refreshToken;
     await this.userService.save(user);
 
-    const expires = new Date();
-    expires.setDate(
-      expires.getDate() +
-        +this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_DATE'),
-    );
-
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'none',
-      maxAge: 1000 * 60 * 60,
-    });
-
-    res.cookie('eid_refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'none',
-      expires,
-    });
-
     return { accessToken, refreshToken };
   }
 
   async socialLogin(
     req: Request,
-    res: Response,
+    _res: Response,
     provider: 'google' | 'kakao' | 'naver',
   ) {
     try {
-      const isProd = process.env.NODE_ENV === 'production';
       const userFromOAuth = req.user as any;
 
-      // 휴대폰 번호 기준 중복 검사
       if (userFromOAuth.phoneNumber) {
         const userByPhone = await this.userService.findUserByPhone(
           userFromOAuth.phoneNumber,
@@ -87,7 +62,6 @@ export class AuthService {
         }
       }
 
-      // 이메일 기준 중복 검사
       const userByEmail = await this.userService.findUserByEmail(
         userFromOAuth.email,
       );
@@ -113,13 +87,6 @@ export class AuthService {
           { expiresIn: '10m' },
         );
 
-        res.cookie('temp_access_token', tempToken, {
-          httpOnly: true,
-          secure: false,
-          sameSite: 'none',
-          maxAge: 1000 * 60 * 10,
-        });
-
         return {
           ok: false,
           needPhoneNumber: true,
@@ -128,14 +95,12 @@ export class AuthService {
         };
       }
 
-      const accessToken = await this.issueTokensAndSetCookies(
-        existingUser,
-        res,
-      );
+      const tokens = await this.issueTokens(existingUser);
 
       return {
         ok: true,
-        eid_access_token: accessToken,
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
       };
     } catch (error) {
       return {
