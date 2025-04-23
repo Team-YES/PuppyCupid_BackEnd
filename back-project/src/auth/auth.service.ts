@@ -53,6 +53,7 @@ export class AuthService {
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60,
+      path: '/',
     });
 
     res.cookie('eid_refresh_token', refreshToken, {
