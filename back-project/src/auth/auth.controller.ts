@@ -60,9 +60,22 @@ export class AuthController {
     const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
     if (!result.ok) {
+      // 전화번호 필요 → 프론트에 임시 토큰과 상태 전달
+      if (result.needPhoneNumber) {
+        return res.redirect(
+          `${FRONT_URL}/phone?temp_token=${result.temp_access_token}`,
+        );
+      }
+
+      // 기타 로그인 실패
       return res.redirect(`${FRONT_URL}/login`);
     }
-    return res.redirect(`${FRONT_URL}`);
+
+    // 정상 로그인 → 메인 페이지로 이동
+    const { access_token, refresh_token } = result;
+    return res.redirect(
+      `${FRONT_URL}/social-login?access_token=${access_token}&refresh_token=${refresh_token}`,
+    );
   }
 
   // 네이버 로그인
@@ -78,9 +91,22 @@ export class AuthController {
     const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
     if (!result.ok) {
+      // 전화번호 필요 → 프론트에 임시 토큰과 상태 전달
+      if (result.needPhoneNumber) {
+        return res.redirect(
+          `${FRONT_URL}/phone?temp_token=${result.temp_access_token}`,
+        );
+      }
+
+      // 기타 로그인 실패
       return res.redirect(`${FRONT_URL}/login`);
     }
-    return res.redirect(`${FRONT_URL}`);
+
+    // 정상 로그인 → 메인 페이지로 이동
+    const { access_token, refresh_token } = result;
+    return res.redirect(
+      `${FRONT_URL}/social-login?access_token=${access_token}&refresh_token=${refresh_token}`,
+    );
   }
 
   // 임시토큰 확인
