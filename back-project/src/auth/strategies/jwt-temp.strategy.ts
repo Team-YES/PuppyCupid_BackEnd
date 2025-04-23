@@ -17,6 +17,7 @@ export class JwtTempStrategy extends PassportStrategy(Strategy, 'jwt-temp') {
   }
 
   async validate(payload: any) {
+    console.log('TEMP 토큰 payload:', payload);
     return { id: payload.id, role: payload.role };
   }
 }
