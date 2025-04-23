@@ -30,7 +30,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: ['http://43.203.242.14:4000', 'http://43.201.114.228:3000'],
+    origin: ['http://43.203.242.14', 'http://43.201.114.228'],
     credentials: true,
     exposedHeaders: ['Set-Cookie', 'Authorization', 'Custom-Header'],
   });
