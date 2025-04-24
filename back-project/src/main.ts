@@ -9,12 +9,11 @@ import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { writeFileSync } from 'fs';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
   const config = new DocumentBuilder()
     .setTitle('PuppyCupid API')
     .setDescription('PuppyCupid 백엔드 API 문서입니다.')
@@ -23,6 +22,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
+  writeFileSync('./swaggerFile', JSON.stringify(document, null, 2));
   SwaggerModule.setup('api', app, document);
 
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -31,12 +32,16 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  app.use(bodyParser.json({ limit: '20mb' }));
+  app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
+
   app.enableCors({
     origin: [
       'http://43.203.242.14',
       'http://43.201.114.228',
       'http://localhost:3000',
       'http://localhost:4000',
+      'http://52.62.112.82',
     ],
     credentials: true,
     exposedHeaders: ['Set-Cookie', 'Authorization', 'Custom-Header'],

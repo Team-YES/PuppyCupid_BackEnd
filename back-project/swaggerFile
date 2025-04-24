@@ -1,0 +1,3223 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/google": {
+      "get": {
+        "operationId": "AuthController_googleAuth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "구글 로그인 요청",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "operationId": "AuthController_googleAuthCallback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "구글 로그인 콜백",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/kakao": {
+      "get": {
+        "operationId": "AuthController_kakaoAuth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "카카오 로그인 요청",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/kakao/callback": {
+      "get": {
+        "operationId": "AuthController_kakaoAuthCallback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "카카오 로그인 콜백",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/naver": {
+      "get": {
+        "operationId": "AuthController_naverAuth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "네이버 로그인 요청",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/naver/callback": {
+      "get": {
+        "operationId": "AuthController_naverAuthCallback",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "네이버 로그인 콜백",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/check-temp-token": {
+      "post": {
+        "operationId": "AuthController_checkTempToken",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempTokenCheckResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "임시 토큰 유효성 검사",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/update-phone": {
+      "post": {
+        "operationId": "AuthController_updatePhone",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhoneUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePhoneResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "전화번호 및 성별, 닉네임 등록",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/check": {
+      "get": {
+        "operationId": "AuthController_checkLogin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "로그인 상태 확인",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/nickName": {
+      "get": {
+        "operationId": "AuthController_checkNickname",
+        "parameters": [
+          {
+            "name": "nickName",
+            "required": true,
+            "in": "query",
+            "description": "중복 확인할 닉네임",
+            "schema": {
+              "example": "puppy_lover",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckNicknameResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "임시 사용자 닉네임 중복 확인",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/adminLogin": {
+      "post": {
+        "operationId": "AuthController_adminLogin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminLoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminLoginResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "관리자 로그인",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/adminCheck": {
+      "get": {
+        "operationId": "AuthController_checkAdminLogin",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "관리자 로그인 상태 확인",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "포폴용 로그인",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenRefreshResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "리프레시 토큰으로 액세스 토큰 재발급",
+        "tags": [
+          "인증"
+        ]
+      }
+    },
+    "/users/info": {
+      "get": {
+        "description": "JWT를 통해 로그인한 유저의 정보를 조회합니다.",
+        "operationId": "UsersController_findUserById",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "내 정보 조회",
+        "tags": [
+          "유저"
+        ]
+      }
+    },
+    "/users/nickName": {
+      "get": {
+        "description": "닉네임이 사용 가능한지 확인합니다.",
+        "operationId": "UsersController_checkNickname",
+        "parameters": [
+          {
+            "name": "nickName",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NicknameCheckResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "닉네임 중복 확인",
+        "tags": [
+          "유저"
+        ]
+      }
+    },
+    "/users/update": {
+      "put": {
+        "description": "전화번호, 닉네임, 성별을 수정합니다.",
+        "operationId": "UsersController_updateform",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "프로필 수정",
+        "tags": [
+          "유저"
+        ]
+      }
+    },
+    "/users/mypage": {
+      "get": {
+        "description": "로그인한 유저의 마이페이지 데이터를 조회합니다.",
+        "operationId": "UsersController_getMypageData",
+        "parameters": [
+          {
+            "name": "notificationsPage",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "likedPage",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "postsPage",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "마이페이지 조회",
+        "tags": [
+          "유저"
+        ]
+      }
+    },
+    "/users/otherpage/{otherUserId}": {
+      "get": {
+        "description": "다른 유저의 마이페이지 정보를 조회합니다.",
+        "operationId": "UsersController_getOtherpageData",
+        "parameters": [
+          {
+            "name": "otherUserId",
+            "required": true,
+            "in": "path",
+            "description": "다른 유저 ID",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "postsPage",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "다른 유저 마이페이지",
+        "tags": [
+          "유저"
+        ]
+      }
+    },
+    "/users/{userId}": {
+      "delete": {
+        "description": "해당 유저를 삭제합니다. 관리자 또는 본인만 가능.",
+        "operationId": "UsersController_deleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "삭제할 유저 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "유저 삭제",
+        "tags": [
+          "유저"
+        ]
+      }
+    },
+    "/posts/form": {
+      "post": {
+        "description": "이미지 포함 게시글을 생성합니다.",
+        "operationId": "PostsController_createPost",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePostDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "게시글 생성",
+        "tags": [
+          "게시글"
+        ]
+      }
+    },
+    "/posts/search": {
+      "get": {
+        "description": "키워드로 게시글을 검색합니다.",
+        "operationId": "PostsController_searchPosts",
+        "parameters": [
+          {
+            "name": "keyword",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "게시글 검색",
+        "tags": [
+          "게시글"
+        ]
+      }
+    },
+    "/posts/{postId}": {
+      "get": {
+        "description": "postId로 게시글 상세 내용을 조회합니다.",
+        "operationId": "PostsController_getPostDetail",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "게시글 상세 조회",
+        "tags": [
+          "게시글"
+        ]
+      },
+      "post": {
+        "description": "게시글 내용을 수정합니다.",
+        "operationId": "PostsController_updatePost",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePostDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "게시글 수정",
+        "tags": [
+          "게시글"
+        ]
+      },
+      "delete": {
+        "description": "게시글을 삭제합니다.",
+        "operationId": "PostsController_deletePost",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "게시글 삭제",
+        "tags": [
+          "게시글"
+        ]
+      }
+    },
+    "/posts": {
+      "get": {
+        "description": "전체 게시글을 무한스크롤 방식으로 조회합니다.",
+        "operationId": "PostsController_getAllPostsWithLikeComment",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "게시글 전체 조회",
+        "tags": [
+          "게시글"
+        ]
+      }
+    },
+    "/posts/user": {
+      "get": {
+        "description": "현재 로그인한 사용자의 게시글을 조회합니다.",
+        "operationId": "PostsController_getUserPosts",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "내가 작성한 게시글 조회",
+        "tags": [
+          "게시글"
+        ]
+      }
+    },
+    "/interactions/like/{postId}": {
+      "post": {
+        "operationId": "InteractionsController_toggleLike",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "좋아요 또는 좋아요 취소",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToggleLikeResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "좋아요 토글",
+        "tags": [
+          "Interactions"
+        ]
+      }
+    },
+    "/interactions/comment/{postId}": {
+      "post": {
+        "operationId": "InteractionsController_createComment",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "댓글 생성 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "댓글 작성",
+        "tags": [
+          "Interactions"
+        ]
+      },
+      "get": {
+        "operationId": "InteractionsController_getComments",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCommentsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "게시글 댓글 목록 조회",
+        "tags": [
+          "Interactions"
+        ]
+      }
+    },
+    "/interactions/comment/{commentId}": {
+      "delete": {
+        "operationId": "InteractionsController_deleteComment",
+        "parameters": [
+          {
+            "name": "commentId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteCommentResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "댓글 삭제",
+        "tags": [
+          "Interactions"
+        ]
+      }
+    },
+    "/notifications": {
+      "get": {
+        "operationId": "NotificationsController_getMyNotifications",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 10
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "알림 목록 조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationListResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "내 알림 목록 조회",
+        "tags": [
+          "알림"
+        ]
+      }
+    },
+    "/notifications/read": {
+      "patch": {
+        "operationId": "NotificationsController_markNotificationsAsRead",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "알림 읽음 처리 완료",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkAsReadResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "내 알림 전체 읽음 표시",
+        "tags": [
+          "알림"
+        ]
+      }
+    },
+    "/notifications/status": {
+      "get": {
+        "operationId": "NotificationsController_checkUnread",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "읽지 않은 알림 상태",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnreadStatusResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "읽지 않은 알림 존재 여부 확인",
+        "tags": [
+          "알림"
+        ]
+      }
+    },
+    "/follows/{targetUserId}": {
+      "post": {
+        "operationId": "FollowsController_toggleFollow",
+        "parameters": [
+          {
+            "name": "targetUserId",
+            "required": true,
+            "in": "path",
+            "description": "상대 유저 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "팔로우 or 언팔로우 처리 결과",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToggleFollowResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "팔로우/언팔로우 토글",
+        "tags": [
+          "팔로우"
+        ]
+      }
+    },
+    "/follows/followers/{userId}": {
+      "get": {
+        "operationId": "FollowsController_getFollowers",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "대상 유저 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "나를 팔로우한 유저 목록",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FollowUserDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "팔로워 목록 조회",
+        "tags": [
+          "팔로우"
+        ]
+      }
+    },
+    "/follows/followings/{userId}": {
+      "get": {
+        "operationId": "FollowsController_getFollowings",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "대상 유저 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "내가 팔로우한 유저 목록",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FollowUserDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "팔로잉 목록 조회",
+        "tags": [
+          "팔로우"
+        ]
+      }
+    },
+    "/follows/status/{targetUserId}": {
+      "get": {
+        "description": "내가 특정 유저를 팔로우 중인지, 상대가 나를 팔로우 중인지 여부를 확인합니다.",
+        "operationId": "FollowsController_getStatus",
+        "parameters": [
+          {
+            "name": "targetUserId",
+            "required": true,
+            "in": "path",
+            "description": "상대 유저 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "팔로우 상태 정보",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FollowStatusDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "팔로우 상태 확인",
+        "tags": [
+          "팔로우"
+        ]
+      }
+    },
+    "/dogs/register": {
+      "post": {
+        "description": "강아지 프로필을 등록합니다.",
+        "operationId": "DogsController_createDog",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDogDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "강아지 등록",
+        "tags": [
+          "강아지"
+        ]
+      }
+    },
+    "/dogs/update/{dogId}": {
+      "post": {
+        "description": "기존 강아지 프로필을 수정합니다.",
+        "operationId": "DogsController_updateDog",
+        "parameters": [
+          {
+            "name": "dogId",
+            "required": true,
+            "in": "path",
+            "description": "강아지 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDogDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "강아지 수정",
+        "tags": [
+          "강아지"
+        ]
+      }
+    },
+    "/dogs/{dogId}/location": {
+      "post": {
+        "description": "강아지 위치를 저장하고, 반경 3km 이내의 다른 강아지 정보를 반환합니다.",
+        "operationId": "DogsController_setDogLocation",
+        "parameters": [
+          {
+            "name": "dogId",
+            "required": true,
+            "in": "path",
+            "description": "강아지 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDogLocationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "강아지 위치 저장 및 주변 강아지 조회",
+        "tags": [
+          "강아지"
+        ]
+      }
+    },
+    "/dogs/profile": {
+      "get": {
+        "description": "내 강아지 프로필을 조회합니다.",
+        "operationId": "DogsController_getDogProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "강아지 프로필 조회",
+        "tags": [
+          "강아지"
+        ]
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "operationId": "AdminController_getUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "전체 유저 목록 반환",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "모든 유저 조회",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/blacklist/{userId}": {
+      "post": {
+        "operationId": "AdminController_addToBlacklist",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "블랙리스트에 등록할 유저 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToBlacklistDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "블랙리스트 등록 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddToBlacklistResDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "유저를 블랙리스트에 추가",
+        "tags": [
+          "관리자 API"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminController_removeBlacklist",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "블랙리스트에서 일반 유저로 변경",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/blacklist": {
+      "get": {
+        "operationId": "AdminController_getBlacklists",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "블랙리스트 전체 조회",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/users/{id}": {
+      "delete": {
+        "operationId": "AdminController_deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "유저 삭제 (강제 탈퇴)",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/reports": {
+      "get": {
+        "operationId": "AdminController_getReports",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "전체 신고 내역 조회",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/postsCount": {
+      "get": {
+        "operationId": "AdminController_getCountAllPosts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "전체 게시글 개수",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/posts/{postId}": {
+      "delete": {
+        "operationId": "AdminController_deletePost",
+        "parameters": [
+          {
+            "name": "postId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "신고된 게시글 삭제",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/comments/{commentId}": {
+      "delete": {
+        "operationId": "AdminController_deleteComment",
+        "parameters": [
+          {
+            "name": "commentId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "신고된 댓글 삭제",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/inquiries": {
+      "get": {
+        "operationId": "AdminController_getInquiries",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "전체 문의 내역 조회",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/inquiries/{id}/status": {
+      "patch": {
+        "operationId": "AdminController_updateInquiryStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInquiryStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "문의 상태 수정",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/inquiries/{id}": {
+      "delete": {
+        "operationId": "AdminController_deleteInquiry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "문의 삭제",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/count": {
+      "get": {
+        "operationId": "AdminController_getChatCount",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "통계 정보 조회 (채팅/결제/게시글)",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/admin/payments": {
+      "get": {
+        "operationId": "AdminController_getPayments",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "전체 결제 내역 조회",
+        "tags": [
+          "관리자 API"
+        ]
+      }
+    },
+    "/report/{type}/{targetId}": {
+      "post": {
+        "description": "게시글, 댓글, 유저에 대한 신고를 생성합니다.",
+        "operationId": "ReportsController_reportContent",
+        "parameters": [
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "enum": [
+                "user",
+                "post",
+                "comment"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "신고하기",
+        "tags": [
+          "신고"
+        ]
+      }
+    },
+    "/report": {
+      "get": {
+        "operationId": "ReportsController_getAllReports",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "모든 신고 목록 조회 (관리자용)",
+        "tags": [
+          "신고"
+        ]
+      }
+    },
+    "/inquiries/contact": {
+      "post": {
+        "description": "문의 정보를 등록합니다.",
+        "operationId": "InquiriesController_createInquiry",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInquiryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "문의 등록",
+        "tags": [
+          "문의"
+        ]
+      }
+    },
+    "/inquiries": {
+      "get": {
+        "description": "모든 문의를 조회합니다.",
+        "operationId": "InquiriesController_getAllInquiries",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "문의 전체 조회",
+        "tags": [
+          "문의"
+        ]
+      }
+    },
+    "/inquiries/{id}": {
+      "get": {
+        "description": "특정 문의 내용을 조회합니다.",
+        "operationId": "InquiriesController_getInquiry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "문의 상세 조회",
+        "tags": [
+          "문의"
+        ]
+      },
+      "delete": {
+        "description": "특정 문의를 삭제합니다.",
+        "operationId": "InquiriesController_deleteInquiry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "문의 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "문의 삭제",
+        "tags": [
+          "문의"
+        ]
+      }
+    },
+    "/inquiries/{id}/status": {
+      "put": {
+        "description": "문의 상태를 변경합니다.",
+        "operationId": "InquiriesController_updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "문의 ID",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInquiryStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "문의 상태 변경",
+        "tags": [
+          "문의"
+        ]
+      }
+    },
+    "/payments/getTossClientKey": {
+      "get": {
+        "description": "프론트에서 결제를 요청할 때 사용하는 Toss Client Key를 반환합니다.",
+        "operationId": "PaymentsController_getTossClientKey",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Toss Client Key 반환"
+          }
+        },
+        "summary": "Toss Client Key 조회",
+        "tags": [
+          "결제"
+        ]
+      }
+    },
+    "/payments/create": {
+      "post": {
+        "description": "사용자가 결제를 시작할 때 호출합니다. 결제 금액과 방법을 입력받습니다.",
+        "operationId": "PaymentsController_createPayment",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "결제 생성 후 orderId 반환"
+          },
+          "401": {
+            "description": "JWT 인증 필요"
+          }
+        },
+        "summary": "결제 생성",
+        "tags": [
+          "결제"
+        ]
+      }
+    },
+    "/payments/success": {
+      "post": {
+        "description": "Toss에서 결제 성공 후 호출됩니다. 결제 상태를 SUCCESS로 업데이트하고 유저 권한도 갱신됩니다.",
+        "operationId": "PaymentsController_handlePaymentSuccess",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentSuccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "결제 성공 처리 완료"
+          }
+        },
+        "summary": "결제 성공 처리",
+        "tags": [
+          "결제"
+        ]
+      }
+    },
+    "/payments/fail": {
+      "post": {
+        "description": "결제 실패 시 호출되어 상태를 FAILED로 업데이트하고, 실패 메시지를 저장합니다.",
+        "operationId": "PaymentsController_handlePaymentFailure",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentFailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "결제 실패 처리 완료"
+          }
+        },
+        "summary": "결제 실패 처리",
+        "tags": [
+          "결제"
+        ]
+      }
+    },
+    "/messages": {
+      "post": {
+        "description": "상대방에게 메시지를 보냅니다.",
+        "operationId": "MessagesController_sendMessage",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "메시지 보내기",
+        "tags": [
+          "채팅"
+        ]
+      }
+    },
+    "/messages/chatUsers": {
+      "get": {
+        "description": "나와 채팅한 유저의 닉네임, 강아지 이미지, 마지막 메시지 등을 조회합니다.",
+        "operationId": "MessagesController_getChatUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatUserInfoDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "채팅 유저 목록",
+        "tags": [
+          "채팅"
+        ]
+      }
+    },
+    "/messages/{otherUserId}": {
+      "get": {
+        "description": "상대 유저와의 메시지 전체를 조회합니다.",
+        "operationId": "MessagesController_getMessages",
+        "parameters": [
+          {
+            "name": "otherUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "대화 내용 조회",
+        "tags": [
+          "채팅"
+        ]
+      },
+      "delete": {
+        "description": "상대방과의 채팅방을 나가고 메시지를 삭제합니다.",
+        "operationId": "MessagesController_deleteConversation",
+        "parameters": [
+          {
+            "name": "otherUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "대화 삭제",
+        "tags": [
+          "채팅"
+        ]
+      }
+    },
+    "/messages/read/{otherUserId}": {
+      "patch": {
+        "description": "상대방이 보낸 메시지를 읽음 상태로 변경합니다.",
+        "operationId": "MessagesController_readMark",
+        "parameters": [
+          {
+            "name": "otherUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "메시지 읽음 처리",
+        "tags": [
+          "채팅"
+        ]
+      }
+    },
+    "/match": {
+      "get": {
+        "description": "현재 사용자의 강아지 MBTI와 성격을 기반으로 인근에 있는 궁합이 잘 맞는 강아지를 추천합니다.",
+        "operationId": "MatchesController_getMatch",
+        "parameters": [
+          {
+            "name": "lat",
+            "required": true,
+            "in": "query",
+            "description": "현재 위도",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lng",
+            "required": true,
+            "in": "query",
+            "description": "현재 경도",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rejected",
+            "required": false,
+            "in": "query",
+            "description": "이미 거절한 강아지 조합 목록 (JSON 형식)",
+            "schema": {
+              "example": "[{\"mbti\": \"INTJ\", \"personality\": [\"고집쟁이\", \"신중함\"]}]",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "추천된 강아지 정보",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "ok": true,
+                    "match": {
+                      "id": 3,
+                      "name": "뽀미",
+                      "mbti": "ENFP",
+                      "personality": "사교적임, 애교쟁이",
+                      "imageUrl": "https://example.com/images/ppomi.jpg",
+                      "latitude": 37.5651,
+                      "longitude": 126.9895,
+                      "userId": 45
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "강아지 추천",
+        "tags": [
+          "Match"
+        ]
+      }
+    },
+    "/weather": {
+      "get": {
+        "description": "위도(latitude)와 경도(longitude)를 기반으로 실시간 날씨 정보를 조회합니다. DB에 데이터가 없으면 외부 API에서 받아와 저장 후 반환.",
+        "operationId": "WeatherController_getWeather",
+        "parameters": [
+          {
+            "name": "lat",
+            "required": true,
+            "in": "query",
+            "description": "위도 (latitude)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lon",
+            "required": true,
+            "in": "query",
+            "description": "경도 (longitude)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "요청한 좌표의 최신 날씨 정보",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeatherResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "날씨 조회",
+        "tags": [
+          "날씨"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "PuppyCupid API",
+    "description": "PuppyCupid 백엔드 API 문서입니다.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "UserInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "유저 ID"
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "이메일 주소"
+          },
+          "nickName": {
+            "type": "object",
+            "example": "멍멍이짱",
+            "description": "닉네임",
+            "nullable": true
+          },
+          "phone": {
+            "type": "object",
+            "example": "01012345678",
+            "description": "휴대폰 번호",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female"
+            ],
+            "example": "female",
+            "description": "성별",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "power_month",
+              "power_year",
+              "admin",
+              "blacklist"
+            ],
+            "example": "user",
+            "description": "유저 권한"
+          },
+          "isPhoneVerified": {
+            "type": "boolean",
+            "example": true,
+            "description": "휴대폰 인증 여부"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-05-01T12:34:56.789Z",
+            "description": "가입일"
+          },
+          "power_expired_at": {
+            "type": "object",
+            "example": "2025-04-30T23:59:59.000Z",
+            "description": "이용권 만료일 (없을 수 있음)",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "nickName",
+          "phone",
+          "gender",
+          "role",
+          "isPhoneVerified",
+          "created_at",
+          "power_expired_at"
+        ]
+      },
+      "TempTokenCheckResDto": {
+        "type": "object",
+        "properties": {
+          "isLoggedIn": {
+            "type": "boolean",
+            "example": true,
+            "description": "로그인 여부"
+          },
+          "user": {
+            "description": "유저 정보",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserInfoDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "isLoggedIn"
+        ]
+      },
+      "PhoneUpdateDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "01012345678",
+            "description": "전화번호"
+          },
+          "nickName": {
+            "type": "string",
+            "example": "nickname123",
+            "description": "닉네임"
+          },
+          "gender": {
+            "type": "string",
+            "example": "male",
+            "enum": [
+              "male",
+              "female"
+            ],
+            "description": "성별"
+          }
+        },
+        "required": [
+          "phone",
+          "nickName",
+          "gender"
+        ]
+      },
+      "UpdatePhoneResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true,
+            "description": "성공 여부"
+          },
+          "message": {
+            "type": "string",
+            "example": "전화번호 등록 완료, 로그인 완료",
+            "description": "메시지"
+          },
+          "access_token": {
+            "type": "string",
+            "example": "access.token.jwt.value",
+            "description": "새로 발급된 access token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "example": "refresh.token.jwt.value",
+            "description": "새로 발급된 refresh token"
+          }
+        },
+        "required": [
+          "ok",
+          "message",
+          "access_token",
+          "refresh_token"
+        ]
+      },
+      "CheckNicknameResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true,
+            "description": "닉네임 사용 가능 여부"
+          },
+          "message": {
+            "type": "string",
+            "example": "사용 가능한 닉네임입니다.",
+            "description": "결과 메시지"
+          },
+          "error": {
+            "type": "string",
+            "example": "이미 사용 중인 닉네임입니다.",
+            "description": "에러 메시지"
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
+      "AdminLoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@example.com",
+            "description": "관리자 이메일"
+          },
+          "password": {
+            "type": "string",
+            "example": "securepassword",
+            "description": "비밀번호"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "AdminLoginResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true,
+            "description": "성공 여부"
+          },
+          "message": {
+            "type": "string",
+            "example": "관리자 로그인 성공",
+            "description": "메시지"
+          },
+          "access_token": {
+            "type": "string",
+            "example": "access.token.jwt.value"
+          },
+          "refresh_token": {
+            "type": "string",
+            "example": "refresh.token.jwt.value"
+          }
+        },
+        "required": [
+          "ok",
+          "message",
+          "access_token",
+          "refresh_token"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@example.com",
+            "description": "이메일"
+          },
+          "password": {
+            "type": "string",
+            "example": "securepassword123!",
+            "description": "비밀번호"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "TokenResDto": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "description": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "description": "Refresh Token"
+          }
+        },
+        "required": [
+          "access_token",
+          "refresh_token"
+        ]
+      },
+      "TokenRefreshResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true,
+            "description": "성공 여부"
+          },
+          "access_token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "description": "새로 발급된 액세스 토큰"
+          }
+        },
+        "required": [
+          "ok",
+          "access_token"
+        ]
+      },
+      "NicknameCheckResponseDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "사용 가능한 닉네임입니다."
+          },
+          "error": {
+            "type": "string",
+            "example": "이미 사용 중인 닉네임입니다."
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
+      "UpdateUserProfileDto": {
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "example": "댕댕이주인",
+            "description": "닉네임"
+          },
+          "phone": {
+            "type": "string",
+            "example": "01012345678",
+            "description": "전화번호"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female"
+            ],
+            "description": "성별"
+          }
+        },
+        "required": [
+          "nickname",
+          "phone",
+          "gender"
+        ]
+      },
+      "CreatePostDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "adopt",
+              "free",
+              "supplies"
+            ],
+            "description": "게시글 카테고리"
+          },
+          "content": {
+            "type": "string",
+            "description": "게시글 내용"
+          },
+          "images": {
+            "description": "업로드할 이미지들 (최대 10장)",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "binary"
+            }
+          }
+        },
+        "required": [
+          "category",
+          "content",
+          "images"
+        ]
+      },
+      "UpdatePostDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "수정할 게시글 내용"
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "ToggleLikeResponseDto": {
+        "type": "object",
+        "properties": {
+          "liked": {
+            "type": "boolean",
+            "example": true,
+            "description": "좋아요 여부"
+          },
+          "likeCount": {
+            "type": "number",
+            "example": 17,
+            "description": "좋아요 수"
+          }
+        },
+        "required": [
+          "liked",
+          "likeCount"
+        ]
+      },
+      "CreateCommentDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "댓글 내용",
+            "example": "게시글의 내용이 도움이 돼요"
+          },
+          "parentCommentId": {
+            "type": "number",
+            "description": "부모 댓글 ID (대댓글일 경우)",
+            "example": 3
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "CommentUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "사용자 ID"
+          },
+          "nickName": {
+            "type": "string",
+            "example": "yujeen",
+            "description": "닉네임"
+          },
+          "dogImage": {
+            "type": "object",
+            "example": "https://example.com/dog.jpg",
+            "description": "반려견 이미지 URL",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "nickName",
+          "dogImage"
+        ]
+      },
+      "CommentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 5,
+            "description": "댓글 ID"
+          },
+          "content": {
+            "type": "string",
+            "example": "좋은 게시글이네요!",
+            "description": "댓글 내용"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2025-04-16T12:34:56.789Z",
+            "description": "생성일"
+          },
+          "postId": {
+            "type": "number",
+            "example": 2,
+            "description": "게시글 ID"
+          },
+          "user": {
+            "description": "댓글 작성자 정보",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CommentUserDto"
+              }
+            ]
+          },
+          "parentCommentId": {
+            "type": "object",
+            "example": null,
+            "description": "부모 댓글 ID (없으면 null)"
+          }
+        },
+        "required": [
+          "id",
+          "content",
+          "created_at",
+          "postId",
+          "user",
+          "parentCommentId"
+        ]
+      },
+      "GetCommentsResponseDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "postId": {
+            "type": "number",
+            "example": 1,
+            "description": "게시글 ID"
+          },
+          "comments": {
+            "description": "댓글 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentResponseDto"
+            }
+          }
+        },
+        "required": [
+          "ok",
+          "postId",
+          "comments"
+        ]
+      },
+      "DeleteCommentResponseDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true,
+            "description": "성공 여부"
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
+      "NotificationItemDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "ㅇㅇㅇ님이 회원님의 게시글에 댓글을 남겼습니다."
+          },
+          "isRead": {
+            "type": "boolean",
+            "example": false
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2024-04-16T10:30:00.000Z"
+          },
+          "dogImage": {
+            "type": "object",
+            "example": "https://example.com/dog.jpg",
+            "nullable": true,
+            "description": "유저의 대표 강아지 이미지"
+          }
+        },
+        "required": [
+          "message",
+          "isRead",
+          "createdAt",
+          "dogImage"
+        ]
+      },
+      "NotificationListResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationItemDto"
+            }
+          },
+          "totalCount": {
+            "type": "number",
+            "example": 15
+          }
+        },
+        "required": [
+          "ok",
+          "notifications",
+          "totalCount"
+        ]
+      },
+      "MarkAsReadResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "알림 읽음 처리 완료"
+          }
+        },
+        "required": [
+          "ok",
+          "message"
+        ]
+      },
+      "UnreadStatusResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "hasUnread": {
+            "type": "boolean",
+            "example": true,
+            "description": "읽지 않은 알림 존재 여부"
+          }
+        },
+        "required": [
+          "ok",
+          "hasUnread"
+        ]
+      },
+      "ToggleFollowResponseDto": {
+        "type": "object",
+        "properties": {
+          "followed": {
+            "type": "boolean",
+            "example": true,
+            "description": "팔로우 성공 여부 (언팔로우 시 false)"
+          }
+        },
+        "required": [
+          "followed"
+        ]
+      },
+      "FollowUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "유저 ID"
+          },
+          "nickName": {
+            "type": "string",
+            "example": "댕댕이주인",
+            "description": "유저 닉네임"
+          },
+          "dogImage": {
+            "type": "object",
+            "example": "/uploads/dogsImage/dog123.jpg",
+            "description": "강아지 이미지 URL",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "nickName",
+          "dogImage"
+        ]
+      },
+      "FollowStatusDto": {
+        "type": "object",
+        "properties": {
+          "isFollowing": {
+            "type": "boolean",
+            "example": true,
+            "description": "내가 상대를 팔로우하고 있는지 여부"
+          },
+          "isFollowedBy": {
+            "type": "boolean",
+            "example": false,
+            "description": "상대가 나를 팔로우하고 있는지 여부"
+          }
+        },
+        "required": [
+          "isFollowing",
+          "isFollowedBy"
+        ]
+      },
+      "CreateDogDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "뽀삐",
+            "description": "강아지 이름"
+          },
+          "age": {
+            "type": "number",
+            "example": 3,
+            "description": "강아지 나이"
+          },
+          "breed": {
+            "type": "string",
+            "example": "푸들",
+            "description": "견종"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "male_neutered",
+              "female_neutered"
+            ],
+            "example": "male",
+            "description": "성별 (중성화 여부 포함)"
+          },
+          "mbti": {
+            "type": "string",
+            "enum": [
+              "ISTJ",
+              "ISFJ",
+              "INFJ",
+              "INTJ",
+              "ISTP",
+              "ISFP",
+              "INFP",
+              "INTP",
+              "ESTP",
+              "ESFP",
+              "ENFP",
+              "ENTP",
+              "ESTJ",
+              "ESFJ",
+              "ENFJ",
+              "ENTJ"
+            ],
+            "example": "ENFP",
+            "description": "MBTI (선택사항)"
+          },
+          "personality": {
+            "type": "string",
+            "example": "활발,사교적",
+            "description": "성격 (콤마로 구분된 문자열)"
+          },
+          "dog_image": {
+            "type": "string",
+            "example": "/uploads/dogsImage/uuid.jpg",
+            "description": "이미지 URL"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 37.5665,
+            "description": "위도"
+          },
+          "longitude": {
+            "type": "number",
+            "example": 126.978,
+            "description": "경도"
+          }
+        },
+        "required": [
+          "name",
+          "age",
+          "breed",
+          "gender",
+          "personality"
+        ]
+      },
+      "UpdateDogDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "뽀삐",
+            "description": "강아지 이름"
+          },
+          "age": {
+            "type": "number",
+            "example": 3,
+            "description": "강아지 나이"
+          },
+          "breed": {
+            "type": "string",
+            "example": "푸들",
+            "description": "견종"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "male_neutered",
+              "female_neutered"
+            ],
+            "example": "male",
+            "description": "성별 (중성화 여부 포함)"
+          },
+          "mbti": {
+            "type": "string",
+            "enum": [
+              "ISTJ",
+              "ISFJ",
+              "INFJ",
+              "INTJ",
+              "ISTP",
+              "ISFP",
+              "INFP",
+              "INTP",
+              "ESTP",
+              "ESFP",
+              "ENFP",
+              "ENTP",
+              "ESTJ",
+              "ESFJ",
+              "ENFJ",
+              "ENTJ"
+            ],
+            "example": "ENFP",
+            "description": "MBTI (선택사항)"
+          },
+          "personality": {
+            "type": "string",
+            "example": "활발,사교적",
+            "description": "성격 (콤마로 구분된 문자열)"
+          },
+          "dog_image": {
+            "type": "string",
+            "example": "/uploads/dogsImage/uuid.jpg",
+            "description": "이미지 URL"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 37.5665,
+            "description": "위도"
+          },
+          "longitude": {
+            "type": "number",
+            "example": 126.978,
+            "description": "경도"
+          }
+        }
+      },
+      "UpdateDogLocationDto": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "example": 37.5665,
+            "description": "위도"
+          },
+          "longitude": {
+            "type": "number",
+            "example": 126.978,
+            "description": "경도"
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude"
+        ]
+      },
+      "AddToBlacklistDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "example": "욕설로 인한 블랙리스트 처리"
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "AddToBlacklistResDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true,
+            "description": "요청 성공 여부"
+          },
+          "targetUserId": {
+            "type": "number",
+            "example": 5,
+            "description": "블랙리스트에 등록된 유저 ID"
+          }
+        },
+        "required": [
+          "ok",
+          "targetUserId"
+        ]
+      },
+      "UpdateInquiryStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "resolved"
+            ],
+            "example": "resolved",
+            "description": "문의 상태 (처리중, 완료)"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "CreateReportDto": {
+        "type": "object",
+        "properties": {
+          "reportType": {
+            "type": "string",
+            "enum": [
+              "user",
+              "post",
+              "comment"
+            ],
+            "example": "post",
+            "description": "신고 대상 유형 (user, post, comment)"
+          },
+          "targetId": {
+            "type": "number",
+            "example": 123,
+            "description": "신고 대상의 ID (예: 게시글 ID, 댓글 ID, 유저 ID)"
+          },
+          "reason": {
+            "type": "string",
+            "example": "욕설이 포함되어 있습니다.",
+            "description": "신고 사유"
+          }
+        },
+        "required": [
+          "reportType",
+          "targetId",
+          "reason"
+        ]
+      },
+      "CreateInquiryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "홍길동",
+            "description": "문의자 이름"
+          },
+          "email": {
+            "type": "string",
+            "example": "example@email.com",
+            "description": "이메일 주소"
+          },
+          "phone": {
+            "type": "string",
+            "example": "010-1234-5678",
+            "description": "전화번호"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "service",
+              "bug",
+              "etc"
+            ],
+            "example": "service",
+            "description": "문의 유형 (서비스, 버그, 기타)"
+          },
+          "content": {
+            "type": "string",
+            "example": "서비스 이용 중 오류가 발생했습니다.",
+            "description": "문의 내용"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "phone",
+          "type",
+          "content"
+        ]
+      },
+      "CreatePaymentDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 2900,
+            "description": "결제 금액 (예: 2900, 29000)"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "card",
+              "test"
+            ],
+            "example": "card",
+            "description": "결제 수단"
+          }
+        },
+        "required": [
+          "amount",
+          "method"
+        ]
+      },
+      "PaymentSuccessDto": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "order_1713774940158_123",
+            "description": "주문 ID"
+          },
+          "amount": {
+            "type": "number",
+            "example": 2900,
+            "description": "결제 금액"
+          },
+          "paymentKey": {
+            "type": "string",
+            "example": "tosspayments_PyV...aKx",
+            "description": "Toss 결제 키"
+          }
+        },
+        "required": [
+          "orderId",
+          "amount",
+          "paymentKey"
+        ]
+      },
+      "PaymentFailDto": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "order_1713774940158_123",
+            "description": "주문 ID"
+          },
+          "amount": {
+            "type": "number",
+            "example": 2900,
+            "description": "결제 금액"
+          },
+          "errorCode": {
+            "type": "string",
+            "example": "PAYMENT_FAILED",
+            "description": "에러 코드"
+          },
+          "errorMessage": {
+            "type": "string",
+            "example": "잔액 부족",
+            "description": "에러 메시지"
+          }
+        },
+        "required": [
+          "orderId",
+          "amount",
+          "errorCode",
+          "errorMessage"
+        ]
+      },
+      "SendMessageDto": {
+        "type": "object",
+        "properties": {
+          "receiverId": {
+            "type": "number",
+            "example": 2,
+            "description": "메시지를 받을 유저 ID"
+          },
+          "content": {
+            "type": "string",
+            "example": "안녕하세요!",
+            "description": "메시지 내용"
+          }
+        },
+        "required": [
+          "receiverId",
+          "content"
+        ]
+      },
+      "ChatUserInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 3,
+            "description": "상대 유저 ID"
+          },
+          "nickName": {
+            "type": "string",
+            "example": "댕댕이주인",
+            "description": "상대 유저 닉네임"
+          },
+          "dogImage": {
+            "type": "object",
+            "example": "/uploads/dogsImage/dog.png",
+            "nullable": true,
+            "description": "상대 강아지 이미지"
+          },
+          "lastMessage": {
+            "type": "string",
+            "example": "마지막 보낸 메시지입니다.",
+            "description": "최근 메시지"
+          },
+          "lastMessageTime": {
+            "type": "string",
+            "example": "2025-04-21T10:30:00.000Z",
+            "description": "최근 메시지 시간"
+          },
+          "unreadCount": {
+            "type": "number",
+            "example": 2,
+            "description": "안 읽은 메시지 수"
+          }
+        },
+        "required": [
+          "id",
+          "nickName",
+          "dogImage",
+          "lastMessage",
+          "lastMessageTime",
+          "unreadCount"
+        ]
+      },
+      "MessageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1,
+            "description": "메시지 ID"
+          },
+          "content": {
+            "type": "string",
+            "example": "안녕하세요!",
+            "description": "내용"
+          },
+          "system": {
+            "type": "boolean",
+            "example": false,
+            "description": "시스템 메시지 여부"
+          },
+          "isRead": {
+            "type": "boolean",
+            "example": false,
+            "description": "읽음 여부"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2025-04-21T10:30:00.000Z",
+            "description": "보낸 시간"
+          },
+          "senderId": {
+            "type": "number",
+            "example": 1,
+            "description": "보낸 사람 ID"
+          },
+          "receiverId": {
+            "type": "number",
+            "example": 2,
+            "description": "받은 사람 ID"
+          }
+        },
+        "required": [
+          "id",
+          "content",
+          "system",
+          "isRead",
+          "created_at",
+          "senderId",
+          "receiverId"
+        ]
+      },
+      "WeatherResponseDto": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "example": 37.5665,
+            "description": "위도 (Latitude)"
+          },
+          "longitude": {
+            "type": "number",
+            "example": 126.978,
+            "description": "경도 (Longitude)"
+          },
+          "temperature": {
+            "type": "number",
+            "example": 22.5,
+            "description": "기온 (℃)"
+          },
+          "humidity": {
+            "type": "number",
+            "example": 60,
+            "description": "습도 (%)"
+          },
+          "wind_speed": {
+            "type": "number",
+            "example": 4.6,
+            "description": "풍속 (m/s)"
+          },
+          "weather_main": {
+            "type": "string",
+            "example": "Clear",
+            "description": "날씨 요약"
+          },
+          "weather_desc": {
+            "type": "string",
+            "example": "clear sky",
+            "description": "날씨 설명"
+          },
+          "icon": {
+            "type": "string",
+            "example": "01d",
+            "description": "날씨 아이콘 코드"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2025-04-22T10:00:00.000Z",
+            "description": "기록된 시각 (UTC)"
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude",
+          "temperature",
+          "humidity",
+          "wind_speed",
+          "weather_main",
+          "weather_desc",
+          "icon",
+          "recorded_at"
+        ]
+      }
+    }
+  }
+}
