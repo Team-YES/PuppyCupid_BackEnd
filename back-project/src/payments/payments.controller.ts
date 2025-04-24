@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { PaymentMethod, PaymentStatus } from './payments.entity';
+import { PaymentStatus } from './payments.entity';
 import { AuthGuard } from '@nestjs/passport';
 import {
   CreatePaymentDto,
@@ -22,7 +22,6 @@ export class PaymentsController {
   constructor(private readonly paymentService: PaymentsService) {}
 
   @Get('getTossClientKey')
-  @Get('getTossClientKey')
   @ApiOperation({
     summary: 'Toss Client Key 조회',
     description:
@@ -30,6 +29,7 @@ export class PaymentsController {
   })
   @ApiOkResponse({ description: 'Toss Client Key 반환' })
   getTossClientKey() {
+    console.log('TOSS_CLIENT_KEY:', process.env.TOSS_CLIENT_KEY);
     return { tossClientKey: process.env.TOSS_CLIENT_KEY };
   }
 
