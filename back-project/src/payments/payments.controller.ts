@@ -17,7 +17,6 @@ import {
 
 @ApiTags('결제')
 @Controller('payments')
-@UseGuards(AuthGuard('jwt'))
 export class PaymentsController {
   constructor(private readonly paymentService: PaymentsService) {}
 
@@ -29,12 +28,16 @@ export class PaymentsController {
   })
   @ApiOkResponse({ description: 'Toss Client Key 반환' })
   getTossClientKey() {
-    console.log('TOSS_CLIENT_KEY:', process.env.TOSS_CLIENT_KEY);
+    console.log(
+      'TOSS_CLIENT_KEY:asdfjlasjkdflakjsdflkajsdflk',
+      process.env.TOSS_CLIENT_KEY,
+    );
     return { tossClientKey: process.env.TOSS_CLIENT_KEY };
   }
 
   // 결제
   @Post('create')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '결제 생성',
     description:
@@ -55,6 +58,7 @@ export class PaymentsController {
 
   // 결제 성공 처리
   @Post('success')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '결제 성공 처리',
     description:
@@ -83,6 +87,7 @@ export class PaymentsController {
 
   // 결제 실패 처리
   @Post('fail')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '결제 실패 처리',
     description:
