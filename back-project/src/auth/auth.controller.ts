@@ -230,9 +230,6 @@ export class AuthController {
   // 포폴용 유저
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
-    const hash = await bcrypt.hash('teamYESsuperUser', 10);
-    console.log('해시된 비밀번호:', hash);
-
     const user = await this.usersService.findUserByEmail(body.email);
 
     if (!user) {
