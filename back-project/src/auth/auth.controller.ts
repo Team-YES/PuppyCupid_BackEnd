@@ -238,7 +238,7 @@ export class AuthController {
     if (!valid) return { ok: false, error: '비밀번호가 틀렸습니다.' };
 
     const tokens = await this.authService.issueTokens(user);
-    return { ok: true, message: '관리자 로그인 성공', ...tokens };
+    return { ok: true, message: '관리자 로그인 성공', ...tokens, user };
   }
 
   // 관리자 로그인 확인
