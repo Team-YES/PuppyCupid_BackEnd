@@ -17,11 +17,31 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
 import { Gender, UserRole } from 'src/users/users.entity';
 
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  CheckNicknameQueryDto,
+  CheckNicknameResDto,
+  LoginDto,
+  PhoneUpdateDto,
+  TokenRefreshResDto,
+  TokenResDto,
+  TempTokenCheckResDto,
+  UpdatePhoneResDto,
+  AdminLoginDto,
+  AdminLoginResDto,
+} from './dto/auth.dto';
 interface JwtUser {
   id: number;
   role: string;
 }
-
+@ApiTags('인증')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -32,10 +52,12 @@ export class AuthController {
   // 구글 로그인
   @Get('google')
   @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: '구글 로그인 요청' })
   async googleAuth(@Req() _req: Request) {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: '구글 로그인 콜백' })
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.googleLogin(req, res);
 
@@ -63,10 +85,12 @@ export class AuthController {
   // // 카카오 로그인
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
+  @ApiOperation({ summary: '카카오 로그인 요청' })
   async kakaoAuth(@Req() _req: Request) {}
 
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
+  @ApiOperation({ summary: '카카오 로그인 콜백' })
   async kakaoAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.kakaoLogin(req, res);
 
@@ -94,10 +118,12 @@ export class AuthController {
   // 네이버 로그인
   @Get('naver')
   @UseGuards(AuthGuard('naver'))
+  @ApiOperation({ summary: '네이버 로그인 요청' })
   async naverAuth(@Req() _req: Request) {}
 
   @Get('naver/callback')
   @UseGuards(AuthGuard('naver'))
+  @ApiOperation({ summary: '네이버 로그인 콜백' })
   async naverAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.naverLogin(req, res);
 
@@ -125,6 +151,8 @@ export class AuthController {
   // 임시토큰 확인
   @Post('check-temp-token')
   @UseGuards(AuthGuard('jwt-temp'))
+  @ApiOperation({ summary: '임시 토큰 유효성 검사' })
+  @ApiResponse({ type: TempTokenCheckResDto })
   async checkTempToken(@Req() req: Request) {
     const user = req.user as JwtUser;
     const foundUser = await this.usersService.findUserById(user.id);
@@ -135,10 +163,10 @@ export class AuthController {
   // 전화번호
   @Post('update-phone')
   @UseGuards(AuthGuard('jwt-temp'))
-  async updatePhone(
-    @Req() req: Request,
-    @Body() body: { phone: string; gender: Gender; nickName: string },
-  ) {
+  @ApiOperation({ summary: '전화번호 및 성별, 닉네임 등록' })
+  @ApiBody({ type: PhoneUpdateDto })
+  @ApiResponse({ type: UpdatePhoneResDto })
+  async updatePhone(@Req() req: Request, @Body() body: PhoneUpdateDto) {
     const user = req.user as JwtUser;
     const userId = user?.id;
     if (!userId) return { ok: false, error: '유저 정보가 없습니다.' };
@@ -164,6 +192,7 @@ export class AuthController {
 
   // 로그인 체크
   @Get('check')
+  @ApiOperation({ summary: '로그인 상태 확인' })
   async checkLogin(@Req() req: Request) {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) return { isLoggedIn: false };
@@ -184,9 +213,12 @@ export class AuthController {
   // 닉네임 중복 검사
   @Get('nickName')
   @UseGuards(AuthGuard('jwt-temp'))
-  async checkNickname(@Query('nickName') nickName: string) {
-    if (!nickName) return { ok: false, error: '닉네임을 입력해주세요.' };
-    const user = await this.usersService.findUserByNickname(nickName);
+  @ApiOperation({ summary: '임시 사용자 닉네임 중복 확인' })
+  @ApiQuery({ name: 'nickName', type: String })
+  @ApiResponse({ type: CheckNicknameResDto })
+  async checkNickname(@Query() query: CheckNicknameQueryDto) {
+    if (query.nickName) return { ok: false, error: '닉네임을 입력해주세요.' };
+    const user = await this.usersService.findUserByNickname(query.nickName);
     return user
       ? { ok: false, message: '이미 사용 중인 닉네임입니다.' }
       : { ok: true, message: '사용 가능한 닉네임입니다.' };
@@ -194,7 +226,10 @@ export class AuthController {
 
   // 관리자 로그인
   @Post('/adminLogin')
-  async adminLogin(@Body() body: { email: string; password: string }) {
+  @ApiOperation({ summary: '관리자 로그인' })
+  @ApiBody({ type: AdminLoginDto })
+  @ApiResponse({ status: 200, type: AdminLoginResDto })
+  async adminLogin(@Body() body: AdminLoginDto) {
     const user = await this.usersService.findUserByEmail(body.email);
     if (!user || user.role !== UserRole.ADMIN)
       return { ok: false, error: '관리자 계정을 찾을 수 없습니다.' };
@@ -208,6 +243,8 @@ export class AuthController {
 
   // 관리자 로그인 확인
   @Get('adminCheck')
+  @ApiOperation({ summary: '관리자 로그인 상태 확인' })
+  @ApiBearerAuth()
   async checkAdminLogin(@Req() req: Request) {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) return { isLoggedIn: false };
@@ -229,7 +266,10 @@ export class AuthController {
 
   // 포폴용 유저
   @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
+  @ApiOperation({ summary: '포폴용 로그인' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ type: TokenResDto })
+  async login(@Body() body: LoginDto) {
     const user = await this.usersService.findUserByEmail(body.email);
 
     if (!user) {
@@ -252,6 +292,8 @@ export class AuthController {
 
   // 리프레시 토큰 확인
   @Get('refresh')
+  @ApiOperation({ summary: '리프레시 토큰으로 액세스 토큰 재발급' })
+  @ApiResponse({ type: TokenRefreshResDto })
   async refresh(@Req() req: Request) {
     const refreshToken = req.headers['refresh_token'] as string;
     if (!refreshToken) return { ok: false, error: 'Refresh token이 없습니다.' };
@@ -270,11 +312,5 @@ export class AuthController {
     } catch {
       return { ok: false, error: '토큰 검증 실패' };
     }
-  }
-
-  // 로그아웃
-  @Get('logout')
-  async logout() {
-    return { ok: true, message: '로그아웃 성공' };
   }
 }
