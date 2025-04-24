@@ -253,7 +253,7 @@ export class AuthController {
   // 리프레시 토큰 확인
   @Get('refresh')
   async refresh(@Req() req: Request) {
-    const refreshToken = req.headers['x-refresh-token'] as string;
+    const refreshToken = req.headers['refresh_token'] as string;
     if (!refreshToken) return { ok: false, error: 'Refresh token이 없습니다.' };
 
     try {
