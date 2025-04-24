@@ -28,10 +28,6 @@ export class PaymentsController {
   })
   @ApiOkResponse({ description: 'Toss Client Key 반환' })
   getTossClientKey() {
-    console.log(
-      'TOSS_CLIENT_KEY:asdfjlasjkdflakjsdflkajsdflk',
-      process.env.TOSS_CLIENT_KEY,
-    );
     return { tossClientKey: process.env.TOSS_CLIENT_KEY };
   }
 
