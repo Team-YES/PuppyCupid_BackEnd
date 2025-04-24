@@ -74,7 +74,7 @@ export class AuthController {
     // 정상 로그인 → 메인 페이지로 이동
     const { access_token, refresh_token } = result;
     return res.redirect(
-      `${FRONT_URL}/social-login?access_token=${access_token}&refresh_token=${refresh_token}`,
+      `${FRONT_URL}/access_token=${access_token}&refresh_token=${refresh_token}`,
     );
   }
 
@@ -105,7 +105,7 @@ export class AuthController {
     // 정상 로그인 → 메인 페이지로 이동
     const { access_token, refresh_token } = result;
     return res.redirect(
-      `${FRONT_URL}/social-login?access_token=${access_token}&refresh_token=${refresh_token}`,
+      `${FRONT_URL}/access_token=${access_token}&refresh_token=${refresh_token}`,
     );
   }
 
