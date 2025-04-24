@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
+import { writeFileSync } from 'fs';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = new DocumentBuilder()
@@ -20,6 +20,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
+  writeFileSync('./swaggerFile', JSON.stringify(document, null, 2));
   SwaggerModule.setup('api', app, document);
 
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -34,6 +36,7 @@ async function bootstrap() {
       'http://43.201.114.228',
       'http://localhost:3000',
       'http://localhost:4000',
+      'http://52.62.112.82',
     ],
     credentials: true,
     exposedHeaders: ['Set-Cookie', 'Authorization', 'Custom-Header'],
