@@ -295,18 +295,24 @@ export class AuthController {
   @ApiOperation({ summary: '리프레시 토큰으로 액세스 토큰 재발급' })
   @ApiResponse({ type: TokenRefreshResDto })
   async refresh(@Req() req: Request) {
-    const refreshToken = req.headers['refresh_token'] as string;
-    if (!refreshToken) return { ok: false, error: 'Refresh token이 없습니다.' };
+    const authHeader = req.headers['authorization'];
+    const refreshToken = authHeader?.split(' ')[1];
+
+    if (!refreshToken) {
+      return { ok: false, error: 'Refresh token이 없습니다.' };
+    }
 
     try {
       const decoded = jwt.verify(
         refreshToken,
         this.configService.get('JWT_REFRESH_TOKEN_SECRET_KEY')!,
       ) as any;
+
       const user = await this.usersService.findUserById(Number(decoded.aud));
       if (!user || user.eid_refresh_token !== refreshToken) {
         return { ok: false, error: '토큰이 만료되었거나 일치하지 않습니다.' };
       }
+
       const { access_token } = await this.authService.issueTokens(user);
       return { ok: true, access_token };
     } catch {
