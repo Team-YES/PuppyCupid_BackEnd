@@ -241,8 +241,8 @@ export class AuthController {
       if (!user || user.eid_refresh_token !== refreshToken) {
         return { ok: false, error: '토큰이 만료되었거나 일치하지 않습니다.' };
       }
-      const { accessToken } = await this.authService.issueTokens(user);
-      return { ok: true, access_token: accessToken };
+      const { access_token } = await this.authService.issueTokens(user);
+      return { ok: true, access_token };
     } catch {
       return { ok: false, error: '토큰 검증 실패' };
     }

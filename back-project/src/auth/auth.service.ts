@@ -14,8 +14,8 @@ export class AuthService {
 
   async issueTokens(
     user: User,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
-    const accessToken = jwt.sign(
+  ): Promise<{ access_token: string; refresh_token: string }> {
+    const access_token = jwt.sign(
       {
         id: user.id,
         role: user.role,
@@ -27,7 +27,7 @@ export class AuthService {
       },
     );
 
-    const refreshToken = jwt.sign(
+    const refresh_token = jwt.sign(
       {},
       this.configService.get('JWT_REFRESH_TOKEN_SECRET_KEY')!,
       {
@@ -36,10 +36,13 @@ export class AuthService {
       },
     );
 
-    user.eid_refresh_token = refreshToken;
+    user.eid_refresh_token = refresh_token;
     await this.userService.save(user);
 
-    return { accessToken, refreshToken };
+    return {
+      access_token,
+      refresh_token,
+    };
   }
 
   async socialLogin(
@@ -99,8 +102,8 @@ export class AuthService {
 
       return {
         ok: true,
-        access_token: tokens.accessToken,
-        refresh_token: tokens.refreshToken,
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
       };
     } catch (error) {
       return {
