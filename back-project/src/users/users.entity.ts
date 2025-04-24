@@ -5,7 +5,7 @@ import {
   OneToMany,
   CreateDateColumn,
 } from 'typeorm';
-import { Dog } from 'src/dogs/dogs.entity';
+import { Dog } from '../dogs/dogs.entity';
 
 export enum Gender {
   MALE = 'male',
@@ -30,9 +30,6 @@ export class User {
 
   @Column({ type: 'varchar', length: 50, unique: true })
   email: string;
-
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  name: string | null;
 
   @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
   nickName: string | null;

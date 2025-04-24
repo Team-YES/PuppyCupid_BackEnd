@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { PaymentMethod, PaymentStatus } from './payments.entity';
+import { PaymentStatus } from './payments.entity';
 import { AuthGuard } from '@nestjs/passport';
 import {
   CreatePaymentDto,
@@ -17,11 +17,9 @@ import {
 
 @ApiTags('결제')
 @Controller('payments')
-@UseGuards(AuthGuard('jwt'))
 export class PaymentsController {
   constructor(private readonly paymentService: PaymentsService) {}
 
-  @Get('getTossClientKey')
   @Get('getTossClientKey')
   @ApiOperation({
     summary: 'Toss Client Key 조회',
@@ -35,6 +33,7 @@ export class PaymentsController {
 
   // 결제
   @Post('create')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '결제 생성',
     description:
@@ -55,6 +54,7 @@ export class PaymentsController {
 
   // 결제 성공 처리
   @Post('success')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '결제 성공 처리',
     description:
@@ -83,6 +83,7 @@ export class PaymentsController {
 
   // 결제 실패 처리
   @Post('fail')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '결제 실패 처리',
     description:
