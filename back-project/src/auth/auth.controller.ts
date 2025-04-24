@@ -30,11 +30,11 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
   // 구글 로그인
-  @Get('/google')
+  @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() _req: Request) {}
 
-  @Get('/google/callback')
+  @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.googleLogin(req, res);
@@ -61,11 +61,11 @@ export class AuthController {
   }
 
   // // 카카오 로그인
-  @Get('/kakao')
+  @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuth(@Req() _req: Request) {}
 
-  @Get('/kakao/callback')
+  @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.kakaoLogin(req, res);
@@ -92,11 +92,11 @@ export class AuthController {
   }
 
   // 네이버 로그인
-  @Get('/naver')
+  @Get('naver')
   @UseGuards(AuthGuard('naver'))
   async naverAuth(@Req() _req: Request) {}
 
-  @Get('/naver/callback')
+  @Get('naver/callback')
   @UseGuards(AuthGuard('naver'))
   async naverAuthCallback(@Req() req: Request, @Res() res: Response) {
     const result = await this.authService.naverLogin(req, res);
@@ -123,7 +123,7 @@ export class AuthController {
   }
 
   // 임시토큰 확인
-  @Post('/check-temp-token')
+  @Post('check-temp-token')
   @UseGuards(AuthGuard('jwt-temp'))
   async checkTempToken(@Req() req: Request) {
     const user = req.user as JwtUser;
@@ -132,19 +132,8 @@ export class AuthController {
     return { isLoggedIn: true, user: foundUser };
   }
 
-  // 닉네임 중복 검사
-  @Get('/nickName')
-  @UseGuards(AuthGuard('jwt-temp'))
-  async checkNickname(@Query('nickName') nickName: string) {
-    if (!nickName) return { ok: false, error: '닉네임을 입력해주세요.' };
-    const user = await this.usersService.findUserByNickname(nickName);
-    return user
-      ? { ok: false, message: '이미 사용 중인 닉네임입니다.' }
-      : { ok: true, message: '사용 가능한 닉네임입니다.' };
-  }
-
   // 전화번호
-  @Post('/update-phone')
+  @Post('update-phone')
   @UseGuards(AuthGuard('jwt-temp'))
   async updatePhone(
     @Req() req: Request,
@@ -174,7 +163,7 @@ export class AuthController {
   }
 
   // 로그인 체크
-  @Get('/check')
+  @Get('check')
   async checkLogin(@Req() req: Request) {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) return { isLoggedIn: false };
@@ -192,6 +181,17 @@ export class AuthController {
     }
   }
 
+  // 닉네임 중복 검사
+  @Get('nickName')
+  @UseGuards(AuthGuard('jwt-temp'))
+  async checkNickname(@Query('nickName') nickName: string) {
+    if (!nickName) return { ok: false, error: '닉네임을 입력해주세요.' };
+    const user = await this.usersService.findUserByNickname(nickName);
+    return user
+      ? { ok: false, message: '이미 사용 중인 닉네임입니다.' }
+      : { ok: true, message: '사용 가능한 닉네임입니다.' };
+  }
+
   // 관리자 로그인
   @Post('/adminLogin')
   async adminLogin(@Body() body: { email: string; password: string }) {
@@ -207,7 +207,7 @@ export class AuthController {
   }
 
   // 관리자 로그인 확인
-  @Get('/adminCheck')
+  @Get('adminCheck')
   async checkAdminLogin(@Req() req: Request) {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) return { isLoggedIn: false };
@@ -227,7 +227,31 @@ export class AuthController {
     }
   }
 
-  @Get('/refresh')
+  // 포폴용 유저
+  @Post('login')
+  async login(@Body() body: { email: string; password: string }) {
+    const user = await this.usersService.findUserByEmail(body.email);
+
+    if (!user) {
+      return { ok: false, error: '이메일 또는 비밀번호가 일치하지 않습니다.' };
+    }
+
+    const valid = await bcrypt.compare(body.password, user.admin_password);
+
+    if (!valid) {
+      return { ok: false, error: '이메일 또는 비밀번호가 일치하지 않습니다.' };
+    }
+
+    const tokens = await this.authService.issueTokens(user);
+    return {
+      ok: true,
+      message: '로그인 성공',
+      ...tokens,
+    };
+  }
+
+  // 리프레시 토큰 확인
+  @Get('refresh')
   async refresh(@Req() req: Request) {
     const refreshToken = req.headers['x-refresh-token'] as string;
     if (!refreshToken) return { ok: false, error: 'Refresh token이 없습니다.' };
@@ -248,7 +272,8 @@ export class AuthController {
     }
   }
 
-  @Get('/logout')
+  // 로그아웃
+  @Get('logout')
   async logout() {
     return { ok: true, message: '로그아웃 성공' };
   }
