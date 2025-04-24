@@ -12,7 +12,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.setGlobalPrefix('api');
   const config = new DocumentBuilder()
     .setTitle('PuppyCupid API')
     .setDescription('PuppyCupid 백엔드 API 문서입니다.')
