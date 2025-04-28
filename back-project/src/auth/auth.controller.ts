@@ -314,6 +314,11 @@ export class AuthController {
       }
 
       const { access_token } = await this.authService.issueTokens(user);
+
+      if (!access_token) {
+        return { ok: false, error: 'access_token 발급 실패' };
+      }
+
       return { ok: true, access_token };
     } catch {
       return { ok: false, error: '토큰 검증 실패' };

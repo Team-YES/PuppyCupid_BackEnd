@@ -36,7 +36,7 @@ export class AuthService {
       },
     );
 
-    user.eid_refresh_token = refresh_token;
+    user.refresh_token = refresh_token;
     await this.userService.save(user);
 
     return {
