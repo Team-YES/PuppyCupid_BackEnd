@@ -203,4 +203,4 @@ npm run start:dev
 - 블랙리스트를 관리할 수 있는 기능을 제공합니다.
 
 
-👉 **프론트 레포지토리**: [front](https://github.com/Team-YES/PuppyCupid_FrontEnd)
+👉 **프론트 레포지토리**: [PuppyCupid_front-project](https://github.com/Team-YES/PuppyCupid_FrontEnd)
