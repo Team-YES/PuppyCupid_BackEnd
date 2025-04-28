@@ -40,7 +40,7 @@ async function bootstrap() {
       'http://43.203.242.14',
       'http://localhost:3000',
       'http://localhost:4000',
-      'http://52.79.135.142 ',
+      'http://52.79.135.142',
     ],
     credentials: true,
     exposedHeaders: ['Set-Cookie', 'Authorization', 'Custom-Header'],
