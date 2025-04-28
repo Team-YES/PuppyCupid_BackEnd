@@ -10,7 +10,7 @@
 
 ```
 npm install
-npm run dev
+npm run start:dev
 ```
 
 ## ☁️ 배포 링크
