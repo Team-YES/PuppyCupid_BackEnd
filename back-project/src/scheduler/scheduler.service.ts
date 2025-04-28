@@ -17,7 +17,6 @@ export class SchedulerService {
       user.role = UserRole.USER;
       user.power_expired_at = null;
       await this.usersService.save(user);
-      console.log(`유저 ${user.id} → 일반 유저`);
     }
   }
 }

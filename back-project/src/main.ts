@@ -38,10 +38,9 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://43.203.242.14',
-      'http://43.201.114.228',
       'http://localhost:3000',
       'http://localhost:4000',
-      'http://52.62.112.82',
+      'http://52.79.135.142 ',
     ],
     credentials: true,
     exposedHeaders: ['Set-Cookie', 'Authorization', 'Custom-Header'],
