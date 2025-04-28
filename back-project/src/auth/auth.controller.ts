@@ -217,7 +217,7 @@ export class AuthController {
   @ApiQuery({ name: 'nickName', type: String })
   @ApiResponse({ type: CheckNicknameResDto })
   async checkNickname(@Query() query: CheckNicknameQueryDto) {
-    if (query.nickName) return { ok: false, error: '닉네임을 입력해주세요.' };
+    if (!query.nickName) return { ok: false, error: '닉네임을 입력해주세요.' };
     const user = await this.usersService.findUserByNickname(query.nickName);
     return user
       ? { ok: false, message: '이미 사용 중인 닉네임입니다.' }
@@ -309,7 +309,7 @@ export class AuthController {
       ) as any;
 
       const user = await this.usersService.findUserById(Number(decoded.aud));
-      if (!user || user.eid_refresh_token !== refreshToken) {
+      if (!user || user.refresh_token !== refreshToken) {
         return { ok: false, error: '토큰이 만료되었거나 일치하지 않습니다.' };
       }
 
