@@ -110,6 +110,7 @@ npm run start:dev
 <img width="700" alt="db" src="https://github.com/user-attachments/assets/0e210187-bbd8-4771-ac92-c3fc0c541789" />
 
 ## 🧾 API 명세서
+<img width="1066" alt="Image" src="https://github.com/user-attachments/assets/867d3d1f-a769-4e3d-b661-50a8356fcd8b" />
 
 ## 주요 기능 소개
 
