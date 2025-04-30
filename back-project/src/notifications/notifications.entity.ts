@@ -6,7 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { User } from 'src/users/users.entity';
+import { User } from '../users/users.entity';
 
 @Entity('notifications')
 export class Notification {
@@ -18,7 +18,7 @@ export class Notification {
   receiver: User;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'sender_user_id'})
+  @JoinColumn({ name: 'sender_user_id' })
   sender: User;
 
   @Column()

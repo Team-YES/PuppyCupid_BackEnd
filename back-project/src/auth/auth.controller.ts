@@ -14,8 +14,8 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from 'src/users/users.service';
-import { Gender, UserRole } from 'src/users/users.entity';
+import { UsersService } from '../users/users.service';
+import { Gender, UserRole } from '../users/users.entity';
 
 import {
   ApiBearerAuth,
@@ -296,20 +296,20 @@ export class AuthController {
   @ApiResponse({ type: TokenRefreshResDto })
   async refresh(@Req() req: Request) {
     const authHeader = req.headers['authorization'];
-    const refreshToken = authHeader?.split(' ')[1];
+    const refresh_token = authHeader?.split(' ')[1];
 
-    if (!refreshToken) {
+    if (!refresh_token) {
       return { ok: false, error: 'Refresh token이 없습니다.' };
     }
 
     try {
       const decoded = jwt.verify(
-        refreshToken,
+        refresh_token,
         this.configService.get('JWT_REFRESH_TOKEN_SECRET_KEY')!,
       ) as any;
 
       const user = await this.usersService.findUserById(Number(decoded.aud));
-      if (!user || user.refresh_token !== refreshToken) {
+      if (!user || user.refresh_token !== refresh_token) {
         return { ok: false, error: '토큰이 만료되었거나 일치하지 않습니다.' };
       }
 
@@ -319,7 +319,7 @@ export class AuthController {
         return { ok: false, error: 'access_token 발급 실패' };
       }
 
-      return { ok: true, access_token };
+      return { ok: true, access_token, refresh_token };
     } catch {
       return { ok: false, error: '토큰 검증 실패' };
     }
