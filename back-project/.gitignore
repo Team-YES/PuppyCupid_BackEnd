@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# misc
+*.pem
+
 # Logs
 logs
 *.log
