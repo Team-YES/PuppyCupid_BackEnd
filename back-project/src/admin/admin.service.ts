@@ -14,7 +14,7 @@ import { PostsService } from 'src/posts/posts.service';
 import { InteractionsService } from 'src/interactions/interactions.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blacklist } from './blacklist.entity';
-import { Admin, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MessagesService } from 'src/messages/messages.service';
 import { error } from 'console';
 

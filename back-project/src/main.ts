@@ -37,7 +37,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://43.203.242.14',
+      'https://puppycupid.co.kr/',
       'http://localhost:3000',
       'http://localhost:4000',
       'http://52.79.135.142',

@@ -13,7 +13,6 @@ import {
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminService } from './admin.service';
-import { InquiryStatus } from 'src/inquiries/inquiries.entity';
 import { UserRole } from 'src/users/users.entity';
 import { AddToBlacklistDto } from './dto/addToBlacklist.dto';
 import { UpdateInquiryStatusDto } from './dto/updateInquiryStatus.dto';
