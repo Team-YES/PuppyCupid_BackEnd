@@ -13,26 +13,17 @@ export class JwtKakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     });
   }
 
-  async validate(
-    profile: Profile,
-    done: (error: any, user?: any, info?: any) => void,
-  ) {
-    try {
-      const { _json } = profile;
+  async validate(profile: Profile): Promise<any> {
+    const { _json } = profile;
 
-      const email = _json.kakao_account?.email ?? null;
-      const nickname = _json.properties?.nickname ?? '카카오 사용자';
+    const email = _json.kakao_account?.email ?? null;
+    const nickname = _json.properties?.nickname ?? '카카오 사용자';
 
-      const user = {
-        email,
-        nickname,
-        name: nickname,
-        provider: 'kakao',
-      };
-
-      done(null, user);
-    } catch (error) {
-      done(error);
-    }
+    return {
+      email,
+      nickname,
+      name: nickname,
+      provider: 'kakao',
+    };
   }
 }

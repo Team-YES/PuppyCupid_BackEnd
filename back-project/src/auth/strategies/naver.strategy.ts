@@ -13,20 +13,12 @@ export class JwtNaverStrategy extends PassportStrategy(Strategy, 'naver') {
     });
   }
 
-  async validate(
-    profile: Profile,
-    done: (err: any, user?: any, info?: any) => void,
-  ) {
-    try {
-      const { _json } = profile;
-      const user = {
-        email: _json.email,
-        name: _json.nickname,
-        provider: 'naver',
-      };
-      done(null, user);
-    } catch (error) {
-      done(error, false);
-    }
+  async validate(profile: Profile): Promise<any> {
+    const { _json } = profile;
+    return {
+      email: _json.email,
+      name: _json.nickname,
+      provider: 'naver',
+    };
   }
 }
