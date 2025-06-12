@@ -90,6 +90,3 @@ import { Blacklist } from './admin/blacklist.entity';
   ],
 })
 export class AppModule {}
-
-console.log('🔐 Loaded DB_USER:', process.env.DB_USER);
-console.log('✅ ENV DB_PASSWORD:', process.env.DB_PASSWORD);

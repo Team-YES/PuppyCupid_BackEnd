@@ -64,22 +64,33 @@ export class AuthController {
     const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
     if (!result.ok) {
-      // 전화번호 필요 → 프론트에 임시 토큰과 상태 전달
       if (result.needPhoneNumber) {
-        return res.redirect(
-          `${FRONT_URL}/phone?temp_access_token=${result.temp_access_token}`,
-        );
+        res.cookie('temp_access_token', result.temp_access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          maxAge: 10 * 60 * 1000,
+        });
+        return res.redirect(`${FRONT_URL}/phone`);
       }
-
-      // 기타 로그인 실패
       return res.redirect(`${FRONT_URL}/login`);
     }
 
-    // 정상 로그인 → 메인 페이지로 이동
-    const { access_token, refresh_token } = result;
-    return res.redirect(
-      `${FRONT_URL}/?access_token=${access_token}&refresh_token=${refresh_token}`,
-    );
+    res.cookie('access_token', result.access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie('refresh_token', result.refresh_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.redirect(FRONT_URL);
   }
 
   // // 카카오 로그인
@@ -97,22 +108,33 @@ export class AuthController {
     const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
     if (!result.ok) {
-      // 전화번호 필요 → 프론트에 임시 토큰과 상태 전달
       if (result.needPhoneNumber) {
-        return res.redirect(
-          `${FRONT_URL}/phone?temp_access_token=${result.temp_access_token}`,
-        );
+        res.cookie('temp_access_token', result.temp_access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          maxAge: 10 * 60 * 1000,
+        });
+        return res.redirect(`${FRONT_URL}/phone`);
       }
-
-      // 기타 로그인 실패
       return res.redirect(`${FRONT_URL}/login`);
     }
 
-    // 정상 로그인 → 메인 페이지로 이동
-    const { access_token, refresh_token } = result;
-    return res.redirect(
-      `${FRONT_URL}/?access_token=${access_token}&refresh_token=${refresh_token}`,
-    );
+    res.cookie('access_token', result.access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie('refresh_token', result.refresh_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.redirect(FRONT_URL);
   }
 
   // 네이버 로그인
@@ -130,22 +152,33 @@ export class AuthController {
     const FRONT_URL = this.configService.get<string>('FRONT_URL')!;
 
     if (!result.ok) {
-      // 전화번호 필요 → 프론트에 임시 토큰과 상태 전달
       if (result.needPhoneNumber) {
-        return res.redirect(
-          `${FRONT_URL}/phone?temp_access_token=${result.temp_access_token}`,
-        );
+        res.cookie('temp_access_token', result.temp_access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+          maxAge: 10 * 60 * 1000,
+        });
+        return res.redirect(`${FRONT_URL}/phone`);
       }
-
-      // 기타 로그인 실패
       return res.redirect(`${FRONT_URL}/login`);
     }
 
-    // 정상 로그인 → 메인 페이지로 이동
-    const { access_token, refresh_token } = result;
-    return res.redirect(
-      `${FRONT_URL}/?access_token=${access_token}&refresh_token=${refresh_token}`,
-    );
+    res.cookie('access_token', result.access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie('refresh_token', result.refresh_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.redirect(FRONT_URL);
   }
 
   // 임시토큰 확인
@@ -194,9 +227,8 @@ export class AuthController {
   @Get('check')
   @ApiOperation({ summary: '로그인 상태 확인' })
   async checkLogin(@Req() req: Request) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) return { isLoggedIn: false };
-    const token = authHeader.split(' ')[1];
+    const token = req.cookies['access_token'];
+    if (!token) return { isLoggedIn: false };
 
     try {
       const payload = jwt.verify(
@@ -296,12 +328,10 @@ export class AuthController {
   @Get('refresh')
   @ApiOperation({ summary: '리프레시 토큰으로 액세스 토큰 재발급' })
   @ApiResponse({ type: TokenRefreshResDto })
-  async refresh(@Req() req: Request) {
-    const authHeader = req.headers['authorization'];
-    const refresh_token = authHeader?.split(' ')[1];
-
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const refresh_token = req.cookies['refresh_token'];
     if (!refresh_token) {
-      return { ok: false, error: 'Refresh token이 없습니다.' };
+      return res.json({ ok: false, error: 'Refresh token이 없습니다.' });
     }
 
     try {
@@ -312,18 +342,32 @@ export class AuthController {
 
       const user = await this.usersService.findUserById(Number(decoded.aud));
       if (!user || user.refresh_token !== refresh_token) {
-        return { ok: false, error: '토큰이 만료되었거나 일치하지 않습니다.' };
+        return res.json({
+          ok: false,
+          error: '토큰이 만료되었거나 일치하지 않습니다.',
+        });
       }
 
-      const { access_token } = await this.authService.issueTokens(user);
+      const { access_token, refresh_token: newRefreshToken } =
+        await this.authService.issueTokens(user);
 
-      if (!access_token) {
-        return { ok: false, error: 'access_token 발급 실패' };
-      }
+      res.cookie('access_token', access_token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 60 * 60 * 1000,
+      });
 
-      return { ok: true, access_token, refresh_token };
+      res.cookie('refresh_token', newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      return res.json({ ok: true });
     } catch {
-      return { ok: false, error: '토큰 검증 실패' };
+      return res.json({ ok: false, error: '토큰 검증 실패' });
     }
   }
 }

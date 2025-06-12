@@ -57,7 +57,6 @@ export class MatchesService {
 
     try {
       const result = await model.generateContent([prompt]);
-      console.log(JSON.stringify(result, null, 2));
 
       rawText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
     } catch (error) {
@@ -82,8 +81,6 @@ export class MatchesService {
           mbti: combo.mbti,
           personality: combo.personality.map((p: string) => p.trim()),
         }));
-
-        console.log('파싱 성공:', recommendedCombos);
       }
     } catch (err) {
       console.error('Gemini 응답 파싱 실패:', rawText);

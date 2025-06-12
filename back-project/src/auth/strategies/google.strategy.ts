@@ -21,12 +21,7 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
     };
   }
 
-  async validate(
-    accessToken: string,
-    refreshToken: string,
-    profile: Profile,
-    done: VerifyCallback,
-  ) {
+  async validate(profile: Profile, done: VerifyCallback) {
     try {
       const { name, emails } = profile;
       const user = {
