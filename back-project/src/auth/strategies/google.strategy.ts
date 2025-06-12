@@ -21,13 +21,24 @@ export class JwtGoogleStrategy extends PassportStrategy(Strategy, 'google') {
     };
   }
 
-  async validate(profile: Profile) {
-    const { name, emails } = profile;
-    return {
-      email: emails?.[0]?.value,
-      firstName: name?.givenName,
-      lastName: name?.familyName,
-      provider: 'google',
-    };
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+    done: VerifyCallback,
+  ) {
+    try {
+      const { name, emails } = profile;
+      const user = {
+        email: emails?.[0]?.value,
+        firstName: name?.givenName,
+        lastName: name?.familyName,
+
+        provider: 'google',
+      };
+      done(null, user);
+    } catch (error) {
+      done(error, false);
+    }
   }
 }
