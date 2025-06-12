@@ -282,6 +282,8 @@ export class AuthController {
       return { ok: false, error: '이메일 또는 비밀번호가 일치하지 않습니다.' };
     }
 
+    console.log('암호화된 비밀번호:', user.admin_password);
+
     const tokens = await this.authService.issueTokens(user);
     return {
       ok: true,
