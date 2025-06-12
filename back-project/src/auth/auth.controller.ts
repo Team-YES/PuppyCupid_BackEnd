@@ -199,17 +199,21 @@ export class AuthController {
   @ApiOperation({ summary: '전화번호 및 성별, 닉네임 등록' })
   @ApiBody({ type: PhoneUpdateDto })
   @ApiResponse({ type: UpdatePhoneResDto })
-  async updatePhone(@Req() req: Request, @Body() body: PhoneUpdateDto) {
+  async updatePhone(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: PhoneUpdateDto,
+  ) {
     const user = req.user as JwtUser;
     const userId = user?.id;
-    if (!userId) return { ok: false, error: '유저 정보가 없습니다.' };
+    if (!userId) return res.json({ ok: false, error: '유저 정보가 없습니다.' });
 
     const existing = await this.usersService.findUserByPhone(body.phone);
     if (existing && existing.id !== userId) {
-      return {
+      return res.json({
         ok: false,
         error: `이미 ${existing.provider?.toUpperCase() || '다른'} 계정으로 가입된 전화번호입니다.`,
-      };
+      });
     }
 
     await this.usersService.updatePhoneNumber(userId, body.phone);
@@ -217,10 +221,32 @@ export class AuthController {
     await this.usersService.updateProfile(userId, body);
 
     const updatedUser = await this.usersService.findUserById(userId);
-    if (!updatedUser) return { ok: false, error: '유저를 찾을 수 없습니다.' };
+    if (!updatedUser)
+      return res.json({ ok: false, error: '유저를 찾을 수 없습니다.' });
 
-    const tokens = await this.authService.issueTokens(updatedUser);
-    return { ok: true, message: '전화번호 등록 완료, 로그인 완료', ...tokens };
+    const { access_token, refresh_token } =
+      await this.authService.issueTokens(updatedUser);
+
+    res.clearCookie('temp_access_token');
+
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({
+      ok: true,
+      message: '전화번호 등록 완료, 로그인 완료',
+    });
   }
 
   // 로그인 체크
@@ -257,7 +283,7 @@ export class AuthController {
   }
 
   // 관리자 로그인
-  @Post('/adminLogin')
+  @Post('adminLogin')
   @ApiOperation({ summary: '관리자 로그인' })
   @ApiBody({ type: AdminLoginDto })
   @ApiResponse({ status: 200, type: AdminLoginResDto })

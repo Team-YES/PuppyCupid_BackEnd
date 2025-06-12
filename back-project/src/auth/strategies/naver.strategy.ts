@@ -14,8 +14,6 @@ export class JwtNaverStrategy extends PassportStrategy(Strategy, 'naver') {
   }
 
   async validate(
-    accessToken: string,
-    refreshToken: string,
     profile: Profile,
     done: (err: any, user?: any, info?: any) => void,
   ) {
