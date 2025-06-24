@@ -16,7 +16,7 @@ npm run start:dev
 
 ## ☁️ 배포 링크
 
-- 🔗 소개팅 홈페이지 주소: http://52.79.135.142
+- 🔗 소개팅 홈페이지 주소: https://puppycupid.co.kr/
 - 🌐 프론트 배포 서버: AWS EC2 (Next.js)
 - 🛠 백엔드 서버: AWS EC2 (NestJS)
 - 💾 DB: AWS (MySQL)
